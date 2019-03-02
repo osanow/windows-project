@@ -5,13 +5,19 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const outputDirectory = 'dist';
 
 module.exports = {
-  entry: ['babel-polyfill', './src/client/index.js'],
+  entry: [
+    'babel-polyfill',
+    'core-js/modules/es6.promise',
+    'core-js/modules/es6.array.iterator',
+    './src/client/index.js'
+  ],
   output: {
     path: path.join(__dirname, outputDirectory),
     filename: 'bundle.js'
   },
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
@@ -23,8 +29,13 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000'
+        test: /\.(gif|png|jpe?g|svg)$/,
+        use: [
+          'file-loader',
+          {
+            loader: 'image-webpack-loader'
+          }
+        ]
       }
     ]
   },
