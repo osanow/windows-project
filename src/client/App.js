@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { updateObject } from './util/utility';
 import Toolbar from './containers/Toolbar/Toolbar';
+import DesktopIcon from './components/DesktopIcon/DesktopIcon';
 
 import './app.css';
 
@@ -11,29 +12,17 @@ const App = styled.div`
   height: 100vh;
   overflow: hidden;
   margin: 0;
-  padding: 0.3rem 0.3rem 3rem 0.3rem;
+  padding: 1rem 0.3rem 3rem 0.3rem;
 
-  background: ${props => `#3366ff ${'' && (props.bg && `url(${props.bg})`)} center no-repeat`};
+  background: ${props => `#3366ff ${props.bg ? `url(${props.bg})` : ''} center no-repeat`};
 
   position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 4rem);
-  grid-template-rows: repeat(auto-fill, 4rem);
+  grid-template-columns: repeat(auto-fill, 6rem);
+  grid-template-rows: repeat(auto-fill, 4.5rem);
   grid-gap: 0.3rem;
   justify-content: center;
   grid-auto-flow: column;
-
-  & > * {
-    position: relative;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  & > p {
-    text-align: center;
-  }
 `;
 
 class root extends Component {
@@ -42,20 +31,23 @@ class root extends Component {
   };
 
   componentWillMount() {
-    this.setState(updateObject(this.state, { currWallpaper: import('./assets/bgrounds/wallpaper_default.jpg') } ));
+    import('./assets/bgrounds/wallpaper_default.jpg')
+      .then((path) => {
+        this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   render() {
-    // const { currWallpaper } = this.state;
+    const { currWallpaper } = this.state;
 
     return (
       <>
-        <App bg={this.currWallpaper}>
-          <p>Hello</p>
-          <p>Hello</p>
-          <p>Hello</p>
-          <p>Hello</p>
-          <p>Hello</p>
+        <App bg={currWallpaper}>
+          <DesktopIcon name="My computer" iconName="computer.png" />
+          <DesktopIcon name="Trash" iconName="trash-empty.png" />
         </App>
         <Toolbar />
       </>

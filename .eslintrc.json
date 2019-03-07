@@ -6,6 +6,7 @@
     "node": true
   },
   "rules": {
+    "react/prop-types": 0,
     "no-console": "off",
     "comma-dangle": "off",
     "react/jsx-filename-extension": "off"
