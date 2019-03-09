@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   width: 100vw;
   height: 100vh;
   position: absolute;

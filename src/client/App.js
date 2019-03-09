@@ -61,7 +61,7 @@ class root extends Component {
           <DesktopIcon name="Trash" iconName="trash-empty.png" />
         </App>
         <Toolbar />
-        <AuthLayer onLoaded={this.authLoadedHandler} />
+        <AuthLayer disableLoadingPageHandler={this.authLoadedHandler} />
         <AppLoader closed={!appLoader} />
       </>
     );
