@@ -7,6 +7,9 @@
   },
   "rules": {
     "react/prop-types": 0,
+    "linebreak-style": "off",
+    "max-len": "off",
+    "no-alert": "off",
     "no-console": "off",
     "comma-dangle": "off",
     "react/jsx-filename-extension": "off"

@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import { updateObject } from './util/utility';
+import { updateObject } from './utils/utility';
 import Toolbar from './containers/Toolbar/Toolbar';
 import DesktopIcon from './components/DesktopIcon/DesktopIcon';
+import AppLoader from './components/AppLoader/appLoader';
+import AuthLayer from './containers/AuthLayer/AuthLayer';
 
 import './app.css';
 
 const App = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 3rem);
   overflow: hidden;
   margin: 0;
-  padding: 1rem 0.3rem 3rem 0.3rem;
+  padding: 1rem 0.3rem 1rem 0.3rem;
 
   background: ${props => `#3366ff ${props.bg ? `url(${props.bg})` : ''} center no-repeat`};
 
@@ -27,21 +29,26 @@ const App = styled.div`
 
 class root extends Component {
   state = {
-    currWallpaper: null
+    currWallpaper: null,
+    appLoader: true
   };
 
-  componentWillMount() {
-    import('./assets/bgrounds/wallpaper_default.jpg')
-      .then((path) => {
-        this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  // componentDidMount() {
+  //   import('./assets/bgrounds/wallpaper_default.jpg')
+  //     .then((path) => {
+  //       this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+
+  authLoadedHandler = () => {
+    this.setState(prevState => updateObject(prevState, { appLoader: false }));
+  };
 
   render() {
-    const { currWallpaper } = this.state;
+    const { currWallpaper, appLoader } = this.state;
 
     return (
       <>
@@ -50,6 +57,8 @@ class root extends Component {
           <DesktopIcon name="Trash" iconName="trash-empty.png" />
         </App>
         <Toolbar />
+        <AuthLayer disableLoadingPageHandler={this.authLoadedHandler} />
+        <AppLoader closed={!appLoader} />
       </>
     );
   }

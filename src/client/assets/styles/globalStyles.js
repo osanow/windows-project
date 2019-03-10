@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const imageContainer = styled.img`
   height: ${({ scale }) => {
@@ -11,4 +11,13 @@ export const imageContainer = styled.img`
     if (scale === 'medium') return '1.5rem';
     return '1.1rem';
   }};
+`;
+
+export const underlineAnimation = keyframes`
+    0% {
+      width: 0;
+    }
+    100% {
+      width: 100%;
+    }
 `;
