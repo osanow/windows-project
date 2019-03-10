@@ -1,6 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
+import { underslineAnimation } from '../../assets/styles/globalStyles';
+
 const Wrapper = styled.section`
   width: 100vw;
   height: 100vh;
@@ -62,15 +64,6 @@ const textAnimation = keyframes`
     }
 `;
 
-const underscoreAnimation = keyframes`
-    0% {
-      width: 0;
-    }
-    100% {
-      width: 100%;
-    }
-`;
-
 const Title = styled.h1`
   position: relative;
   font-size: 32px;
@@ -88,7 +81,7 @@ const Title = styled.h1`
     position: absolute;
     bottom: 0;
     left: 0;
-    animation: ${underscoreAnimation} 1.5s ease-in-out 1s forwards;
+    animation: ${underslineAnimation} 1.5s ease-in-out 1s forwards;
   }
 `;
 

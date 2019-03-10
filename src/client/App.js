@@ -33,19 +33,15 @@ class root extends Component {
     appLoader: true
   };
 
-  componentDidMount() {
-    import('./assets/bgrounds/wallpaper_default.jpg')
-      .then((path) => {
-        this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  shouldComponentUpdate(prevState, nextState) {
-    return prevState.appLoader !== nextState.appLoader;
-  }
+  // componentDidMount() {
+  //   import('./assets/bgrounds/wallpaper_default.jpg')
+  //     .then((path) => {
+  //       this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
 
   authLoadedHandler = () => {
     this.setState(prevState => updateObject(prevState, { appLoader: false }));

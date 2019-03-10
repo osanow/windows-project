@@ -13,7 +13,7 @@ const Input = styled.input`
   width: 100%;
   height: 2rem;
   color: #3c3e42;
-  background: rgba(255, 255, 255, 0.7);
+  background: ${({ valid, touched }) => (!valid && touched ? 'rgba(216, 144, 136, 0.7)' : 'rgba(255, 255, 255, 0.7)')};
 
   &::placeholder {
     font-weight: 600;
