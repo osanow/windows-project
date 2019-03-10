@@ -41,6 +41,59 @@ class AuthLayer extends Component {
           minLength: 6
         }
       }
+    },
+    signinFormConfig: {
+      email: {
+        inputConfig: {
+          type: 'email',
+          placeholder: 'E-mail',
+          value: '',
+          valid: false,
+          touched: false
+        },
+        validation: {
+          required: true,
+          isEmail: true
+        }
+      },
+      passwordFirst: {
+        inputConfig: {
+          type: 'password',
+          placeholder: 'Password',
+          value: '',
+          valid: false,
+          touched: false
+        },
+        validation: {
+          required: true,
+          minLength: 6
+        }
+      },
+      passwordSec: {
+        inputConfig: {
+          type: 'password',
+          placeholder: 'Password',
+          value: '',
+          valid: false,
+          touched: false
+        },
+        validation: {
+          required: true,
+          minLength: 6
+        }
+      },
+      username: {
+        inputConfig: {
+          type: 'text',
+          placeholder: 'Your name',
+          value: '',
+          valid: false,
+          touched: false
+        },
+        validation: {
+          required: false
+        }
+      },
     }
   };
 
@@ -99,12 +152,20 @@ class AuthLayer extends Component {
 
   render() {
     const {
-      backgroundUrl, loading, loginMode, loginFormConfig
+      backgroundUrl, loading, loginMode, loginFormConfig, signinFormConfig
     } = this.state;
 
     const loginForm = Object.entries(loginFormConfig).map(formItem => (
       <Input
         key={`loginForm ${formItem[0]}`}
+        inputConfig={formItem[1].inputConfig}
+        changeHandler={e => this.inputChangedHandler(e, formItem[0])}
+      />
+    ));
+
+    const signinForm = Object.entries(signinFormConfig).map(formItem => (
+      <Input
+        key={`signinForm ${formItem[0]}`}
         inputConfig={formItem[1].inputConfig}
         changeHandler={e => this.inputChangedHandler(e, formItem[0])}
       />
@@ -116,18 +177,23 @@ class AuthLayer extends Component {
           <AvatarWrapper>
             <Avatar />
           </AvatarWrapper>
-          <Title loginMode={loginMode}>Welcome</Title>
-          <Form onSubmit={e => this.submitHandler(e, 'login')}>
-            {loginForm}
+          <Title loginMode={loginMode} />
+          <Form onSubmit={e => this.submitHandler(e, (loginMode ? 'login' : 'signin'))}>
+            { loginMode ? loginForm : signinForm}
             <Button>
-              {loading ? <Spinner /> : <img src={arrowIcon} alt="Log in" />}
+              {loading ? <Spinner /> : <img src={arrowIcon} alt="Continue" />}
             </Button>
           </Form>
-          {loginMode && (
+          {loginMode ? (
             <Hint onClick={this.changeModeHandler}>
               You dont have
               <span style={{ color: '#85a4e2' }}> account </span>
               yet?
+            </Hint>
+          ) : (
+            <Hint onClick={this.changeModeHandler}>
+              I already have
+              <span style={{ color: '#85a4e2' }}> account </span>
             </Hint>
           )}
         </Wrapper>

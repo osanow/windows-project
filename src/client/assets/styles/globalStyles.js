@@ -13,7 +13,7 @@ export const imageContainer = styled.img`
   }};
 `;
 
-export const underslineAnimation = keyframes`
+export const underlineAnimation = keyframes`
     0% {
       width: 0;
     }

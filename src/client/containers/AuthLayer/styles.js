@@ -46,11 +46,32 @@ export const Avatar = styled.div`
 `;
 
 export const Title = styled.p`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 2.5rem;
   font-weight: 100;
   font-size: 32px;
   color: white;
   margin-bottom: 1.5rem;
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+
+  &::before {
+    position: absolute;
+    content: 'Welcome';
+    transition: transform 0.4s ease-in-out, opacity 0.25s ease-in-out;
+    transform: ${({ loginMode }) => (!loginMode ? 'translateX(40px)' : 'translateX(0)')};
+    opacity: ${({ loginMode }) => (!loginMode ? '0' : '1')};
+  }
+
+  &::after {
+    position: absolute;
+    content: 'Sign in';
+    transition: transform 0.4s ease-in-out, opacity 0.25s ease-in-out;
+    transform: ${({ loginMode }) => (loginMode ? 'translateX(-40px)' : 'translateX(0)')};
+    opacity: ${({ loginMode }) => (loginMode ? '0' : '1')};
+  }
 `;
 
 export const Form = styled.form`

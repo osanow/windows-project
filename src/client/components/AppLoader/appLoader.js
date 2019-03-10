@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import { underslineAnimation } from '../../assets/styles/globalStyles';
+import { underlineAnimation } from '../../assets/styles/globalStyles';
 
 const Wrapper = styled.section`
   width: 100vw;
@@ -81,7 +81,7 @@ const Title = styled.h1`
     position: absolute;
     bottom: 0;
     left: 0;
-    animation: ${underslineAnimation} 1.5s ease-in-out 1s forwards;
+    animation: ${underlineAnimation} 1.5s ease-in-out 1s forwards;
   }
 `;
 
