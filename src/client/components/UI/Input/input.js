@@ -12,7 +12,7 @@ const Input = styled.input`
   padding: 0.3rem;
   width: 100%;
   height: 2rem;
-  color: #3c3e42;
+  color: #202020;
   background: ${({ valid, touched }) => (!valid && touched
     ? 'rgba(220, 130, 130, 0.85)'
     : 'rgba(255, 255, 255, 0.7)')};

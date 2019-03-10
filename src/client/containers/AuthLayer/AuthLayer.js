@@ -1,19 +1,27 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 
+import { auth, authLoginFail, authSigninFail } from '../../store/actions/auth';
 import Spinner from '../../components/Spinners/dottedSpinner';
 import Input from '../../components/UI/Input/input';
 import arrowIcon from '../../assets/icons/right-arrow.svg';
 import { updateObject, checkValidity } from '../../utils/utility';
 import {
-  Container, Wrapper, AvatarWrapper, Avatar, Title, Form, Button, Hint
+  Container,
+  Wrapper,
+  AvatarWrapper,
+  Avatar,
+  Title,
+  Form,
+  Button,
+  Hint
 } from './styles';
 
 class AuthLayer extends Component {
   state = {
     loginMode: true,
     backgroundUrl: null,
-    loading: false,
     loginFormConfig: {
       email: {
         inputConfig: {
@@ -46,7 +54,7 @@ class AuthLayer extends Component {
       email: {
         inputConfig: {
           type: 'email',
-          placeholder: 'E-mail',
+          placeholder: 'E-mail *',
           value: '',
           valid: false,
           touched: false
@@ -59,7 +67,7 @@ class AuthLayer extends Component {
       passwordFirst: {
         inputConfig: {
           type: 'password',
-          placeholder: 'Password',
+          placeholder: 'Password *',
           value: '',
           valid: false,
           touched: false
@@ -72,7 +80,7 @@ class AuthLayer extends Component {
       passwordSec: {
         inputConfig: {
           type: 'password',
-          placeholder: 'Password',
+          placeholder: 'Password *',
           value: '',
           valid: false,
           touched: false
@@ -93,7 +101,7 @@ class AuthLayer extends Component {
         validation: {
           required: false
         }
-      },
+      }
     }
   };
 
@@ -123,9 +131,56 @@ class AuthLayer extends Component {
       });
   }
 
-  submitHandler = (e, type) => {
+  checkValidityForm = (loginMode) => {
+    const { loginFormConfig, signinFormConfig } = this.state;
+    let isValid = true;
+
+    Object.entries(loginMode ? loginFormConfig : signinFormConfig).forEach(
+      (formItem) => {
+        const configData = formItem[1].inputConfig;
+        if (!configData.valid) isValid = false;
+      }
+    );
+
+    return isValid;
+  };
+
+  touchFormFields = (loginMode) => {
+    const { loginFormConfig, signinFormConfig } = this.state;
+    const currFormConfig = loginMode ? loginFormConfig : signinFormConfig;
+
+    const updatedConfig = {};
+
+    Object.entries(currFormConfig).forEach((formItem) => {
+      updatedConfig[formItem[0]] = {
+        ...currFormConfig[formItem[0]],
+        inputConfig: {
+          ...currFormConfig[formItem[0]].inputConfig,
+          touched: true
+        }
+      };
+    });
+
+    if (loginMode) this.setState({ loginFormConfig: updatedConfig });
+    else this.setState({ signinFormConfig: updatedConfig });
+  };
+
+  submitHandler = (e) => {
+    const { loginMode, loginFormConfig, signinFormConfig } = this.state;
+    const { failedLoginAuth, failedSigninAuth, auth } = this.props;
     e.preventDefault();
-    this.setState({ loading: true });
+
+    const isValid = this.checkValidityForm(loginMode);
+    if (!isValid) {
+      if (loginMode) failedLoginAuth('Invalid user data!');
+      else failedSigninAuth('Invalid user data!');
+      this.touchFormFields(loginMode);
+      return;
+    }
+
+    if (loginMode) {
+    } else {
+    }
   };
 
   changeModeHandler = () => {
@@ -133,27 +188,35 @@ class AuthLayer extends Component {
   };
 
   inputChangedHandler = (e, inputId) => {
-    const { loginFormConfig } = this.state;
+    const { loginFormConfig, signinFormConfig, loginMode } = this.state;
+    const currFormConfig = loginMode ? loginFormConfig : signinFormConfig;
 
-    const updatedConfig = updateObject(loginFormConfig, {
-      [inputId]: updateObject(loginFormConfig[inputId], {
-        inputConfig: updateObject(loginFormConfig[inputId].inputConfig, {
+    const updatedConfig = updateObject(currFormConfig, {
+      [inputId]: updateObject(currFormConfig[inputId], {
+        inputConfig: updateObject(currFormConfig[inputId].inputConfig, {
           value: e.target.value,
           valid: checkValidity(
             e.target.value,
-            loginFormConfig[inputId].validation
+            currFormConfig[inputId].validation
           ),
           touched: true
         })
       })
     });
-    this.setState({ loginFormConfig: updatedConfig });
+
+    if (loginMode) this.setState({ loginFormConfig: updatedConfig });
+    else this.setState({ signinFormConfig: updatedConfig });
   };
 
   render() {
     const {
-      backgroundUrl, loading, loginMode, loginFormConfig, signinFormConfig
+      backgroundUrl,
+      loginMode,
+      loginFormConfig,
+      signinFormConfig
     } = this.state;
+
+    const { loading, loginError, signinError } = this.props;
 
     const loginForm = Object.entries(loginFormConfig).map(formItem => (
       <Input
@@ -178,8 +241,8 @@ class AuthLayer extends Component {
             <Avatar />
           </AvatarWrapper>
           <Title loginMode={loginMode} />
-          <Form onSubmit={e => this.submitHandler(e, (loginMode ? 'login' : 'signin'))}>
-            { loginMode ? loginForm : signinForm}
+          <Form onSubmit={this.submitHandler} error={loginMode ? loginError : signinError}>
+            {loginMode ? loginForm : signinForm}
             <Button>
               {loading ? <Spinner /> : <img src={arrowIcon} alt="Continue" />}
             </Button>
@@ -202,4 +265,19 @@ class AuthLayer extends Component {
   }
 }
 
-export default AuthLayer;
+const mapStateToProps = state => ({
+  loading: state.loading,
+  loginError: state.loginError,
+  signinError: state.signinError
+});
+
+const mapDispatchToProps = dispatch => ({
+  onAuth: (email, password, isSignup) => dispatch(auth(email, password, isSignup)),
+  failedLoginAuth: err => dispatch(authLoginFail(err)),
+  failedSigninAuth: err => dispatch(authSigninFail(err)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AuthLayer);

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import userIcon from '../../assets/icons/user.svg';
 import arrowIcon from '../../assets/icons/right-arrow.svg';
+import cancel from '../../assets/icons/cancel.svg';
 
 export const Container = styled.div`
   width: 100vw;
@@ -33,7 +34,8 @@ export const AvatarWrapper = styled.div`
   background: rgba(60, 60, 60, 0.6);
   border-radius: 50%;
   padding: 4.5vh;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(20, 20, 20, 0.15);
+  box-shadow: 0px 0px 20px 1px rgba(0, 0, 0, 0.5);
 `;
 
 export const Avatar = styled.div`
@@ -55,7 +57,7 @@ export const Title = styled.p`
   font-size: 32px;
   color: white;
   margin-bottom: 1.5rem;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+  text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.9);
 
   &::before {
     position: absolute;
@@ -78,12 +80,49 @@ export const Form = styled.form`
   position: relative;
   margin: 0 auto;
   width: 60%;
+  max-width: 20rem;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   box-shadow: 2px 2px 20px 6px rgba(0, 0, 0, 0.5);
+
+  &::before {
+    content: ' ';
+    position: absolute;
+    bottom: -18px;
+    left: -20px;
+    width: 14px;
+    height: 14px;
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+    color: #ff1919;
+    background: ${({ error }) => (error ? `url(${cancel})` : 'none')};
+    animation: ${({ error }) => (error ? 'fadeIn 1s ease-in-out forwards' : 'none')};
+  }
+
+  &::after {
+    content: ${({ error }) => (error ? `'${error}'` : "''")};
+    position: absolute;
+    bottom: -18px;
+    left: 0;
+    font-size: 13px;
+    font-weight: 900;
+    text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.9);
+    color: #fc1919;
+    animation: ${({ error }) => (error ? 'fadeIn 1s ease-in-out forwards' : 'none')};
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateX(0px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(20px);
+    }
+  }
 `;
 
 export const Button = styled.button`
@@ -114,7 +153,7 @@ export const Hint = styled.p`
   font-weight: 700;
   margin: 0.1rem auto;
   cursor: pointer;
-  text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.8);
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
 
   &::after {
     position: absolute;
