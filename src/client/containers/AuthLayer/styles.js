@@ -22,7 +22,7 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
+  width: 80%;
   margin: 0 auto;
 `;
 
@@ -79,6 +79,7 @@ export const Title = styled.p`
 export const Form = styled.form`
   position: relative;
   margin: 0 auto;
+  min-width: 15rem;
   width: 60%;
   max-width: 20rem;
   display: flex;
@@ -108,8 +109,8 @@ export const Form = styled.form`
     left: 0;
     font-size: 13px;
     font-weight: 900;
-    text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.9);
-    color: #fc1919;
+    text-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+    color: #fc0c0c;
     animation: ${({ error }) => (error ? 'fadeIn 1s ease-in-out forwards' : 'none')};
   }
 
@@ -132,8 +133,8 @@ export const Button = styled.button`
   background: rgba(60, 60, 60, 0.6);
   border: 1px solid gray;
   border-top: none;
+  border-left: none;
   cursor: pointer;
-  align-self: right;
 
   & > img {
     filter: invert(100%);
@@ -146,7 +147,9 @@ export const Button = styled.button`
 export const Hint = styled.p`
   position: relative;
   width: 60%;
+  min-width: 15rem;
   height: 1.4rem;
+  max-width: 20rem;
   text-align: right;
   font-size: 13px;
   color: whitesmoke;

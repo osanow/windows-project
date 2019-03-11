@@ -4,8 +4,12 @@ import { updateObject } from '../../utils/utility';
 const initialState = {
   userId: null,
   token: null,
-  password: null,
-  mail: null,
+  // userData: {
+  //   volume: null,
+  //   background: null,
+  //   desktop: [],
+  //   files: []
+  // },
   loginError: null,
   signinError: null,
   loading: false
@@ -16,17 +20,18 @@ const authStart = state => updateObject(state, { error: null, loading: true });
 const authSuccess = (state, action) => updateObject(state, {
   token: action.idToken,
   userId: action.userId,
-  error: null,
+  loginError: null,
+  signinError: null,
   loading: false
 });
 
 const authSigninFail = (state, action) => updateObject(state, {
-  loginError: action.error,
+  signinError: action.error,
   loading: false
 });
 
 const authLoginFail = (state, action) => updateObject(state, {
-  signinError: action.error,
+  loginError: action.error,
   loading: false
 });
 

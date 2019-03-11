@@ -9,7 +9,7 @@ const Input = styled.input`
   font-weight: bold;
   font-size: 14px;
   border: 1px solid gray;
-  padding: 0.3rem;
+  padding: 0.3rem 4rem;
   width: 100%;
   height: 2rem;
   color: #202020;
@@ -31,7 +31,8 @@ const Input = styled.input`
   }
 
   &:last-of-type {
-    padding-left: 2.25rem;
+    padding: 0.3rem 4rem;
+    padding-left: 5.9rem;
     width: calc(100% - 2rem);
     display: inline-block;
     align-self: flex-start;

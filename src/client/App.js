@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
+import { authCheckState } from './store/actions/auth';
 import { updateObject } from './utils/utility';
 import Toolbar from './containers/Toolbar/Toolbar';
 import DesktopIcon from './components/DesktopIcon/DesktopIcon';
@@ -33,7 +35,10 @@ class root extends Component {
     appLoader: true
   };
 
-  // componentDidMount() {
+  componentDidMount() {
+    const { onTryAutoSignup } = this.props;
+    onTryAutoSignup();
+
   //   import('./assets/bgrounds/wallpaper_default.jpg')
   //     .then((path) => {
   //       this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
@@ -41,7 +46,7 @@ class root extends Component {
   //     .catch((err) => {
   //       console.log(err);
   //     });
-  // }
+  }
 
   authLoadedHandler = () => {
     this.setState(prevState => updateObject(prevState, { appLoader: false }));
@@ -64,4 +69,15 @@ class root extends Component {
   }
 }
 
-export default root;
+const mapStateToProps = state => ({
+  isAuth: state.token !== null,
+});
+
+const mapDispatchToProps = dispatch => ({
+  onTryAutoSignup: () => dispatch(authCheckState())
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(root);

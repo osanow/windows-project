@@ -156,7 +156,7 @@ class AuthLayer extends Component {
         ...currFormConfig[formItem[0]],
         inputConfig: {
           ...currFormConfig[formItem[0]].inputConfig,
-          touched: true
+          touched: currFormConfig[formItem[0]].validation.required
         }
       };
     });
@@ -167,7 +167,7 @@ class AuthLayer extends Component {
 
   submitHandler = (e) => {
     const { loginMode, loginFormConfig, signinFormConfig } = this.state;
-    const { failedLoginAuth, failedSigninAuth, auth } = this.props;
+    const { failedLoginAuth, failedSigninAuth, onAuth } = this.props;
     e.preventDefault();
 
     const isValid = this.checkValidityForm(loginMode);
@@ -179,7 +179,25 @@ class AuthLayer extends Component {
     }
 
     if (loginMode) {
+      onAuth(
+        loginFormConfig.email.inputConfig.value,
+        loginFormConfig.password.inputConfig.value,
+        null,
+        loginMode
+      );
     } else {
+      if (signinFormConfig.passwordFirst.inputConfig.value !== signinFormConfig.passwordSec.inputConfig.value) {
+        failedSigninAuth('Passwords are not equal!');
+        this.touchFormFields(loginMode);
+        return;
+      }
+
+      onAuth(
+        signinFormConfig.email.inputConfig.value,
+        signinFormConfig.passwordFirst.inputConfig.value,
+        signinFormConfig.username.inputConfig.value,
+        loginMode
+      );
     }
   };
 
@@ -241,7 +259,10 @@ class AuthLayer extends Component {
             <Avatar />
           </AvatarWrapper>
           <Title loginMode={loginMode} />
-          <Form onSubmit={this.submitHandler} error={loginMode ? loginError : signinError}>
+          <Form
+            onSubmit={this.submitHandler}
+            error={loginMode ? loginError : signinError}
+          >
             {loginMode ? loginForm : signinForm}
             <Button>
               {loading ? <Spinner /> : <img src={arrowIcon} alt="Continue" />}
@@ -274,7 +295,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onAuth: (email, password, isSignup) => dispatch(auth(email, password, isSignup)),
   failedLoginAuth: err => dispatch(authLoginFail(err)),
-  failedSigninAuth: err => dispatch(authSigninFail(err)),
+  failedSigninAuth: err => dispatch(authSigninFail(err))
 });
 
 export default connect(
