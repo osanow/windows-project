@@ -4,12 +4,9 @@ import { updateObject } from '../../utils/utility';
 const initialState = {
   userId: null,
   token: null,
-  // userData: {
-  //   volume: null,
-  //   background: null,
-  //   desktop: [],
-  //   files: []
-  // },
+  preferences: {
+    wallpaper: null
+  },
   loginError: null,
   signinError: null,
   loading: false
@@ -20,6 +17,7 @@ const authStart = state => updateObject(state, { error: null, loading: true });
 const authSuccess = (state, action) => updateObject(state, {
   token: action.idToken,
   userId: action.userId,
+  preferences: action.preferences,
   loginError: null,
   signinError: null,
   loading: false

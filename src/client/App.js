@@ -31,21 +31,28 @@ const App = styled.div`
 
 class root extends Component {
   state = {
-    currWallpaper: null,
+    wallpaperUrl: null,
     appLoader: true
   };
 
   componentDidMount() {
     const { onTryAutoSignup } = this.props;
     onTryAutoSignup();
+  }
 
-    //   import('./assets/bgrounds/wallpaper_default.jpg')
-    //     .then((path) => {
-    //       this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
+  componentDidUpdate(prevProps) {
+    const { wallpaper } = this.props;
+    const { wallpaperUrl } = this.state;
+
+    if (wallpaper && (wallpaper !== prevProps.wallpaper || wallpaperUrl === null)) {
+      import(`./assets/bgrounds/${wallpaper}`)
+        .then((res) => {
+          this.setState(prevState => updateObject(prevState, { wallpaperUrl: res.default }));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 
   authLoadedHandler = () => {
@@ -53,12 +60,12 @@ class root extends Component {
   };
 
   render() {
-    const { currWallpaper, appLoader } = this.state;
+    const { appLoader, wallpaperUrl } = this.state;
     const { isAuth } = this.props;
 
     return (
       <>
-        <App bg={currWallpaper}>
+        <App bg={wallpaperUrl}>
           <DesktopIcon name="My computer" iconName="computer.png" />
           <DesktopIcon name="Trash" iconName="trash-empty.png" />
         </App>
@@ -74,7 +81,8 @@ class root extends Component {
 }
 
 const mapStateToProps = state => ({
-  isAuth: state.token !== null
+  isAuth: state.token !== null,
+  wallpaper: state.preferences.wallpaper
 });
 
 const mapDispatchToProps = dispatch => ({

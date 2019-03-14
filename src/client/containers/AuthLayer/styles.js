@@ -7,15 +7,30 @@ import cancel from '../../assets/icons/cancel.svg';
 export const Container = styled.div`
   width: 100vw;
   height: 100vh;
-  display: ${({ closed }) => (closed ? 'none' : 'block')};
   position: absolute;
   top: 0;
   left: 0;
   z-index: 9;
+  animation: ${({ closed }) => (closed ? 'smoothClose 1.5s ease-in-out 0.5s forwards' : 'none')};
   background: ${({ bGround }) => (bGround ? `#3f51b5 url(${bGround})` : '#3f51b5')};
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+
+  @keyframes smoothClose {
+    0% {
+      opacity: 1;
+      z-index: 9;
+    }
+    95% {
+      opacity: 0;
+      z-index: 9;
+    }
+    100% {
+      opacity: 0;
+      z-index: -1;
+    }
+  }
 `;
 
 export const Wrapper = styled.div`
@@ -24,6 +39,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 80%;
+  height: 100%;
   margin: 0 auto;
 `;
 

@@ -20,7 +20,7 @@ const userSchema = new Schema({
     default: 'not set'
   },
   preferences: {
-    background: {
+    wallpaper: {
       type: String,
       default: 'wallpaper_default.jpg',
       required: false

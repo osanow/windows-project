@@ -4,8 +4,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const tokenConfig = require('../tokenConfig');
 
-const passExpiredIn = 7200; // seconds
-
 exports.postLogin = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email })
@@ -16,7 +14,7 @@ exports.postLogin = (req, res) => {
       if (!passwordIsValid) return res.status(401).send({ error: 'Invalid email or password' });
 
       const token = jsonwebtoken.sign({ id: user._id }, tokenConfig.secret, {
-        expiresIn: passExpiredIn
+        expiresIn: tokenConfig.passExpiredIn
       });
 
       return res.status(200).json({
@@ -24,7 +22,7 @@ exports.postLogin = (req, res) => {
         id: user._id,
         preferences: user.preferences,
         token,
-        expiresIn: passExpiredIn
+        expiresIn: tokenConfig.passExpiredIn
       });
     })
     .catch(() => res.status(500).json({ error: 'Server not responded' }));
@@ -38,7 +36,7 @@ exports.postSignin = (req, res) => {
   const user = new User({ email, password: hashedPassword, name });
 
   const token = jsonwebtoken.sign({ id: user._id }, tokenConfig.secret, {
-    expiresIn: passExpiredIn
+    expiresIn: tokenConfig.passExpiredIn
   });
 
   user
@@ -49,7 +47,7 @@ exports.postSignin = (req, res) => {
         id: newUser._id,
         preferences: newUser.preferences,
         token,
-        expiresIn: passExpiredIn
+        expiresIn: tokenConfig.passExpiredIn
       });
     })
     .catch((err) => {

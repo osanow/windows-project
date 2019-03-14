@@ -27,6 +27,7 @@ export const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('expirationDate');
   localStorage.removeItem('userId');
+  localStorage.removeItem('wallpaper');
   return {
     type: actionTypes.AUTH_LOGOUT
   };
@@ -64,7 +65,7 @@ export const auth = (
       localStorage.setItem('token', token);
       localStorage.setItem('expirationDate', expirationDate);
       localStorage.setItem('userId', userId);
-      localStorage.setItem('preferences', preferences);
+      localStorage.setItem('wallpaper', preferences.wallpaper);
       dispatch(authSuccess(token, userId, preferences));
       dispatch(checkAuthTimeout(expiresIn));
     })
@@ -85,7 +86,7 @@ export const authCheckState = () => (dispatch) => {
       dispatch(logout());
     } else {
       const userId = localStorage.getItem('userId');
-      const preferences = localStorage.getItem('preferences');
+      const preferences = { wallpaper: localStorage.getItem('wallpaper') };
 
       dispatch(authSuccess(token, userId, preferences));
       dispatch(
