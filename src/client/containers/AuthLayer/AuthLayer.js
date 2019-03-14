@@ -95,7 +95,7 @@ class AuthLayer extends Component {
           type: 'text',
           placeholder: 'Your name',
           value: '',
-          valid: false,
+          valid: true,
           touched: false
         },
         validation: {
@@ -167,7 +167,12 @@ class AuthLayer extends Component {
 
   submitHandler = (e) => {
     const { loginMode, loginFormConfig, signinFormConfig } = this.state;
-    const { failedLoginAuth, failedSigninAuth, onAuth } = this.props;
+    const {
+      failedLoginAuth, failedSigninAuth, onAuth, loading
+    } = this.props;
+
+    if (loading) return;
+
     e.preventDefault();
 
     const isValid = this.checkValidityForm(loginMode);
@@ -182,8 +187,8 @@ class AuthLayer extends Component {
       onAuth(
         loginFormConfig.email.inputConfig.value,
         loginFormConfig.password.inputConfig.value,
-        null,
-        loginMode
+        loginMode,
+        null
       );
     } else {
       if (signinFormConfig.passwordFirst.inputConfig.value !== signinFormConfig.passwordSec.inputConfig.value) {
@@ -195,8 +200,8 @@ class AuthLayer extends Component {
       onAuth(
         signinFormConfig.email.inputConfig.value,
         signinFormConfig.passwordFirst.inputConfig.value,
-        signinFormConfig.username.inputConfig.value,
-        loginMode
+        loginMode,
+        signinFormConfig.username.inputConfig.value
       );
     }
   };
@@ -234,7 +239,9 @@ class AuthLayer extends Component {
       signinFormConfig
     } = this.state;
 
-    const { loading, loginError, signinError } = this.props;
+    const {
+      loading, loginError, signinError, closed
+    } = this.props;
 
     const loginForm = Object.entries(loginFormConfig).map(formItem => (
       <Input
@@ -253,7 +260,7 @@ class AuthLayer extends Component {
     ));
 
     return (
-      <Container bGround={backgroundUrl}>
+      <Container closed={closed} bGround={backgroundUrl}>
         <Wrapper>
           <AvatarWrapper>
             <Avatar />
@@ -270,14 +277,11 @@ class AuthLayer extends Component {
           </Form>
           {loginMode ? (
             <Hint onClick={this.changeModeHandler}>
-              You dont have
-              <span style={{ color: '#85a4e2' }}> account </span>
-              yet?
+              You dont have <span style={{ color: '#85a4e2' }}> account </span> yet?
             </Hint>
           ) : (
             <Hint onClick={this.changeModeHandler}>
-              I already have
-              <span style={{ color: '#85a4e2' }}> account </span>
+              I already have <span style={{ color: '#85a4e2' }}> account </span>
             </Hint>
           )}
         </Wrapper>

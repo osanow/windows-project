@@ -6,9 +6,10 @@ export const authStart = () => ({
   type: actionTypes.AUTH_START
 });
 
-export const authSuccess = (token, userId) => ({
+export const authSuccess = (token, userId, preferences) => ({
   type: actionTypes.AUTH_SUCCESS,
   idToken: token,
+  preferences,
   userId
 });
 
@@ -40,8 +41,8 @@ export const checkAuthTimeout = expirationTime => (dispatch) => {
 export const auth = (
   email,
   password,
-  name = 'not set',
-  isSignup
+  isSignup,
+  name = 'not set'
 ) => (dispatch) => {
   dispatch(authStart());
   const authData = {
@@ -50,23 +51,27 @@ export const auth = (
     name
   };
 
-  const url = isSignup ? 'login/' : 'signin/';
+  const url = isSignup ? 'auth/login/' : 'auth/signin/';
 
   axios
     .post(url, authData)
     .then((response) => {
-      const expirationDate = new Date(
-        new Date().getTime() + response.data.expiresIn * 1000
-      );
-      localStorage.setItem('token', response.data.token);
+      const {
+        token, userId, expiresIn, preferences
+      } = response.data;
+
+      const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+      localStorage.setItem('token', token);
       localStorage.setItem('expirationDate', expirationDate);
-      localStorage.setItem('userId', response.data.userId);
-      dispatch(authSuccess(response.data.token, response.data.userId));
-      dispatch(checkAuthTimeout(response.data.expiresIn));
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('preferences', preferences);
+      dispatch(authSuccess(token, userId, preferences));
+      dispatch(checkAuthTimeout(expiresIn));
     })
     .catch((err) => {
-      if (isSignup) dispatch(authLoginFail(err.response.data.error));
-      else dispatch(authSigninFail(err.response.data.error));
+      const errorMsg = err.response ? err.response.data.error : err;
+      if (isSignup) dispatch(authLoginFail(errorMsg));
+      else dispatch(authSigninFail(errorMsg));
     });
 };
 
@@ -80,19 +85,14 @@ export const authCheckState = () => (dispatch) => {
       dispatch(logout());
     } else {
       const userId = localStorage.getItem('userId');
+      const preferences = localStorage.getItem('preferences');
 
-      axios.post('checkToken/', { token, userId })
-        .then(() => {
-          dispatch(authSuccess(token, userId));
-          dispatch(
-            checkAuthTimeout(
-              (expirationDate.getTime() - new Date().getTime()) / 1000
-            )
-          );
-        })
-        .catch(() => {
-          dispatch(logout());
-        });
+      dispatch(authSuccess(token, userId, preferences));
+      dispatch(
+        checkAuthTimeout(
+          (expirationDate.getTime() - new Date().getTime()) / 1000
+        )
+      );
     }
   }
 };

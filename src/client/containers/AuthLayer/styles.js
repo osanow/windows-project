@@ -7,6 +7,7 @@ import cancel from '../../assets/icons/cancel.svg';
 export const Container = styled.div`
   width: 100vw;
   height: 100vh;
+  display: ${({ closed }) => (closed ? 'none' : 'block')};
   position: absolute;
   top: 0;
   left: 0;
@@ -93,7 +94,7 @@ export const Form = styled.form`
     content: ' ';
     position: absolute;
     bottom: -18px;
-    left: -20px;
+    left: -40px;
     width: 14px;
     height: 14px;
     text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
@@ -106,7 +107,7 @@ export const Form = styled.form`
     content: ${({ error }) => (error ? `'${error}'` : "''")};
     position: absolute;
     bottom: -18px;
-    left: 0;
+    left: -20px;
     font-size: 13px;
     font-weight: 900;
     text-shadow: 0px 0px 10px rgba(0, 0, 0, 1);

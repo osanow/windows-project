@@ -39,13 +39,13 @@ class root extends Component {
     const { onTryAutoSignup } = this.props;
     onTryAutoSignup();
 
-  //   import('./assets/bgrounds/wallpaper_default.jpg')
-  //     .then((path) => {
-  //       this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
+    //   import('./assets/bgrounds/wallpaper_default.jpg')
+    //     .then((path) => {
+    //       this.setState(prevState => updateObject(prevState, { currWallpaper: path.default }));
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
   }
 
   authLoadedHandler = () => {
@@ -54,6 +54,7 @@ class root extends Component {
 
   render() {
     const { currWallpaper, appLoader } = this.state;
+    const { isAuth } = this.props;
 
     return (
       <>
@@ -62,7 +63,10 @@ class root extends Component {
           <DesktopIcon name="Trash" iconName="trash-empty.png" />
         </App>
         <Toolbar />
-        <AuthLayer disableLoadingPageHandler={this.authLoadedHandler} />
+        <AuthLayer
+          closed={isAuth}
+          disableLoadingPageHandler={this.authLoadedHandler}
+        />
         <AppLoader closed={!appLoader} />
       </>
     );
@@ -70,7 +74,7 @@ class root extends Component {
 }
 
 const mapStateToProps = state => ({
-  isAuth: state.token !== null,
+  isAuth: state.token !== null
 });
 
 const mapDispatchToProps = dispatch => ({
