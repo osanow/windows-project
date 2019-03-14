@@ -8,6 +8,8 @@
   "rules": {
     "react/prop-types": 0,
     "linebreak-style": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "no-underscore-dangle": "off",
     "max-len": "off",
     "no-alert": "off",
     "no-console": "off",
