@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
 const authRouter = require('./routes/auth');
+const verifyToken = require('./controllers/verifyToken');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
+app.use('/', verifyToken);
 
 app.use(errorController.get404);
 
