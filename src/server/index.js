@@ -1,8 +1,44 @@
+const path = require('path');
+
 const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+const errorController = require('./controllers/error');
+const authRouter = require('./routes/auth');
+const verifyToken = require('./controllers/verifyToken');
 
 const app = express();
 
-app.use(express.static('dist'));
-app.use('/', (req, res) => res.send({ username: 'test' }));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 
-app.listen(process.env.PORT || 8080, () => console.log(`Listening on port ${process.env.PORT || 8080}!`));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/auth', authRouter);
+app.use('/', verifyToken);
+
+app.use(errorController.get404);
+
+mongoose
+  .connect(
+    'mongodb+srv://user:DBEEO232zGYWFWMz@cluster0-gmyy5.mongodb.net/windowsProject?retryWrites=true',
+    {
+      useCreateIndex: true,
+      useNewUrlParser: true
+    }
+  )
+  .then(() => {
+    app.listen(process.env.PORT || 8080);
+  })
+  .catch(err => console.log(err));
