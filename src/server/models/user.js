@@ -26,7 +26,12 @@ const userSchema = new Schema({
       required: false
     }
   },
-  items: [{ type: Schema.Types.ObjectId, ref: 'Item' }]
+  items: [
+    {
+      _id: { type: Schema.Types.ObjectId, ref: 'Item' },
+      path: { type: String, ref: 'Item' }
+    }
+  ]
 });
 
 userSchema.plugin(uniqueValidator, {

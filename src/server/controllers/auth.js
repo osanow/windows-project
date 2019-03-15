@@ -9,7 +9,7 @@ exports.postLogin = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .then((user) => {
-      if (!user) return res.status(404).json({ error: 'Invalid email or passwor1d' });
+      if (!user) return res.status(404).json({ error: 'Invalid email or password' });
 
       const passwordIsValid = bcrypt.compareSync(password, user.password);
       if (!passwordIsValid) return res.status(401).send({ error: 'Invalid email or password' });
@@ -23,6 +23,7 @@ exports.postLogin = (req, res) => {
         id: user._id,
         preferences: user.preferences,
         token,
+        items: req.newUser.items,
         expiresIn: tokenConfig.passExpiredIn
       });
     })
@@ -34,7 +35,9 @@ exports.postSignin = (req, res) => {
 
   const hashedPassword = bcrypt.hashSync(password, 8);
 
-  const user = new User({ email, password: hashedPassword, name });
+  const user = new User({
+    email, password: hashedPassword, name, items: []
+  });
 
   const token = jsonwebtoken.sign({ id: user._id }, tokenConfig.secret, {
     expiresIn: tokenConfig.passExpiredIn
@@ -49,17 +52,22 @@ exports.postSignin = (req, res) => {
         icon: 'computer.png',
         path: '/Desktop/',
         permanent: true,
-        _owner: newUser._id
+        owner: newUser._id
       }, {
         name: 'Trash',
         type: ['trash', 'container'],
         icon: 'trash-empty.png',
         path: '/Desktop/',
         permanent: true,
-        _owner: newUser._id
+        owner: newUser._id
       }];
       req.newUser = newUser;
+
       return Item.insertMany(items, { ordered: false });
+    })
+    .then((itemsData) => {
+      req.newUser.items.push(...itemsData);
+      return req.newUser.save();
     })
     .then(() => {
       res.status(200).json({
@@ -67,6 +75,7 @@ exports.postSignin = (req, res) => {
         id: req.newUser._id,
         preferences: req.newUser.preferences,
         token,
+        items: req.newUser.items,
         expiresIn: tokenConfig.passExpiredIn
       });
     })

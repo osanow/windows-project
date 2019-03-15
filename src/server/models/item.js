@@ -16,7 +16,17 @@ const itemSchema = new Schema({
     required: false,
     default: ''
   },
-  _owner: { type: Schema.Types.ObjectId, ref: 'User' }
+  rowPos: {
+    type: String,
+    required: false,
+    default: 'auto'
+  },
+  colPos: {
+    type: String,
+    required: false,
+    default: 'auto'
+  },
+  owner: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
 module.exports = mongoose.model('Item', itemSchema);
