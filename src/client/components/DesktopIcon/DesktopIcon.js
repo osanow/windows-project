@@ -45,11 +45,20 @@ const item = ({ name, iconName }) => {
   const [position, setPosition] = useState(['auto', 'auto']); // row , col
 
   const onDropHandler = (e) => {
-    console.log('down', e.clientX, e.clientY);
-    setPosition([
-      calculatePos('row', e.clientY).toString(),
-      calculatePos('col', e.clientX).toString()
-    ]);
+    const maxRow = calculatePos('row', window.innerHeight - 128);
+    const currRow = calculatePos('row', e.clientY);
+
+    if (currRow > maxRow) {
+      setPosition([
+        maxRow,
+        calculatePos('col', e.clientX).toString()
+      ]);
+    } else {
+      setPosition([
+        calculatePos('row', e.clientY).toString(),
+        calculatePos('col', e.clientX).toString()
+      ]);
+    }
   };
 
   const onCatchHandler = (e) => {
