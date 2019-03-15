@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -51,4 +51,4 @@ const mapStateToProps = state => ({
   wallpaper: state.preferences.wallpaper
 });
 
-export default connect(mapStateToProps)(desktop);
+export default connect(mapStateToProps)(memo(desktop));

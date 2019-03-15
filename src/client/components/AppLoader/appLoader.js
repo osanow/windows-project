@@ -91,4 +91,4 @@ const appLoader = ({ closed }) => (
   </Wrapper>
 );
 
-export default appLoader;
+export default React.memo(appLoader);
