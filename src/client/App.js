@@ -9,19 +9,16 @@ import AuthLayer from './containers/AuthLayer/AuthLayer';
 
 import './app.css';
 
-const root = (props) => {
+const root = ({ isAuth, onTryAutoSignup }) => {
   const [appLoader, setAppLoader] = useState(true);
 
   useEffect(() => {
-    const { onTryAutoSignup } = this.props;
     onTryAutoSignup();
   }, []);
 
   const authLoadedHandler = () => {
     setAppLoader(false);
   };
-
-  const { isAuth } = props;
 
   return (
     <>
