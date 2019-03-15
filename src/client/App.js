@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { authCheckState } from './store/actions/auth';
+import { authCheckState } from './store/actions/index';
 import Toolbar from './containers/Toolbar/Toolbar';
 import Desktop from './containers/Desktop/Desktop';
 import AppLoader from './components/AppLoader/appLoader';
@@ -34,7 +34,7 @@ const root = ({ isAuth, onTryAutoSignup }) => {
 };
 
 const mapStateToProps = state => ({
-  isAuth: state.token !== null
+  isAuth: state.auth.token !== null
 });
 
 const mapDispatchToProps = dispatch => ({

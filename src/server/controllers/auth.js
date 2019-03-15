@@ -23,11 +23,13 @@ exports.postLogin = (req, res) => {
         id: user._id,
         preferences: user.preferences,
         token,
-        items: req.newUser.items,
+        items: user.items,
         expiresIn: tokenConfig.passExpiredIn
       });
     })
-    .catch(() => res.status(500).json({ error: 'Server not responded' }));
+    .catch(() => {
+      res.status(500).json({ error: 'Server not responded' });
+    });
 };
 
 exports.postSignin = (req, res) => {
@@ -36,7 +38,10 @@ exports.postSignin = (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 8);
 
   const user = new User({
-    email, password: hashedPassword, name, items: []
+    email,
+    password: hashedPassword,
+    name,
+    items: []
   });
 
   const token = jsonwebtoken.sign({ id: user._id }, tokenConfig.secret, {
@@ -46,21 +51,24 @@ exports.postSignin = (req, res) => {
   user
     .save()
     .then((newUser) => {
-      const items = [{
-        name: 'My computer',
-        type: ['computer'],
-        icon: 'computer.png',
-        path: '/Desktop/',
-        permanent: true,
-        owner: newUser._id
-      }, {
-        name: 'Trash',
-        type: ['trash', 'container'],
-        icon: 'trash-empty.png',
-        path: '/Desktop/',
-        permanent: true,
-        owner: newUser._id
-      }];
+      const items = [
+        {
+          name: 'My computer',
+          type: ['computer'],
+          icon: 'computer.png',
+          path: '/Desktop/',
+          permanent: true,
+          owner: newUser._id
+        },
+        {
+          name: 'Trash',
+          type: ['trash', 'container'],
+          icon: 'trash-empty.png',
+          path: '/Desktop/',
+          permanent: true,
+          owner: newUser._id
+        }
+      ];
       req.newUser = newUser;
 
       return Item.insertMany(items, { ordered: false });

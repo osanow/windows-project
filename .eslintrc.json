@@ -6,6 +6,7 @@
     "node": true
   },
   "rules": {
+    "consistent-return": "off",
     "react/prop-types": 0,
     "linebreak-style": "off",
     "react/jsx-one-expression-per-line": "off",

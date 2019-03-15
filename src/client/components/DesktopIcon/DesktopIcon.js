@@ -40,19 +40,18 @@ const calculatePos = (type, value) => {
   return Math.round(value / (6 * 16));
 };
 
-const item = ({ name, iconName }) => {
-  const [icon, setIcon] = useState(noIcon);
+const item = (props) => {
+  const [displayIcon, setDisplayIcon] = useState(noIcon);
   const [position, setPosition] = useState(['auto', 'auto']); // row , col
+
+  const { name, icon } = props;
 
   const onDropHandler = (e) => {
     const maxRow = calculatePos('row', window.innerHeight - 128);
     const currRow = calculatePos('row', e.clientY);
 
     if (currRow > maxRow) {
-      setPosition([
-        maxRow,
-        calculatePos('col', e.clientX).toString()
-      ]);
+      setPosition([maxRow, calculatePos('col', e.clientX).toString()]);
     } else {
       setPosition([
         calculatePos('row', e.clientY).toString(),
@@ -65,9 +64,9 @@ const item = ({ name, iconName }) => {
     console.log('up', e.clientX, e.clientY);
   };
 
-  if (icon === noIcon) {
-    import(`../../assets/icons/${iconName}`)
-      .then(res => setIcon(res.default))
+  if (displayIcon === noIcon) {
+    import(`../../assets/icons/${icon}`)
+      .then(res => setDisplayIcon(res.default))
       .catch(err => console.log(err));
   }
 
@@ -79,7 +78,7 @@ const item = ({ name, iconName }) => {
       rowPos={position[0]}
       colPos={position[1]}
     >
-      <ItemIcon src={icon} alt="icon" scale="huge" />
+      <ItemIcon src={displayIcon} alt="icon" scale="huge" />
       <ItemDesc>{name}</ItemDesc>
     </Container>
   );

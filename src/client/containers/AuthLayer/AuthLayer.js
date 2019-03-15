@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 
-import { auth, authLoginFail, authSigninFail } from '../../store/actions/auth';
+import { auth, authLoginFail, authSigninFail } from '../../store/actions/index';
 import Spinner from '../../components/Spinners/dottedSpinner';
 import Input from '../../components/UI/Input/input';
 import arrowIcon from '../../assets/icons/right-arrow.svg';
@@ -112,17 +112,28 @@ class AuthLayer extends Component {
       .get(
         'https://api.unsplash.com/photos/random/?client_id=595801d981b62e6549e983610e2ebb1d42f54b245d427ce465ff6d5fe4439df5&query=nature&orientation=landscape&count=1'
       )
-      .then(res => this.setState(prevState => updateObject(prevState, { backgroundUrl: res.data[0].urls.regular })))
+      .then((res) => {
+        const { closed } = this.props;
+        if (closed) {
+          disableLoadingPageHandler();
+          return;
+        }
+        return this.setState(prevState => updateObject(prevState, { backgroundUrl: res.data[0].urls.regular }));
+      })
       .then(() => {
-        console.log('HQ background');
+        const { closed } = this.props;
         disableLoadingPageHandler();
+        if (closed) return;
+        console.log('HQ background');
       })
       .catch((err) => {
         if (err.message.includes('network')) {
           alert('Check your internet connection!');
         } else {
-          console.log('Low quality background due to too much queries :c');
+          const { closed } = this.props;
           disableLoadingPageHandler();
+          if (closed) return;
+          console.log('Low quality background due to too much queries :c');
           this.setState(prevState => updateObject(prevState, {
             backgroundUrl:
                 'https://source.unsplash.com/random/2000×1400/?nature'
@@ -191,7 +202,10 @@ class AuthLayer extends Component {
         null
       );
     } else {
-      if (signinFormConfig.passwordFirst.inputConfig.value !== signinFormConfig.passwordSec.inputConfig.value) {
+      if (
+        signinFormConfig.passwordFirst.inputConfig.value
+        !== signinFormConfig.passwordSec.inputConfig.value
+      ) {
         failedSigninAuth('Passwords are not equal!');
         this.touchFormFields(loginMode);
         return;
@@ -277,7 +291,8 @@ class AuthLayer extends Component {
           </Form>
           {loginMode ? (
             <Hint onClick={this.changeModeHandler}>
-              You dont have <span style={{ color: '#85a4e2' }}> account </span> yet?
+              You dont have <span style={{ color: '#85a4e2' }}> account </span>{' '}
+              yet?
             </Hint>
           ) : (
             <Hint onClick={this.changeModeHandler}>
@@ -291,9 +306,9 @@ class AuthLayer extends Component {
 }
 
 const mapStateToProps = state => ({
-  loading: state.loading,
-  loginError: state.loginError,
-  signinError: state.signinError
+  loading: state.auth.loading,
+  loginError: state.auth.loginError,
+  signinError: state.auth.signinError
 });
 
 const mapDispatchToProps = dispatch => ({

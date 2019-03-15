@@ -3,30 +3,23 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const errorController = require('./controllers/error');
+const itemsRouter = require('./routes/items');
 const authRouter = require('./routes/auth');
 const verifyToken = require('./controllers/verifyToken');
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-  );
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-access-token');
-  next();
-});
-
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
-app.use(verifyToken);
+app.use('/items', verifyToken, itemsRouter);
 
 app.use(errorController.get404);
 
