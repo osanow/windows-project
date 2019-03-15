@@ -25,7 +25,8 @@ const userSchema = new Schema({
       default: 'wallpaper_default.jpg',
       required: false
     }
-  }
+  },
+  items: [{ type: Schema.Types.ObjectId, ref: 'Item' }]
 });
 
 userSchema.plugin(uniqueValidator, {

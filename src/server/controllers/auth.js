@@ -2,6 +2,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
+const Item = require('../models/item');
 const tokenConfig = require('../tokenConfig');
 
 exports.postLogin = (req, res) => {
@@ -42,10 +43,29 @@ exports.postSignin = (req, res) => {
   user
     .save()
     .then((newUser) => {
+      const items = [{
+        name: 'My computer',
+        type: ['computer'],
+        icon: 'computer.png',
+        path: '/Desktop/',
+        permanent: true,
+        _owner: newUser._id
+      }, {
+        name: 'Trash',
+        type: ['trash', 'container'],
+        icon: 'trash-empty.png',
+        path: '/Desktop/',
+        permanent: true,
+        _owner: newUser._id
+      }];
+      req.newUser = newUser;
+      return Item.insertMany(items, { ordered: false });
+    })
+    .then(() => {
       res.status(200).json({
         message: 'Successful signed in!',
-        id: newUser._id,
-        preferences: newUser.preferences,
+        id: req.newUser._id,
+        preferences: req.newUser.preferences,
         token,
         expiresIn: tokenConfig.passExpiredIn
       });

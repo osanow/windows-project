@@ -27,7 +27,7 @@ const desktop = (props) => {
   const { wallpaper, isAuth } = props;
 
   useEffect(() => {
-    if (wallpaper && isAuth) {
+    if (wallpaper) {
       import(`../../assets/bgrounds/${wallpaper}`)
         .then((res) => {
           setWallpaperUrl(res.default);
@@ -36,7 +36,7 @@ const desktop = (props) => {
           console.log(err);
         });
     }
-  }, [wallpaper]);
+  }, [wallpaper, isAuth]);
 
   return (
     <Desktop wallpaperUrl={wallpaperUrl}>
