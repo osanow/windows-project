@@ -85,6 +85,7 @@ class Item extends Component {
 
   onDropHandler = (e) => {
     const { _id, token } = this.props;
+
     document.removeEventListener('mouseup', this.onDropHandler, false);
     document.removeEventListener('mousemove', this.throttledMouseMove, false);
 
@@ -132,8 +133,8 @@ class Item extends Component {
   onCatchHandler = (e) => {
     this.prevX = e.clientX;
     this.prevY = e.clientY;
+    
     this.throttledMouseMove = _.throttle(this.onMoveHandler, 100);
-
     this.setState({ isDragging: true }, () => {
       document.addEventListener('mouseup', this.onDropHandler, false);
       document.addEventListener('mousemove', this.throttledMouseMove, false);
