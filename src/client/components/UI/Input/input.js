@@ -43,4 +43,4 @@ const input = ({ inputConfig, changeHandler }) => (
   <Input spellCheck="off" {...inputConfig} onChange={changeHandler} />
 );
 
-export default input;
+export default React.memo(input);

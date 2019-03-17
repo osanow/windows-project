@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
+import { onContextMenu } from './utils/itemsUtil';
 import { authCheckState } from './store/actions/index';
 import Toolbar from './containers/Toolbar/Toolbar';
 import Desktop from './containers/Desktop/Desktop';
@@ -20,6 +21,8 @@ const root = ({ isAuth, onTryAutoSignup }) => {
     setAppLoader(false);
   };
 
+  window.oncontextmenu = onContextMenu;
+
   return (
     <>
       <Desktop />
@@ -34,7 +37,7 @@ const root = ({ isAuth, onTryAutoSignup }) => {
 };
 
 const mapStateToProps = state => ({
-  isAuth: state.auth.token !== null
+  isAuth: state.auth.token !== null,
 });
 
 const mapDispatchToProps = dispatch => ({

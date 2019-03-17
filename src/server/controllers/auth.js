@@ -58,7 +58,9 @@ exports.postSignin = (req, res) => {
           icon: 'computer.png',
           path: '/Desktop/',
           permanent: true,
-          owner: newUser._id
+          owner: newUser._id,
+          colPos: 0,
+          rowPos: 1
         },
         {
           name: 'Trash',
@@ -66,7 +68,9 @@ exports.postSignin = (req, res) => {
           icon: 'trash-empty.png',
           path: '/Desktop/',
           permanent: true,
-          owner: newUser._id
+          owner: newUser._id,
+          colPos: 0,
+          rowPos: 1
         }
       ];
       req.newUser = newUser;

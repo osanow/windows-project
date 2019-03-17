@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 export const imageContainer = styled.img`
+  user-select: none;
   height: ${({ scale }) => {
     if (scale === 'huge') return '3rem';
     if (scale === 'medium') return '1.5rem';

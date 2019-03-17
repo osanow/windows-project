@@ -112,27 +112,16 @@ class AuthLayer extends Component {
       .get(
         'https://api.unsplash.com/photos/random/?client_id=595801d981b62e6549e983610e2ebb1d42f54b245d427ce465ff6d5fe4439df5&query=nature&orientation=landscape&count=1'
       )
-      .then((res) => {
-        const { closed } = this.props;
-        if (closed) {
-          disableLoadingPageHandler();
-          return;
-        }
-        return this.setState(prevState => updateObject(prevState, { backgroundUrl: res.data[0].urls.regular }));
-      })
+      .then(res => this.setState(prevState => updateObject(prevState, { backgroundUrl: res.data[0].urls.regular })))
       .then(() => {
-        const { closed } = this.props;
         disableLoadingPageHandler();
-        if (closed) return;
         console.log('HQ background');
       })
       .catch((err) => {
         if (err.message.includes('network')) {
           alert('Check your internet connection!');
         } else {
-          const { closed } = this.props;
           disableLoadingPageHandler();
-          if (closed) return;
           console.log('Low quality background due to too much queries :c');
           this.setState(prevState => updateObject(prevState, {
             backgroundUrl:

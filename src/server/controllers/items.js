@@ -38,10 +38,10 @@ exports.postItems = (req, res) => {
 };
 
 exports.putItem = (req, res) => {
-  const { item } = req.body;
+  const { changedValues } = req.body;
   const { id } = req.params;
 
-  Item.findByIdAndUpdate(id, item)
+  Item.findByIdAndUpdate(id, { $set: { ...changedValues } })
     .then(() => {
       res.status(200).json({ message: 'Updated item' });
     })

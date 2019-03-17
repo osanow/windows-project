@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+import _ from 'lodash';
 
+import axios from '../../axios-instance';
+import { updateObject } from '../../utils/utility';
 import { imageContainer } from '../../assets/styles/globalStyles';
 import noIcon from '../../assets/icons/noIcon.png';
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   border: 1px solid transparent;
+
+  cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'pointer')};
+  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .1s linear')};
+  transform: ${({ left, top, isDragging }) => (isDragging ? `translate( ${left}px, ${top}px )` : `translate( 0px, 0px )`)};
   grid-column-start: ${({ colPos }) => colPos};
   grid-row-start: ${({ rowPos }) => rowPos};
-  cursor: pointer;
+
+  pointer-events: all;
+  user-select: none;
 
   &:hover {
     border: 1px solid rgba(107, 128, 160, 0.3);
@@ -36,52 +46,128 @@ const ItemDesc = styled.p`
 `;
 
 const calculatePos = (type, value) => {
-  if (type === 'row') return Math.round(value / (4.5 * 16));
-  return Math.round(value / (6 * 16));
+  if (type === 'row') return Math.abs(Math.ceil(value / (4.8 * 16)));
+  return Math.abs(Math.ceil(value / (6.3 * 16)));
 };
 
-const item = (props) => {
-  const [displayIcon, setDisplayIcon] = useState(noIcon);
-  const [position, setPosition] = useState(['auto', 'auto']); // row , col
-
-  const { name, icon } = props;
-
-  const onDropHandler = (e) => {
-    const maxRow = calculatePos('row', window.innerHeight - 128);
-    const currRow = calculatePos('row', e.clientY);
-
-    if (currRow > maxRow) {
-      setPosition([maxRow, calculatePos('col', e.clientX).toString()]);
-    } else {
-      setPosition([
-        calculatePos('row', e.clientY).toString(),
-        calculatePos('col', e.clientX).toString()
-      ]);
+class Item extends Component {
+  state = {
+    displayIcon: noIcon,
+    isDragging: false,
+    gridPosition: {
+      rowPos: 'auto',
+      colPos: 'auto'
+    },
+    position: {
+      x: 0,
+      y: 0
     }
   };
 
-  const onCatchHandler = (e) => {
-    console.log('up', e.clientX, e.clientY);
-  };
+  componentDidMount() {
+    const { icon, rowPos, colPos } = this.props;
 
-  if (displayIcon === noIcon) {
     import(`../../assets/icons/${icon}`)
-      .then(res => setDisplayIcon(res.default))
+      .then(res => this.setState(prevState => updateObject(prevState, {
+        displayIcon: res.default,
+        gridPosition: { rowPos, colPos }
+      })))
       .catch(err => console.log(err));
   }
 
-  return (
-    <Container
-      draggable="true"
-      onDragStart={onCatchHandler}
-      onDragEnd={onDropHandler}
-      rowPos={position[0]}
-      colPos={position[1]}
-    >
-      <ItemIcon src={displayIcon} alt="icon" scale="huge" />
-      <ItemDesc>{name}</ItemDesc>
-    </Container>
-  );
-};
+  onMoveHandler = (e) => {
+    const { isDragging } = this.state;
+    if (!isDragging) return;
+    const newX = e.clientX - this.prevX;
+    const newY = e.clientY - this.prevY;
+    this.setState(prevState => updateObject(prevState, { position: { x: newX, y: newY } }));
+  };
 
-export default item;
+  onDropHandler = (e) => {
+    const { _id, token } = this.props;
+    document.removeEventListener('mouseup', this.onDropHandler, false);
+    document.removeEventListener('mousemove', this.throttledMouseMove, false);
+
+    const posX = (e.clientX-( e.target.offsetLeft > 94 ? 0 : e.target.offsetLeft ))+(( e.target.offsetWidth > 94 ? 0 : e.target.offsetWidth )/2)-22;
+    const posY = (e.clientY-( e.target.offsetTop > 70 ? 0 : e.target.offsetTop ))+(( e.target.offsetHeight > 70 ? 0 : e.target.offsetHeight )/2)-16;
+
+    const maxRow = calculatePos('row', window.innerHeight - 128);
+    const currRow = calculatePos('row', posY);
+
+    const maxCol = calculatePos('col', window.innerWidth - 64);
+    const currCol = calculatePos('col', posX);
+
+    const newRow = currRow > maxRow
+      ? maxRow.toString()
+      : currRow.toString();
+    const newCol = currCol > maxCol
+      ? maxCol.toString()
+      : currCol.toString();
+
+    this.prevX = 0;
+    this.prevY = 0;
+
+    this.setState(prevState => updateObject(prevState, {
+      isDragging: false,
+      position: { x: 0, y: 0 },
+      gridPosition: { rowPos: newRow, colPos: newCol }
+    }));
+
+    axios(`/items/${_id}`, {
+      method: 'PUT',
+      data: {
+        changedValues: {
+          rowPos: newRow,
+          colPos: newCol
+        }
+      },
+      headers: {
+        authorization: token
+      }
+    }).catch((error) => {
+      console.log(error);
+    });
+  };
+
+  onCatchHandler = (e) => {
+    this.prevX = e.clientX;
+    this.prevY = e.clientY;
+    this.throttledMouseMove = _.throttle(this.onMoveHandler, 100);
+
+    this.setState({ isDragging: true }, () => {
+      document.addEventListener('mouseup', this.onDropHandler, false);
+      document.addEventListener('mousemove', this.throttledMouseMove, false);
+    });
+  };
+
+  render() {
+    const {
+      name, _id, type, path
+    } = this.props;
+    const {
+      position, isDragging, gridPosition, displayIcon
+    } = this.state;
+
+    return (
+      <Container
+        isDragging={this.state.isDragging}
+        id={_id}
+        type={type}
+        path={path}
+        left={position.x}
+        top={position.y}
+        onMouseDown={this.onCatchHandler}
+        onDoubleClick={(e) => {
+          console.log('double', e.target);
+        }}
+        rowPos={gridPosition.rowPos}
+        colPos={gridPosition.colPos}
+      >
+        <ItemIcon src={displayIcon} draggable="false" alt="icon" scale="huge" />
+        <ItemDesc>{name}</ItemDesc>
+      </Container>
+    );
+  }
+}
+
+export default React.memo(Item);

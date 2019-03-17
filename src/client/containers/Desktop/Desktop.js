@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -24,15 +24,19 @@ const Desktop = styled.div`
 `;
 
 const desktop = (props) => {
-  const [wallpaperUrl, setWallpaperUrl] = useState('');
-  const [desktopItems, setDesktopItems] = useState([]);
+  const [desktopConfig, setDesktopConfig] = useState({
+    wallpaperUrl: '',
+    desktopItems: []
+  });
 
   const { wallpaper, isAuth, token } = props;
+
+  let ResItems = null;
 
   useEffect(() => {
     if (isAuth) {
       axios('items/', {
-        method: 'POST',
+        method: 'GET',
         params: {
           path: '/Desktop/'
         },
@@ -41,24 +45,25 @@ const desktop = (props) => {
         }
       })
         .then((res) => {
-          setDesktopItems(res.data);
+          ResItems = res.data;
           return import(`../../assets/bgrounds/${wallpaper}`);
         })
         .then((res) => {
-          setWallpaperUrl(res.default);
+          setDesktopConfig({
+            wallpaperUrl: res.default,
+            desktopItems: ResItems
+          });
         })
         .catch((err) => {
-          if (wallpaperUrl) setWallpaperUrl('');
-          if (desktopItems !== []) setDesktopItems([]);
           console.log(err);
         });
     }
   }, [isAuth]);
 
   return (
-    <Desktop wallpaperUrl={wallpaperUrl}>
-      {desktopItems.map(item => (
-        <DesktopIcon key={item._id} {...item} />
+    <Desktop wallpaperUrl={desktopConfig.wallpaperUrl} type="desktop">
+      {desktopConfig.desktopItems.map(item => (
+        <DesktopIcon key={item._id} token={token} {...item} />
       ))}
     </Desktop>
   );
@@ -70,4 +75,4 @@ const mapStateToProps = state => ({
   wallpaper: state.auth.preferences.wallpaper
 });
 
-export default connect(mapStateToProps)(memo(desktop));
+export default connect(mapStateToProps)(React.memo(desktop));
