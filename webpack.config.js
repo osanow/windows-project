@@ -13,7 +13,6 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, outputDirectory),
-    publicPath: '/',
     filename: 'bundle.js'
   },
   module: {
