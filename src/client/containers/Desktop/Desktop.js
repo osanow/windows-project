@@ -12,7 +12,10 @@ const Desktop = styled.div`
   margin: 0;
   padding: 1rem 0.3rem 1rem 0.3rem;
 
-  background: ${({ wallpaperUrl }) => `#3366ff ${wallpaperUrl ? `url(${wallpaperUrl})` : ''} center no-repeat`};
+  background: ${({ wallpaperUrl }) => `${
+    wallpaperUrl ? `url(${wallpaperUrl})` : ''
+  } center center / cover no-repeat
+    rgb(51, 102, 255)`};
 
   position: relative;
   display: grid;
