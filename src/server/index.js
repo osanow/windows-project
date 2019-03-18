@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// const errorController = require('./controllers/error');
 const itemsRouter = require('./routes/items');
 const authRouter = require('./routes/auth');
 const verifyToken = require('./controllers/verifyToken');
@@ -25,8 +24,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', '..', 'dist', 'index.html'));
 });
 
-// app.use(errorController.get404);
-
 mongoose
   .connect(
     'mongodb+srv://user:DBEEO232zGYWFWMz@cluster0-gmyy5.mongodb.net/windowsProject?retryWrites=true',
@@ -39,5 +36,6 @@ mongoose
     app.listen(process.env.PORT || 8080);
   })
   .catch(() => {
+    console.log('Cant connect with DB');
     app.listen(process.env.PORT || 8080);
   });
