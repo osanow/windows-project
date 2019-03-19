@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
+import * as menuOptions from '../../utils/contextMenuOptions';
+import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
 import DesktopIcon from '../../components/DesktopIcon/DesktopIcon';
 
@@ -31,20 +33,59 @@ const desktop = (props) => {
     wallpaperUrl: '',
     desktopItems: []
   });
+  const [contextMenuData, setContextMenuData] = useState({
+    opened: false,
+    options: {},
+    left: 0,
+    top: 0
+  });
 
-  const { wallpaper, isAuth, token } = props;
+  const { wallpaper, isAuth, userId } = props;
+
+  const closeContextMenuHandler = () => {
+    document.removeEventListener('click', closeContextMenuHandler);
+    setContextMenuData({
+      opened: false,
+      options: {},
+      left: 0,
+      top: 0
+    });
+  };
+
+  const onContextMenu = (e) => {
+    const correctTarget = e.path.find(
+      val => val.getAttribute('data-type') || val.id === 'app-root'
+    );
+
+    const iconId = correctTarget.id;
+    const iconType = correctTarget.getAttribute('data-type').split(',');
+    const iconPath = correctTarget.getAttribute('data-path');
+
+    const options = { ...menuOptions[[...iconType]] };
+
+    setContextMenuData({
+      opened: true,
+      left: e.clientX,
+      top: e.clientY,
+      data: {
+        path: iconPath,
+        owner: userId,
+        id: iconId
+      },
+      options
+    });
+    document.addEventListener('click', closeContextMenuHandler);
+    return false;
+  };
+  window.oncontextmenu = onContextMenu;
 
   let ResItems = null;
-
   useEffect(() => {
     if (isAuth) {
       axios('items/', {
         method: 'GET',
         params: {
           path: '/Desktop/'
-        },
-        headers: {
-          authorization: token
         }
       })
         .then((res) => {
@@ -64,17 +105,18 @@ const desktop = (props) => {
   }, [isAuth]);
 
   return (
-    <Desktop wallpaperUrl={desktopConfig.wallpaperUrl} type="desktop">
+    <Desktop wallpaperUrl={desktopConfig.wallpaperUrl} data-type="desktop" data-path="/Desktop/">
       {desktopConfig.desktopItems.map(item => (
-        <DesktopIcon key={item._id} token={token} {...item} />
+        <DesktopIcon key={item._id} {...item} />
       ))}
+      {contextMenuData.opened && <ContextMenu {...contextMenuData} />}
     </Desktop>
   );
 };
 
 const mapStateToProps = state => ({
   isAuth: state.auth.token !== null,
-  token: state.auth.token,
+  userId: state.auth.userId,
   wallpaper: state.auth.preferences.wallpaper
 });
 

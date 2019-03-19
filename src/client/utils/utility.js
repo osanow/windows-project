@@ -33,3 +33,5 @@ export const checkValidity = (value, rules) => {
 
   return isValid;
 };
+
+export const changeFormat = text => text.replace('_', ' ');

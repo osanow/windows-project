@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { onContextMenu } from './utils/itemsUtil';
 import { authCheckState } from './store/actions/index';
 import Toolbar from './containers/Toolbar/Toolbar';
 import Desktop from './containers/Desktop/Desktop';
@@ -20,8 +19,6 @@ const root = ({ isAuth, onTryAutoSignup }) => {
   const authLoadedHandler = () => {
     setAppLoader(false);
   };
-
-  window.oncontextmenu = onContextMenu;
 
   return (
     <>

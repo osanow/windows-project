@@ -33,7 +33,12 @@ const item = ({ iconName, isPermanent, scale }) => {
 
   return (
     <BarItem scale={scale}>
-      <ImageContainer src={icon} alt="icon" permanent={isPermanent} scale={scale} />
+      <ImageContainer
+        src={icon}
+        alt="icon"
+        permanent={isPermanent}
+        scale={scale}
+      />
     </BarItem>
   );
 };

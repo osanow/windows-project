@@ -16,7 +16,7 @@ const Container = styled.div`
 
   cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'pointer')};
   transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .1s linear')};
-  transform: ${({ left, top, isDragging }) => (isDragging ? `translate( ${left}px, ${top}px )` : `translate( 0px, 0px )`)};
+  transform: ${({ left, top, isDragging }) => (isDragging ? `translate( ${left}px, ${top}px )` : 'translate( 0px, 0px )')};
   grid-column-start: ${({ colPos }) => colPos};
   grid-row-start: ${({ rowPos }) => rowPos};
 
@@ -84,13 +84,20 @@ class Item extends Component {
   };
 
   onDropHandler = (e) => {
-    const { _id, token } = this.props;
+    const { _id } = this.props;
 
+    document.body.style.cursor = 'default';
     document.removeEventListener('mouseup', this.onDropHandler, false);
     document.removeEventListener('mousemove', this.throttledMouseMove, false);
 
-    const posX = (e.clientX-( e.target.offsetLeft > 94 ? 0 : e.target.offsetLeft ))+(( e.target.offsetWidth > 94 ? 0 : e.target.offsetWidth )/2)-22;
-    const posY = (e.clientY-( e.target.offsetTop > 70 ? 0 : e.target.offsetTop ))+(( e.target.offsetHeight > 70 ? 0 : e.target.offsetHeight )/2)-16;
+    const posX = e.clientX
+      - (e.target.offsetLeft > 94 ? 0 : e.target.offsetLeft)
+      + (e.target.offsetWidth > 94 ? 0 : e.target.offsetWidth) / 2
+      - 22;
+    const posY = e.clientY
+      - (e.target.offsetTop > 70 ? 0 : e.target.offsetTop)
+      + (e.target.offsetHeight > 70 ? 0 : e.target.offsetHeight) / 2
+      - 16;
 
     const maxRow = calculatePos('row', window.innerHeight - 128);
     const currRow = calculatePos('row', posY);
@@ -98,12 +105,8 @@ class Item extends Component {
     const maxCol = calculatePos('col', window.innerWidth - 64);
     const currCol = calculatePos('col', posX);
 
-    const newRow = currRow > maxRow
-      ? maxRow.toString()
-      : currRow.toString();
-    const newCol = currCol > maxCol
-      ? maxCol.toString()
-      : currCol.toString();
+    const newRow = currRow > maxRow ? maxRow.toString() : currRow.toString();
+    const newCol = currCol > maxCol ? maxCol.toString() : currCol.toString();
 
     this.prevX = 0;
     this.prevY = 0;
@@ -121,9 +124,6 @@ class Item extends Component {
           rowPos: newRow,
           colPos: newCol
         }
-      },
-      headers: {
-        authorization: token
       }
     }).catch((error) => {
       console.log(error);
@@ -133,28 +133,30 @@ class Item extends Component {
   onCatchHandler = (e) => {
     this.prevX = e.clientX;
     this.prevY = e.clientY;
-    
+
     this.throttledMouseMove = _.throttle(this.onMoveHandler, 100);
     this.setState({ isDragging: true }, () => {
       document.addEventListener('mouseup', this.onDropHandler, false);
       document.addEventListener('mousemove', this.throttledMouseMove, false);
+      document.body.style.cursor = 'grabbing';
     });
   };
 
   render() {
     const {
-      name, _id, type, path
+      name, _id, type, path, permanent
     } = this.props;
     const {
-      position, isDragging, gridPosition, displayIcon
+      position, gridPosition, displayIcon, isDragging
     } = this.state;
 
     return (
       <Container
-        isDragging={this.state.isDragging}
+        data-path={path}
+        data-permanent={permanent}
+        data-type={type.toString()}
         id={_id}
-        type={type}
-        path={path}
+        isDragging={isDragging}
         left={position.x}
         top={position.y}
         onMouseDown={this.onCatchHandler}
