@@ -8,10 +8,10 @@ export const personalize = () => {
   console.log('personalize');
 };
 
-export const deleteItem = (data) => {
-  document.getElementById(data.id).style.display = 'none';
+export const deleteItem = (id) => {
+  document.getElementById(id).style.display = 'none';
 
-  axios.delete(`/items/${data.id}`).catch((error) => {
+  axios.delete(`/items/${id}`).catch((error) => {
     console.log(error);
   });
   console.log('deleted');
@@ -37,6 +37,8 @@ export const createItem = (type, data) => {
   console.log('created');
 };
 
-export const changeName = () => {
-
+export const changeName = (ref, id) => {
+  ref.current.setState({ nameChanging: true }, () => {
+    document.getElementById(id).lastChild.focus();
+  });
 };

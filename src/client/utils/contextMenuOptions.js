@@ -10,15 +10,15 @@ export const desktop = {
     big_icons: () => itemsActions.changeIconsSize('big'),
     medium_icons: () => itemsActions.changeIconsSize('medium'),
     small_icons: () => itemsActions.changeIconsSize('small')
-  },
+  }
 };
 
 export const file = {
-  delete: id => itemsActions.deleteItem(id),
-  change_name: id => itemsActions.changeName(id)
+  delete: ({ id }) => itemsActions.deleteItem(id),
+  change_name: ({ ref, id }) => itemsActions.changeName(ref, id)
 };
 
 export const container = {
-  delete: id => itemsActions.deleteItem(id),
-  change_name: id => itemsActions.changeName(id)
+  delete: ({ id }) => itemsActions.deleteItem(id),
+  change_name: ({ ref, id }) => itemsActions.changeName(ref, id)
 };

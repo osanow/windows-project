@@ -30,6 +30,11 @@ const DesktopWrapper = styled.div`
 `;
 
 class Desktop extends Component {
+  constructor(props) {
+    super(props);
+    this.itemRef = {};
+  }
+
   state = {
     wallpaperUrl: '',
     desktopItems: [],
@@ -62,6 +67,9 @@ class Desktop extends Component {
           return import(`../../assets/bgrounds/${wallpaper}`);
         })
         .then((res) => {
+          ResItems.forEach((item) => {
+            this.itemRef[item._id] = React.createRef();
+          });
           this.setState(prevState => updateObject(prevState, {
             wallpaperUrl: res.default,
             desktopItems: ResItems
@@ -109,7 +117,7 @@ class Desktop extends Component {
           path: iconPath,
           owner: userId,
           id: iconId,
-          ref: this.myRef
+          ref: this.itemRef[iconId]
         },
         options
       }
@@ -121,18 +129,14 @@ class Desktop extends Component {
 
   render() {
     const { desktopItems, wallpaperUrl, contextMenu } = this.state;
-
     return (
       <DesktopWrapper
         wallpaperUrl={wallpaperUrl}
         data-type="desktop"
         data-path="/Desktop/"
       >
-        {desktopItems.map((item) => {
-          this.myRef = React.createRef();
-          return <DesktopIcon key={item._id} ref={this.myRef} {...item} />;
-        })}
-        {contextMenu.opened && <ContextMenu {...contextMenu.data} />}
+        {desktopItems.map(item => <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />)}
+        {contextMenu.opened && <ContextMenu {...contextMenu} />}
       </DesktopWrapper>
     );
   }
@@ -144,4 +148,4 @@ const mapStateToProps = state => ({
   wallpaper: state.auth.preferences.wallpaper
 });
 
-export default connect(mapStateToProps)(React.memo(Desktop));
+export default connect(mapStateToProps)(Desktop);
