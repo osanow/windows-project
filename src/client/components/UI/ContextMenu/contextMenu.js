@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
-import { changeFormat } from '../../../utils/utility';
+import { changeFormatWithoutDashes } from '../../../utils/utility';
 
 const ContextMenu = styled.ul`
   position: absolute;
@@ -49,12 +49,12 @@ const contextMenu = ({
     if (typeof el[1] === 'object') {
       return (
         <MenuOption key={el[0]}>
-          <span>{changeFormat(el[0])}</span>
+          <span>{changeFormatWithoutDashes(el[0])}</span>
           <span>{'>'}</span>
           <ContextMenu left={13 * 16 - 0.5 * 16} top={-0.35 * 16}>
             {Object.entries(el[1]).map(nestedEl => (
               <MenuOption key={nestedEl[0]} onClick={() => nestedEl[1](data)}>
-                <span>{changeFormat(nestedEl[0])}</span>
+                <span>{changeFormatWithoutDashes(nestedEl[0])}</span>
               </MenuOption>
             ))}
           </ContextMenu>
@@ -63,7 +63,7 @@ const contextMenu = ({
     }
     return (
       <MenuOption key={el[0]} onClick={() => el[1](data)}>
-        <span>{changeFormat(el[0])}</span>
+        <span>{changeFormatWithoutDashes(el[0])}</span>
       </MenuOption>
     );
   });

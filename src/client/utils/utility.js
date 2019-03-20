@@ -34,4 +34,5 @@ export const checkValidity = (value, rules) => {
   return isValid;
 };
 
-export const changeFormat = text => text.replace('_', ' ');
+export const changeFormatWithoutDashes = text => text.replace('_', ' ');
+export const changeFormatWithDashes = text => text.replace(' ', '_');

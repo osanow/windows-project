@@ -36,13 +36,22 @@ const Container = styled.div`
 
 const ItemIcon = styled(imageContainer)``;
 
-const ItemDesc = styled.p`
+const ItemName = styled.p`
   color: white;
   font-size: 13px;
   letter-spacing: 0.5px;
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
   padding: 0;
   margin: 0.3rem 0 0 0;
+`;
+
+const NameChanging = styled.input`
+  width: 90%;
+  margin: 0 auto;
+  color: black;
+  text-align: center;
+  background-color: whitesmoke;
+  border: 1px solid gray;
 `;
 
 const calculatePos = (type, value) => {
@@ -53,6 +62,8 @@ const calculatePos = (type, value) => {
 class Item extends Component {
   state = {
     displayIcon: noIcon,
+    displayName: '',
+    nameChanging: false,
     isDragging: false,
     gridPosition: {
       rowPos: 'auto',
@@ -65,11 +76,14 @@ class Item extends Component {
   };
 
   componentDidMount() {
-    const { icon, rowPos, colPos } = this.props;
+    const {
+      icon, rowPos, colPos, name
+    } = this.props;
 
     import(`../../assets/icons/${icon}`)
       .then(res => this.setState(prevState => updateObject(prevState, {
         displayIcon: res.default,
+        displayName: name,
         gridPosition: { rowPos, colPos }
       })))
       .catch(err => console.log(err));
@@ -86,17 +100,26 @@ class Item extends Component {
   onDropHandler = (e) => {
     const { _id } = this.props;
 
-    document.body.style.cursor = 'default';
     document.removeEventListener('mouseup', this.onDropHandler, false);
     document.removeEventListener('mousemove', this.throttledMouseMove, false);
 
     const posX = e.clientX
-      - (e.target.offsetLeft > 94 ? 0 : e.target.offsetLeft)
-      + (e.target.offsetWidth > 94 ? 0 : e.target.offsetWidth) / 2
+      - (e.target.offsetLeft > 94 || e.target.tagName !== 'DIV'
+        ? 0
+        : e.target.offsetLeft)
+      + (e.target.offsetWidth > 94 || e.target.tagName !== 'DIV'
+        ? 0
+        : e.target.offsetWidth)
+        / 2
       - 22;
     const posY = e.clientY
-      - (e.target.offsetTop > 70 ? 0 : e.target.offsetTop)
-      + (e.target.offsetHeight > 70 ? 0 : e.target.offsetHeight) / 2
+      - (e.target.offsetTop > 70 || e.target.tagName !== 'DIV'
+        ? 0
+        : e.target.offsetTop)
+      + (e.target.offsetHeight > 70 || e.target.tagName !== 'DIV'
+        ? 0
+        : e.target.offsetHeight)
+        / 2
       - 16;
 
     const maxRow = calculatePos('row', window.innerHeight - 128);
@@ -138,16 +161,34 @@ class Item extends Component {
     this.setState({ isDragging: true }, () => {
       document.addEventListener('mouseup', this.onDropHandler, false);
       document.addEventListener('mousemove', this.throttledMouseMove, false);
-      document.body.style.cursor = 'grabbing';
     });
+  };
+
+  onRenameHandler = () => {
+    this.setState({ nameChanging: true });
+  };
+
+  onChangeNameHandler = (e) => {
+    const newValue = e.target.value.replace(/[^\w\s]/g, '');
+    this.setState({ displayName: newValue });
+  };
+
+  onSubmitNameHandler = ({ keyCode }) => {
+    if (keyCode === 13) {
+      this.setState({ nameChanging: false });
+    }
   };
 
   render() {
     const {
-      name, _id, type, path, permanent
+      _id, type, path, permanent
     } = this.props;
     const {
-      position, gridPosition, displayIcon, isDragging
+      position,
+      gridPosition,
+      displayIcon,
+      displayName,
+      nameChanging
     } = this.state;
 
     return (
@@ -156,7 +197,8 @@ class Item extends Component {
         data-permanent={permanent}
         data-type={type.toString()}
         id={_id}
-        isDragging={isDragging}
+        // eslint-disable-next-line react/destructuring-assignment
+        isDragging={this.state.isDragging}
         left={position.x}
         top={position.y}
         onMouseDown={this.onCatchHandler}
@@ -167,7 +209,19 @@ class Item extends Component {
         colPos={gridPosition.colPos}
       >
         <ItemIcon src={displayIcon} draggable="false" alt="icon" scale="huge" />
-        <ItemDesc>{name}</ItemDesc>
+        {nameChanging ? (
+          <NameChanging
+            value={displayName}
+            onKeyDown={this.onSubmitNameHandler}
+            onChange={this.onChangeNameHandler}
+          />
+        ) : (
+          <ItemName>
+            {displayName > 10
+              ? `${displayName.substring(0, 10)}...`
+              : displayName}
+          </ItemName>
+        )}
       </Container>
     );
   }

@@ -36,3 +36,7 @@ export const createItem = (type, data) => {
   });
   console.log('created');
 };
+
+export const changeName = () => {
+
+};

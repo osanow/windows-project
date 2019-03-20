@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -6,8 +6,9 @@ import * as menuOptions from '../../utils/contextMenuOptions';
 import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
 import DesktopIcon from '../../components/DesktopIcon/DesktopIcon';
+import { updateObject } from '../../utils/utility';
 
-const Desktop = styled.div`
+const DesktopWrapper = styled.div`
   width: 100vw;
   height: calc(100vh - 3rem);
   overflow: hidden;
@@ -28,60 +29,28 @@ const Desktop = styled.div`
   grid-auto-flow: column;
 `;
 
-const desktop = (props) => {
-  const [desktopConfig, setDesktopConfig] = useState({
+class Desktop extends Component {
+  state = {
     wallpaperUrl: '',
-    desktopItems: []
-  });
-  const [contextMenuData, setContextMenuData] = useState({
-    opened: false,
-    options: {},
-    left: 0,
-    top: 0
-  });
-
-  const { wallpaper, isAuth, userId } = props;
-
-  const closeContextMenuHandler = () => {
-    document.removeEventListener('click', closeContextMenuHandler);
-    setContextMenuData({
+    desktopItems: [],
+    contextMenu: {
       opened: false,
       options: {},
+      data: {},
       left: 0,
       top: 0
-    });
+    }
   };
 
-  const onContextMenu = (e) => {
-    const correctTarget = e.path.find(
-      val => val.getAttribute('data-type') || val.id === 'app-root'
-    );
+  componentDidMount() {
+    window.oncontextmenu = this.onContextMenu;
+  }
 
-    const iconId = correctTarget.id;
-    const iconType = correctTarget.getAttribute('data-type').split(',');
-    const iconPath = correctTarget.getAttribute('data-path');
+  componentDidUpdate(prevProps) {
+    const { isAuth, wallpaper } = this.props;
+    let ResItems = null;
 
-    const options = { ...menuOptions[[...iconType]] };
-
-    setContextMenuData({
-      opened: true,
-      left: e.clientX,
-      top: e.clientY,
-      data: {
-        path: iconPath,
-        owner: userId,
-        id: iconId
-      },
-      options
-    });
-    document.addEventListener('click', closeContextMenuHandler);
-    return false;
-  };
-  window.oncontextmenu = onContextMenu;
-
-  let ResItems = null;
-  useEffect(() => {
-    if (isAuth) {
+    if (prevProps.isAuth !== isAuth) {
       axios('items/', {
         method: 'GET',
         params: {
@@ -93,26 +62,81 @@ const desktop = (props) => {
           return import(`../../assets/bgrounds/${wallpaper}`);
         })
         .then((res) => {
-          setDesktopConfig({
+          this.setState(prevState => updateObject(prevState, {
             wallpaperUrl: res.default,
             desktopItems: ResItems
-          });
+          }));
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [isAuth]);
+  }
 
-  return (
-    <Desktop wallpaperUrl={desktopConfig.wallpaperUrl} data-type="desktop" data-path="/Desktop/">
-      {desktopConfig.desktopItems.map(item => (
-        <DesktopIcon key={item._id} {...item} />
-      ))}
-      {contextMenuData.opened && <ContextMenu {...contextMenuData} />}
-    </Desktop>
-  );
-};
+  closeContextMenuHandler = () => {
+    document.removeEventListener('click', this.closeContextMenuHandler);
+    this.setState(prevState => updateObject(prevState, {
+      contextMenu: {
+        opened: false,
+        options: {},
+        data: {},
+        left: 0,
+        top: 0
+      }
+    }));
+  };
+
+  onContextMenu = (e) => {
+    const { userId } = this.props;
+
+    const correctTarget = e.path.find(
+      val => val.getAttribute('data-type') || val.id === 'app-root'
+    );
+    if (!correctTarget.getAttribute('data-type')) return false;
+
+    const iconId = correctTarget.id;
+    const iconType = correctTarget.getAttribute('data-type').split(',');
+    const iconPath = correctTarget.getAttribute('data-path');
+
+    const options = { ...menuOptions[[...iconType]] };
+
+    this.setState(prevState => updateObject(prevState, {
+      contextMenu: {
+        opened: true,
+        left: e.clientX,
+        top: e.clientY,
+        data: {
+          path: iconPath,
+          owner: userId,
+          id: iconId,
+          ref: this.myRef
+        },
+        options
+      }
+    }));
+
+    document.addEventListener('click', this.closeContextMenuHandler);
+    return false;
+  };
+
+  render() {
+    const { desktopItems, wallpaperUrl, contextMenu } = this.state;
+
+    return (
+      <DesktopWrapper
+        wallpaperUrl={wallpaperUrl}
+        data-type="desktop"
+        data-path="/Desktop/"
+      >
+        {desktopItems.map((item) => {
+          this.myRef = React.createRef();
+          return <DesktopIcon key={item._id} ref={this.myRef} {...item} />;
+        })}
+        {contextMenu.opened && <ContextMenu {...contextMenu.data} />}
+      </DesktopWrapper>
+    );
+  }
+}
 
 const mapStateToProps = state => ({
   isAuth: state.auth.token !== null,
@@ -120,4 +144,4 @@ const mapStateToProps = state => ({
   wallpaper: state.auth.preferences.wallpaper
 });
 
-export default connect(mapStateToProps)(React.memo(desktop));
+export default connect(mapStateToProps)(React.memo(Desktop));

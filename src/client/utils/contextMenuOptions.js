@@ -15,4 +15,10 @@ export const desktop = {
 
 export const file = {
   delete: id => itemsActions.deleteItem(id),
-}
+  change_name: id => itemsActions.changeName(id)
+};
+
+export const container = {
+  delete: id => itemsActions.deleteItem(id),
+  change_name: id => itemsActions.changeName(id)
+};
