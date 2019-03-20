@@ -45,7 +45,6 @@ const MenuOption = styled.li`
 const contextMenu = ({
   left, top, options, data
 }) => {
-
   const optionsArray = Object.entries(options).map((el) => {
     if (typeof el[1] === 'object') {
       return (

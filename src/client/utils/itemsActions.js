@@ -10,11 +10,9 @@ export const personalize = () => {
 
 export const deleteItem = (id) => {
   document.getElementById(id).style.display = 'none';
-
   axios.delete(`/items/${id}`).catch((error) => {
     console.log(error);
   });
-  console.log('deleted');
 };
 
 export const createItem = (type, data) => {
@@ -34,7 +32,6 @@ export const createItem = (type, data) => {
   }).catch((error) => {
     console.log(error);
   });
-  console.log('created');
 };
 
 export const changeName = (ref, id) => {

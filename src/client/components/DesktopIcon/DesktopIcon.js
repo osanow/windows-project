@@ -47,7 +47,7 @@ const ItemName = styled.p`
 
 const NameChanging = styled.input`
   width: 90%;
-  margin: 0 auto;
+  margin: 0.2rem auto;
   color: black;
   text-align: center;
   background-color: whitesmoke;
@@ -164,17 +164,23 @@ class Item extends Component {
     });
   };
 
-  onRenameHandler = () => {
-    this.setState({ nameChanging: true });
-  };
-
   onChangeNameHandler = (e) => {
     const newValue = e.target.value.replace(/[^\w\s]/g, '');
     this.setState({ displayName: newValue });
   };
 
-  onSubmitNameHandler = ({ keyCode }) => {
-    if (keyCode === 13) {
+  onSubmitNameHandler = (e) => {
+    if (e.keyCode === 13) {
+      const { _id } = this.props;
+
+      axios(`/items/${_id}`, {
+        method: 'PUT',
+        data: {
+          changedValues: {
+            name: e.target.value
+          }
+        }
+      }).catch(error => console.log(error));
       this.setState({ nameChanging: false });
     }
   };
@@ -217,7 +223,7 @@ class Item extends Component {
           />
         ) : (
           <ItemName>
-            {displayName > 10
+            {displayName.length > 11
               ? `${displayName.substring(0, 10)}...`
               : displayName}
           </ItemName>

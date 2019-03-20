@@ -15,10 +15,10 @@ export const desktop = {
 
 export const file = {
   delete: ({ id }) => itemsActions.deleteItem(id),
-  change_name: ({ ref, id }) => itemsActions.changeName(ref, id)
+  rename: ({ ref, id }) => itemsActions.changeName(ref, id)
 };
 
 export const container = {
   delete: ({ id }) => itemsActions.deleteItem(id),
-  change_name: ({ ref, id }) => itemsActions.changeName(ref, id)
+  rename: ({ ref, id }) => itemsActions.changeName(ref, id)
 };
