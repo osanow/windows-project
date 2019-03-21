@@ -10,5 +10,5 @@ export {
 } from './auth';
 
 export {
-  appOpen, appClose, appMaximalize, appHide, appShow
+  openApp, closeApp, maximalizeApp, hideApp, showApp
 } from './apps';

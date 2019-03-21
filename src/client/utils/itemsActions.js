@@ -16,9 +16,10 @@ export const deleteItem = (id) => {
 };
 
 export const createItem = (type, data, updateIcons) => {
+  console.log(type);
   const newItem = {
     name: `New ${type}`,
-    type: [type === 'directory' ? 'container' : 'file'],
+    type: (type === 'directory' ? ['directory', 'container'] : ['file']),
     icon: `${type}.png`,
     path: data.path,
     owner: data.userId
@@ -39,7 +40,8 @@ export const createItem = (type, data, updateIcons) => {
 };
 
 export const changeName = (ref, id) => {
+  console.log(ref.current);
   ref.current.setState({ nameChanging: true }, () => {
-    document.getElementById(id).lastChild.focus();
+    //document.getElementById(id).lastChild.focus();
   });
 };

@@ -8,9 +8,9 @@ export const Container = styled.div`
   align-items: center;
   border: 1px solid transparent;
 
-  cursor: ${({ isDragging, loading }) => {
-    if (loading) return 'progress';
-    if (isDragging) return 'grabbing';
+  cursor: ${({ isDragging, loading, draggingTime }) => {
+    if (loading) return 'wait';
+    if (isDragging && draggingTime > 5) return 'grabbing';
     return 'pointer';
   }};
   transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .1s linear')};

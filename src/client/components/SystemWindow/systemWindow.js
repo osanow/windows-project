@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import file from '../../assets/icons/file.png';
-import directory from '../../assets/icons/directory.png';
 import dash from '../../assets/icons/delete.svg';
 import multi from '../../assets/icons/multi-tab.svg';
 import close from '../../assets/icons/close.svg';
@@ -13,8 +11,8 @@ const WindowWrapper = styled.div`
   background-color: whitesmoke;
   border: 1px solid rgb(100,100,100);
 
-  top: ${({ top }) => top};
-  left: ${({ left }) => left};
+  top: ${({ top }) => `calc(${top})`};
+  left: ${({ left }) => `calc(${left})`};
   width: ${({ width }) => width};
   height: ${({ height }) => height};
 `;
@@ -39,6 +37,7 @@ const Description = styled.div`
   }
 
   & > img {
+    user-select: none;
     margin: 0 0.5rem;
     height: 1rem;
     width: 1rem;
@@ -89,14 +88,14 @@ const WindowAction = styled.li`
 
 const systemWindow = (props) => {
   const {
-    type, top, left, width, height, name, children
+    icon, top, left, name, children
   } = props;
 
   return (
-    <WindowWrapper top={top} left={left} width={width} height={height}>
+    <WindowWrapper top={top} left={left} width="60vw" height="60vh">
       <NavBelt>
         <Description>
-          <img src={type === 'file' ? file : directory} alt="icon" />
+          <img src={icon} alt="icon" />
           <p>{name}</p>
         </Description>
         <WindowActions>

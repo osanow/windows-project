@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import axios from '../../../axios-instance';
 import { updateObject } from '../../../utils/utility';
+import { openApp } from '../../../store/actions/index';
 import noIcon from '../../../assets/icons/noIcon.png';
 import * as Styles from './styles';
 
@@ -17,7 +19,6 @@ class Item extends Component {
     displayName: '',
     nameChanging: false,
     isDragging: false,
-    loading: false,
     opened: false,
     gridPosition: {
       rowPos: 'auto',
@@ -46,6 +47,7 @@ class Item extends Component {
   onMoveHandler = (e) => {
     const { isDragging } = this.state;
     if (!isDragging) return;
+    this.draggingTime++;
     const newX = e.clientX - this.prevX;
     const newY = e.clientY - this.prevY;
     this.setState(prevState => updateObject(prevState, { position: { x: newX, y: newY } }));
@@ -54,6 +56,7 @@ class Item extends Component {
   onDropHandler = (e) => {
     const { _id } = this.props;
 
+    this.draggingTime = 0;
     document.removeEventListener('mouseup', this.onDropHandler, false);
     document.removeEventListener('mousemove', this.throttledMouseMove, false);
 
@@ -113,6 +116,7 @@ class Item extends Component {
 
     this.throttledMouseMove = _.throttle(this.onMoveHandler, 100);
     this.setState({ isDragging: true }, () => {
+      this.draggingTime = 0;
       document.addEventListener('mouseup', this.onDropHandler, false);
       document.addEventListener('mousemove', this.throttledMouseMove, false);
     });
@@ -139,23 +143,30 @@ class Item extends Component {
     }
   };
 
-  onOpenHandler = () => {
+  onOpenHandler = (e) => {
     const { opened } = this.state;
     if (opened) return;
 
-    const { openApp } = this.props;
-    openApp(this);
-    this.setState({ loading: true });
-  }
+    const { openAppHandler, runningApps } = this.props;
+    const { clientX, clientY } = e;
+
+    this.setState({ opened: true });
+    openAppHandler(this, {clientX, clientY}, runningApps.length);
+  };
 
   render() {
     const {
-      _id, type, path, permanent
+      _id, type, path, permanent, appLoading
     } = this.props;
     const {
-      position, gridPosition, displayIcon, displayName, nameChanging, loading
+      position,
+      gridPosition,
+      displayIcon,
+      displayName,
+      nameChanging
     } = this.state;
 
+    console.log(nameChanging);
     return (
       <Styles.Container
         data-path={path}
@@ -164,7 +175,8 @@ class Item extends Component {
         id={_id}
         // eslint-disable-next-line react/destructuring-assignment
         isDragging={this.state.isDragging}
-        loading={loading}
+        draggingTime={this.draggingTime}
+        loading={appLoading}
         left={position.x}
         top={position.y}
         onMouseDown={this.onCatchHandler}
@@ -172,7 +184,12 @@ class Item extends Component {
         rowPos={gridPosition.rowPos}
         colPos={gridPosition.colPos}
       >
-        <Styles.ItemIcon src={displayIcon} draggable="false" alt="icon" scale="huge" />
+        <Styles.ItemIcon
+          src={displayIcon}
+          draggable="false"
+          alt="icon"
+          scale="huge"
+        />
         {nameChanging ? (
           <Styles.NameChanging
             value={displayName}
@@ -191,4 +208,13 @@ class Item extends Component {
   }
 }
 
-export default React.memo(Item);
+const mapStateToProps = state => ({
+  appLoading: state.apps.loading,
+  runningApps: state.apps.running
+});
+
+const mapDispatchToProps = dispatch => ({
+  openAppHandler: (app, event, runningAppsAmount) => dispatch(openApp(app, event, runningAppsAmount))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Item));

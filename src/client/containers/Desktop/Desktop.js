@@ -147,14 +147,15 @@ class Desktop extends Component {
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   render() {
     const { desktopItems, wallpaperUrl, contextMenu } = this.state;
     const { runningApps } = this.props;
 
-    const itemsArray = desktopItems.map(item => <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />);
-    const runningAppsArray = runningApps.map();
+    const itemsArray = desktopItems.map(item => (
+      <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />
+    ));
 
     return (
       <DesktopWrapper
@@ -163,7 +164,10 @@ class Desktop extends Component {
         data-path="/Desktop/"
       >
         {itemsArray}
-        {contextMenu.opened && <ContextMenu updateIcons={this.updateIcons} {...contextMenu} />}
+        {runningApps}
+        {contextMenu.opened && (
+          <ContextMenu updateIcons={this.updateIcons} {...contextMenu} />
+        )}
       </DesktopWrapper>
     );
   }
