@@ -7,6 +7,8 @@ import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
 import DesktopIcon from '../../components/DesktopIcon/DesktopIcon';
 import { updateObject } from '../../utils/utility';
+import SystemWindow from '../../components/SystemWindow/systemWindow';
+import TextEditor from '../../components/TextEditor/textEditor';
 
 const DesktopWrapper = styled.div`
   width: 100vw;
@@ -137,6 +139,9 @@ class Desktop extends Component {
       >
         {desktopItems.map(item => <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />)}
         {contextMenu.opened && <ContextMenu {...contextMenu} />}
+        <SystemWindow width="60vw" height="60vh" left="20vw" top="10vh" name="New file" type="file">
+          <TextEditor value="Test" />
+        </SystemWindow>
       </DesktopWrapper>
     );
   }
