@@ -2,8 +2,8 @@ import * as itemsActions from './itemsActions';
 
 export const desktop = {
   new: {
-    file: data => itemsActions.createItem('file', data),
-    directory: data => itemsActions.createItem('directory', data)
+    file: (data, updateIcons) => itemsActions.createItem('file', data, updateIcons),
+    directory: (data, updateIcons) => itemsActions.createItem('directory', data, updateIcons)
   },
   personalize: () => itemsActions.personalize(),
   view: {

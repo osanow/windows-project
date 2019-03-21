@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../utils/utility';
 
 const initialState = {
-  running: []
+  running: [],
+  minimalized: []
 };
 
 const reducer = (state = initialState, action) => {

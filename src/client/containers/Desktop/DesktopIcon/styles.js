@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { imageContainer } from '../../assets/styles/globalStyles';
+import { imageContainer } from '../../../assets/styles/globalStyles';
 
 export const Container = styled.div`
   position: relative;
@@ -8,7 +8,11 @@ export const Container = styled.div`
   align-items: center;
   border: 1px solid transparent;
 
-  cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'pointer')};
+  cursor: ${({ isDragging, loading }) => {
+    if (loading) return 'progress';
+    if (isDragging) return 'grabbing';
+    return 'pointer';
+  }};
   transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .1s linear')};
   transform: ${({ left, top, isDragging }) => (isDragging ? `translate( ${left}px, ${top}px )` : 'translate( 0px, 0px )')};
   grid-column-start: ${({ colPos }) => colPos};

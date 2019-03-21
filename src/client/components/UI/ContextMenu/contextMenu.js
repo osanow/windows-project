@@ -43,8 +43,9 @@ const MenuOption = styled.li`
 `;
 
 const contextMenu = ({
-  left, top, options, data
+  left, top, options, data, updateIcons
 }) => {
+
   const optionsArray = Object.entries(options).map((el) => {
     if (typeof el[1] === 'object') {
       return (
@@ -53,7 +54,10 @@ const contextMenu = ({
           <span>{'>'}</span>
           <ContextMenu left={13 * 16 - 0.5 * 16} top={-0.35 * 16}>
             {Object.entries(el[1]).map(nestedEl => (
-              <MenuOption key={nestedEl[0]} onClick={() => nestedEl[1](data)}>
+              <MenuOption
+                key={nestedEl[0]}
+                onClick={() => nestedEl[1](data, updateIcons)}
+              >
                 <span>{changeFormatWithoutDashes(nestedEl[0])}</span>
               </MenuOption>
             ))}
@@ -62,7 +66,7 @@ const contextMenu = ({
       );
     }
     return (
-      <MenuOption key={el[0]} onClick={() => el[1](data)}>
+      <MenuOption key={el[0]} onClick={() => el[1](data, updateIcons)}>
         <span>{changeFormatWithoutDashes(el[0])}</span>
       </MenuOption>
     );

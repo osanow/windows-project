@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as menuOptions from '../../utils/contextMenuOptions';
 import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
-import DesktopIcon from '../../components/DesktopIcon/DesktopIcon';
+import DesktopIcon from './DesktopIcon/DesktopIcon';
 import { updateObject } from '../../utils/utility';
 import SystemWindow from '../../components/SystemWindow/systemWindow';
 import TextEditor from '../../components/TextEditor/textEditor';
@@ -129,16 +129,38 @@ class Desktop extends Component {
     return false;
   };
 
+  updateIcons = () => {
+    axios('items/', {
+      method: 'GET',
+      params: {
+        path: '/Desktop/'
+      }
+    })
+      .then((res) => {
+        res.data.forEach((item) => {
+          this.itemRef[item._id] = React.createRef();
+        });
+        this.setState(prevState => updateObject(prevState, {
+          desktopItems: res.data
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   render() {
     const { desktopItems, wallpaperUrl, contextMenu } = this.state;
+    const itemsArray = desktopItems.map(item => <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />);
+
     return (
       <DesktopWrapper
         wallpaperUrl={wallpaperUrl}
         data-type="desktop"
         data-path="/Desktop/"
       >
-        {desktopItems.map(item => <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />)}
-        {contextMenu.opened && <ContextMenu {...contextMenu} />}
+        {itemsArray}
+        {contextMenu.opened && <ContextMenu updateIcons={this.updateIcons} {...contextMenu} />}
         <SystemWindow width="60vw" height="60vh" left="20vw" top="10vh" name="New file" type="file">
           <TextEditor value="Test" />
         </SystemWindow>

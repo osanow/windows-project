@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 
-import axios from '../../axios-instance';
-import { updateObject } from '../../utils/utility';
-import noIcon from '../../assets/icons/noIcon.png';
+import axios from '../../../axios-instance';
+import { updateObject } from '../../../utils/utility';
+import noIcon from '../../../assets/icons/noIcon.png';
 import * as Styles from './styles';
 
 const calculatePos = (type, value) => {
@@ -17,6 +17,8 @@ class Item extends Component {
     displayName: '',
     nameChanging: false,
     isDragging: false,
+    loading: false,
+    opened: false,
     gridPosition: {
       rowPos: 'auto',
       colPos: 'auto'
@@ -32,7 +34,7 @@ class Item extends Component {
       icon, rowPos, colPos, name
     } = this.props;
 
-    import(`../../assets/icons/${icon}`)
+    import(`../../../assets/icons/${icon}`)
       .then(res => this.setState(prevState => updateObject(prevState, {
         displayIcon: res.default,
         displayName: name,
@@ -137,12 +139,21 @@ class Item extends Component {
     }
   };
 
+  onOpenHandler = () => {
+    const { opened } = this.state;
+    if (opened) return;
+
+    const { openApp } = this.props;
+    openApp(this);
+    this.setState({ loading: true });
+  }
+
   render() {
     const {
       _id, type, path, permanent
     } = this.props;
     const {
-      position, gridPosition, displayIcon, displayName, nameChanging
+      position, gridPosition, displayIcon, displayName, nameChanging, loading
     } = this.state;
 
     return (
@@ -153,12 +164,11 @@ class Item extends Component {
         id={_id}
         // eslint-disable-next-line react/destructuring-assignment
         isDragging={this.state.isDragging}
+        loading={loading}
         left={position.x}
         top={position.y}
         onMouseDown={this.onCatchHandler}
-        onDoubleClick={(e) => {
-          console.log('double', e.target);
-        }}
+        onDoubleClick={this.onOpenHandler}
         rowPos={gridPosition.rowPos}
         colPos={gridPosition.colPos}
       >

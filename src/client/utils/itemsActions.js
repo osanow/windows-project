@@ -15,7 +15,7 @@ export const deleteItem = (id) => {
   });
 };
 
-export const createItem = (type, data) => {
+export const createItem = (type, data, updateIcons) => {
   const newItem = {
     name: `New ${type}`,
     type: [type === 'directory' ? 'container' : 'file'],
@@ -29,9 +29,13 @@ export const createItem = (type, data) => {
     data: {
       items: [newItem]
     }
-  }).catch((error) => {
-    console.log(error);
-  });
+  })
+    .then(() => {
+      updateIcons();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const changeName = (ref, id) => {
