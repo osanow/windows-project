@@ -151,7 +151,10 @@ class Desktop extends Component {
 
   render() {
     const { desktopItems, wallpaperUrl, contextMenu } = this.state;
+    const { runningApps } = this.props;
+
     const itemsArray = desktopItems.map(item => <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />);
+    const runningAppsArray = runningApps.map();
 
     return (
       <DesktopWrapper
@@ -161,9 +164,6 @@ class Desktop extends Component {
       >
         {itemsArray}
         {contextMenu.opened && <ContextMenu updateIcons={this.updateIcons} {...contextMenu} />}
-        <SystemWindow width="60vw" height="60vh" left="20vw" top="10vh" name="New file" type="file">
-          <TextEditor value="Test" />
-        </SystemWindow>
       </DesktopWrapper>
     );
   }
@@ -172,7 +172,8 @@ class Desktop extends Component {
 const mapStateToProps = state => ({
   isAuth: state.auth.token !== null,
   userId: state.auth.userId,
-  wallpaper: state.auth.preferences.wallpaper
+  wallpaper: state.auth.preferences.wallpaper,
+  runningApps: state.apps.running
 });
 
 export default connect(mapStateToProps)(Desktop);

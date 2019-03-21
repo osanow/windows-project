@@ -8,3 +8,7 @@ export {
   auth,
   logout
 } from './auth';
+
+export {
+  appOpen, appClose, appMaximalize, appHide, appShow
+} from './apps';
