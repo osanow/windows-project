@@ -15,6 +15,13 @@ const openApp = (state, action) => ({
   running: state.running.concat([action.openedApp])
 });
 
+const closeApp = (state, action) => updateObject(state, {
+  running: state.running.filter((app) => {
+    console.log(app.props._id, action.id);
+    return app.props._id !== action.id;
+  })
+});
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.APP_START_OPENING:
@@ -22,6 +29,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.APP_OPEN:
       return openApp(state, action);
     case actionTypes.APP_CLOSE:
+      return closeApp(state, action);
     case actionTypes.APP_MAXIMALIZE:
     case actionTypes.APP_HIDE:
     case actionTypes.APP_SHOW:

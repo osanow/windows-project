@@ -18,7 +18,6 @@ class Item extends Component {
     displayIcon: noIcon,
     displayName: '',
     isDragging: false,
-    opened: false,
     gridPosition: {
       rowPos: 'auto',
       colPos: 'auto'
@@ -46,7 +45,7 @@ class Item extends Component {
   onMoveHandler = (e) => {
     const { isDragging } = this.state;
     if (!isDragging) return;
-    this.draggingTime++;
+    this.draggingTime = this.draggingTime + 1;
     const newX = e.clientX - this.prevX;
     const newY = e.clientY - this.prevY;
     this.setState(prevState => updateObject(prevState, { position: { x: newX, y: newY } }));
@@ -113,7 +112,7 @@ class Item extends Component {
     this.prevX = e.clientX;
     this.prevY = e.clientY;
 
-    this.throttledMouseMove = _.throttle(this.onMoveHandler, 100);
+    this.throttledMouseMove = _.throttle(this.onMoveHandler, 50);
     this.setState({ isDragging: true }, () => {
       this.draggingTime = 0;
       document.addEventListener('mouseup', this.onDropHandler, false);
@@ -138,7 +137,7 @@ class Item extends Component {
           }
         }
       }).catch(error => console.log(error));
-      
+
       const icon = document.getElementById(_id);
       icon.querySelector('p').style.display = 'block';
       icon.lastChild.style.display = 'none';
@@ -146,14 +145,13 @@ class Item extends Component {
   };
 
   onOpenHandler = (e) => {
-    const { opened } = this.state;
-    if (opened) return;
+    const {
+      runningApps, minimalizedApps, _id, openAppHandler
+    } = this.props;
+    if (runningApps.find(app => app.props._id === _id) || minimalizedApps.find(app => app.props._id === _id)) return;
 
-    const { openAppHandler, runningApps } = this.props;
     const { clientX, clientY } = e;
-
-    this.setState({ opened: true });
-    openAppHandler(this, {clientX, clientY}, runningApps.length);
+    openAppHandler(this, { clientX, clientY }, runningApps.length);
   };
 
   render() {
@@ -164,8 +162,7 @@ class Item extends Component {
       position,
       gridPosition,
       displayIcon,
-      displayName,
-      nameChanging
+      displayName
     } = this.state;
 
     return (
@@ -197,7 +194,7 @@ class Item extends Component {
             : displayName}
         </Styles.ItemName>
         <Styles.NameChanging
-          style={{display: 'none'}}
+          style={{ display: 'none' }}
           value={displayName}
           onKeyDown={this.onSubmitNameHandler}
           onChange={this.onChangeNameHandler}
@@ -209,7 +206,8 @@ class Item extends Component {
 
 const mapStateToProps = state => ({
   appLoading: state.apps.loading,
-  runningApps: state.apps.running
+  runningApps: state.apps.running,
+  minimalizedApps: state.apps.minimalized
 });
 
 const mapDispatchToProps = dispatch => ({

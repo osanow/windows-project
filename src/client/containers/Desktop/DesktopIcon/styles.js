@@ -13,7 +13,7 @@ export const Container = styled.div`
     if (isDragging && draggingTime > 5) return 'grabbing';
     return 'pointer';
   }};
-  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .1s linear')};
+  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .05s')};
   transform: ${({ left, top, isDragging }) => (isDragging ? `translate( ${left}px, ${top}px )` : 'translate( 0px, 0px )')};
   grid-column-start: ${({ colPos }) => colPos};
   grid-row-start: ${({ rowPos }) => rowPos};

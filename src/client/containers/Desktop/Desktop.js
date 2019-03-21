@@ -126,9 +126,6 @@ class Desktop extends Component {
       }
     })
       .then((res) => {
-        res.data.forEach((item) => {
-          this.itemRef[item._id] = React.createRef();
-        });
         this.setState(prevState => updateObject(prevState, {
           desktopItems: res.data
         }));

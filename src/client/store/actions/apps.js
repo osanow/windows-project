@@ -6,22 +6,26 @@ export const startOpeningApp = () => ({
 });
 
 export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
-  console.log(app, event, activeAppsAmount);
   dispatch(startOpeningApp());
 
   let openedApp;
-  const appIcon = (await import(`../../assets/icons/${app.props.type[0]}.png`)).default;
-  const SystemWindow = (await import('../../components/SystemWindow/systemWindow')).default;
+  const appIcon = (await import(`../../assets/icons/${app.props.type[0]}.png`))
+    .default;
+  const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
+    .default;
   if (app.props.type.find(type => type === 'file')) {
-    const TextEditor = (await import('../../components/TextEditor/textEditor')).default;
+    const TextEditor = (await import('../../components/TextEditor/textEditor'))
+      .default;
     openedApp = (
       <SystemWindow
         key={app.props._id}
-        sourceX={event.clientX+'px'}
-        sourceY={event.clientY+'px'}
-        left={`20vh + ${3*(activeAppsAmount%6)+3*(Math.floor(activeAppsAmount/6))}vh`}
-        top={`10vh + ${3*(activeAppsAmount%6)+3*(Math.floor(activeAppsAmount/6))}vh`}
-      
+        sourceX={`${event.clientX}px`}
+        sourceY={`${event.clientY}px`}
+        left={`20vh + ${3 * (activeAppsAmount % 6)
+          + 3 * Math.floor(activeAppsAmount / 6)}vh`}
+        top={`10vh + ${3 * (activeAppsAmount % 6)
+          + 3 * Math.floor(activeAppsAmount / 6)}vh`}
+        _id={app.props._id}
         name={app.props.name}
         path={app.props.path}
         icon={appIcon}
@@ -31,24 +35,25 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
       </SystemWindow>
     );
   }
-  setTimeout(() => { // for visual effects :)
-    dispatch({
-      type: actionTypes.APP_OPEN,
-      openedApp
-    });
-  }, 400);
+  dispatch({
+    type: actionTypes.APP_OPEN,
+    openedApp
+  });
 };
 
-export const closeApp = () => ({
-  type: actionTypes.APP_CLOSE
+export const closeApp = id => ({
+  type: actionTypes.APP_CLOSE,
+  id
 });
 
-export const maximalizeApp = () => ({
-  type: actionTypes.APP_MAXIMALIZE
+export const maximalizeApp = id => ({
+  type: actionTypes.APP_MAXIMALIZE,
+  id
 });
 
-export const hideApp = () => ({
-  type: actionTypes.APP_HIDE
+export const hideApp = id => ({
+  type: actionTypes.APP_HIDE,
+  id
 });
 
 export const showApp = () => ({

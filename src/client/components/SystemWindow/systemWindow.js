@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
+import { hideApp, maximalizeApp, closeApp } from '../../store/actions/index';
 import dash from '../../assets/icons/delete.svg';
 import multi from '../../assets/icons/multi-tab.svg';
 import close from '../../assets/icons/close.svg';
@@ -9,7 +11,7 @@ const WindowWrapper = styled.div`
   position: absolute;
   z-index: 5;
   background-color: whitesmoke;
-  border: 1px solid rgb(100,100,100);
+  border: 1px solid rgb(100, 100, 100);
 
   top: ${({ top }) => `calc(${top})`};
   left: ${({ left }) => `calc(${left})`};
@@ -88,7 +90,15 @@ const WindowAction = styled.li`
 
 const systemWindow = (props) => {
   const {
-    icon, top, left, name, children
+    _id,
+    icon,
+    top,
+    left,
+    name,
+    children,
+    hideAppHandler,
+    maximalizeAppHandler,
+    closeAppHandler
   } = props;
 
   return (
@@ -99,13 +109,13 @@ const systemWindow = (props) => {
           <p>{name}</p>
         </Description>
         <WindowActions>
-          <WindowAction>
+          <WindowAction onClick={() => hideAppHandler(_id)}>
             <img src={dash} alt="minimalize" />
           </WindowAction>
-          <WindowAction>
+          <WindowAction onClick={() => maximalizeAppHandler(_id)}>
             <img src={multi} alt="multi tabs" />
           </WindowAction>
-          <WindowAction>
+          <WindowAction onClick={() => closeAppHandler(_id)}>
             <img src={close} alt="close" />
           </WindowAction>
         </WindowActions>
@@ -115,4 +125,13 @@ const systemWindow = (props) => {
   );
 };
 
-export default systemWindow;
+const mapDispatchToProps = dispatch => ({
+  hideAppHandler: id => dispatch(hideApp(id)),
+  maximalizeAppHandler: id => dispatch(maximalizeApp(id)),
+  closeAppHandler: id => dispatch(closeApp(id))
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(React.memo(systemWindow));
