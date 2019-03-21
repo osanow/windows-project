@@ -10,5 +10,5 @@ export {
 } from './auth';
 
 export {
-  openApp, closeApp, maximalizeApp, hideApp, showApp
+  openApp, closeApp, hideApp, showApp
 } from './apps';

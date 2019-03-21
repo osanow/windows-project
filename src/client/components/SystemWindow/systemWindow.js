@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import { hideApp, maximalizeApp, closeApp } from '../../store/actions/index';
+import { hideApp, closeApp } from '../../store/actions/index';
 import dash from '../../assets/icons/delete.svg';
 import multi from '../../assets/icons/multi-tab.svg';
 import close from '../../assets/icons/close.svg';
@@ -12,6 +12,11 @@ const WindowWrapper = styled.div`
   z-index: 5;
   background-color: whitesmoke;
   border: 1px solid rgb(100, 100, 100);
+  transition: width 0.5s ease-in-out, height 0.5s ease-in-out,
+    transform 0.5s ease-in-out;
+  transform: ${({ maximalized, left, top }) => (maximalized
+    ? `translate(calc((${left}) * (-1)), calc((${top}) * (-1)))`
+    : 'none')};
 
   top: ${({ top }) => `calc(${top})`};
   left: ${({ left }) => `calc(${left})`};
@@ -66,7 +71,7 @@ const WindowActions = styled.ul`
 const WindowAction = styled.li`
   height: 2rem;
   width: 2.5rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.5rem 0.8rem;
   cursor: pointer;
   background-color: whitesmoke;
 
@@ -89,6 +94,10 @@ const WindowAction = styled.li`
 `;
 
 const systemWindow = (props) => {
+  const [data, setData] = useState({
+    maximalized: false
+  });
+
   const {
     _id,
     icon,
@@ -97,12 +106,21 @@ const systemWindow = (props) => {
     name,
     children,
     hideAppHandler,
-    maximalizeAppHandler,
     closeAppHandler
   } = props;
 
+  const maximalizeAppHandler = () => {
+    setData({ maximalized: !data.maximalized });
+  };
+
   return (
-    <WindowWrapper top={top} left={left} width="60vw" height="60vh">
+    <WindowWrapper
+      top={top}
+      left={left}
+      width={data.maximalized ? '100vw' : '60vw'}
+      height={data.maximalized ? 'calc(100vh - 3rem)' : '60vh'}
+      maximalized={data.maximalized}
+    >
       <NavBelt>
         <Description>
           <img src={icon} alt="icon" />
@@ -112,7 +130,7 @@ const systemWindow = (props) => {
           <WindowAction onClick={() => hideAppHandler(_id)}>
             <img src={dash} alt="minimalize" />
           </WindowAction>
-          <WindowAction onClick={() => maximalizeAppHandler(_id)}>
+          <WindowAction onClick={maximalizeAppHandler}>
             <img src={multi} alt="multi tabs" />
           </WindowAction>
           <WindowAction onClick={() => closeAppHandler(_id)}>
@@ -127,7 +145,6 @@ const systemWindow = (props) => {
 
 const mapDispatchToProps = dispatch => ({
   hideAppHandler: id => dispatch(hideApp(id)),
-  maximalizeAppHandler: id => dispatch(maximalizeApp(id)),
   closeAppHandler: id => dispatch(closeApp(id))
 });
 

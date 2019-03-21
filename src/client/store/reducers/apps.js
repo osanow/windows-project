@@ -16,10 +16,7 @@ const openApp = (state, action) => ({
 });
 
 const closeApp = (state, action) => updateObject(state, {
-  running: state.running.filter((app) => {
-    console.log(app.props._id, action.id);
-    return app.props._id !== action.id;
-  })
+  running: state.running.filter(app => app.props._id !== action.id)
 });
 
 const reducer = (state = initialState, action) => {
@@ -30,7 +27,6 @@ const reducer = (state = initialState, action) => {
       return openApp(state, action);
     case actionTypes.APP_CLOSE:
       return closeApp(state, action);
-    case actionTypes.APP_MAXIMALIZE:
     case actionTypes.APP_HIDE:
     case actionTypes.APP_SHOW:
     default:

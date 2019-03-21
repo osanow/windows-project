@@ -26,7 +26,7 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
         top={`10vh + ${3 * (activeAppsAmount % 6)
           + 3 * Math.floor(activeAppsAmount / 6)}vh`}
         _id={app.props._id}
-        name={app.props.name}
+        name={app.state.displayName}
         path={app.props.path}
         icon={appIcon}
         type={app.props.type}
@@ -43,11 +43,6 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
 
 export const closeApp = id => ({
   type: actionTypes.APP_CLOSE,
-  id
-});
-
-export const maximalizeApp = id => ({
-  type: actionTypes.APP_MAXIMALIZE,
   id
 });
 
