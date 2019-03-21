@@ -17,7 +17,6 @@ class Item extends Component {
   state = {
     displayIcon: noIcon,
     displayName: '',
-    nameChanging: false,
     isDragging: false,
     opened: false,
     gridPosition: {
@@ -139,7 +138,10 @@ class Item extends Component {
           }
         }
       }).catch(error => console.log(error));
-      this.setState({ nameChanging: false });
+      
+      const icon = document.getElementById(_id);
+      icon.querySelector('p').style.display = 'block';
+      icon.lastChild.style.display = 'none';
     }
   };
 
@@ -166,7 +168,6 @@ class Item extends Component {
       nameChanging
     } = this.state;
 
-    console.log(nameChanging);
     return (
       <Styles.Container
         data-path={path}
@@ -190,19 +191,17 @@ class Item extends Component {
           alt="icon"
           scale="huge"
         />
-        {nameChanging ? (
-          <Styles.NameChanging
-            value={displayName}
-            onKeyDown={this.onSubmitNameHandler}
-            onChange={this.onChangeNameHandler}
-          />
-        ) : (
-          <Styles.ItemName>
-            {displayName.length > 11
-              ? `${displayName.substring(0, 10)}...`
-              : displayName}
-          </Styles.ItemName>
-        )}
+        <Styles.ItemName>
+          {displayName.length > 11
+            ? `${displayName.substring(0, 10)}...`
+            : displayName}
+        </Styles.ItemName>
+        <Styles.NameChanging
+          style={{display: 'none'}}
+          value={displayName}
+          onKeyDown={this.onSubmitNameHandler}
+          onChange={this.onChangeNameHandler}
+        />
       </Styles.Container>
     );
   }

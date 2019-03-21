@@ -7,8 +7,6 @@ import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
 import DesktopIcon from './DesktopIcon/DesktopIcon';
 import { updateObject } from '../../utils/utility';
-import SystemWindow from '../../components/SystemWindow/systemWindow';
-import TextEditor from '../../components/TextEditor/textEditor';
 
 const DesktopWrapper = styled.div`
   width: 100vw;
@@ -32,11 +30,6 @@ const DesktopWrapper = styled.div`
 `;
 
 class Desktop extends Component {
-  constructor(props) {
-    super(props);
-    this.itemRef = {};
-  }
-
   state = {
     wallpaperUrl: '',
     desktopItems: [],
@@ -69,9 +62,6 @@ class Desktop extends Component {
           return import(`../../assets/bgrounds/${wallpaper}`);
         })
         .then((res) => {
-          ResItems.forEach((item) => {
-            this.itemRef[item._id] = React.createRef();
-          });
           this.setState(prevState => updateObject(prevState, {
             wallpaperUrl: res.default,
             desktopItems: ResItems
@@ -118,8 +108,7 @@ class Desktop extends Component {
         data: {
           path: iconPath,
           owner: userId,
-          id: iconId,
-          ref: this.itemRef[iconId]
+          id: iconId
         },
         options
       }
@@ -154,7 +143,7 @@ class Desktop extends Component {
     const { runningApps } = this.props;
 
     const itemsArray = desktopItems.map(item => (
-      <DesktopIcon key={item._id} ref={this.itemRef[item._id]} {...item} />
+      <DesktopIcon key={item._id} {...item} />
     ));
 
     return (

@@ -39,9 +39,9 @@ export const createItem = (type, data, updateIcons) => {
     });
 };
 
-export const changeName = (ref, id) => {
-  console.log(ref.current);
-  ref.current.setState({ nameChanging: true }, () => {
-    //document.getElementById(id).lastChild.focus();
-  });
+export const changeName = (id) => {
+  const icon = document.getElementById(id);
+  icon.querySelector('p').style.display = 'none';
+  icon.lastChild.style.display = 'block';
+  icon.lastChild.focus();
 };
