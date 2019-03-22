@@ -6,6 +6,7 @@ export const AUTH_LOGOUT = 'AUTH_LOGOUT';
 
 export const APP_OPEN = 'APP_OPEN';
 export const APP_START_OPENING = 'APP_START_OPENING';
+export const APP_FOCUS = 'APP_FOCUS';
 export const APP_CLOSE = 'APP_CLOSE';
 export const APP_HIDE = 'APP_HIDE';
 export const APP_SHOW = 'APP_SHOW';

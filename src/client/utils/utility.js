@@ -121,8 +121,8 @@ export const onDropHandler = (icon) => {
 };
 
 export const onCatchHandler = (icon, e) => {
-  if (e.target.parentElement.tagName === 'LI' || e.target.tagName === 'LI') return;
   if (icon.state.maximalized) return;
+  console.log('catch');
 
   icon.prevX = e.clientX;
   icon.prevY = e.clientY;

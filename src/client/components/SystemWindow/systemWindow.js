@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import { hideApp, closeApp } from '../../store/actions/index';
+import { hideApp, closeApp, focusApp } from '../../store/actions/index';
 import dash from '../../assets/icons/delete.svg';
 import multi from '../../assets/icons/multi-tab.svg';
 import close from '../../assets/icons/close.svg';
@@ -137,11 +137,16 @@ class systemWindow extends Component {
       name,
       children,
       hideAppHandler,
-      closeAppHandler
+      closeAppHandler,
+      focusAppHandler
     } = this.props;
 
     const {
-      position, dragPosition, maximalized, isDragging, positioning
+      position,
+      dragPosition,
+      maximalized,
+      isDragging,
+      positioning
     } = this.state;
 
     return (
@@ -156,20 +161,21 @@ class systemWindow extends Component {
         isDragging={isDragging}
         positioning={positioning}
         maximalized={maximalized}
+        onClick={() => focusAppHandler(_id)}
       >
         <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
           <Description>
             <img src={icon} alt="icon" />
             <p>{name}</p>
           </Description>
-          <WindowActions>
-            <WindowAction onClick={() => hideAppHandler(_id)}>
+          <WindowActions onMouseDown={e => e.stopPropagation()}>
+            <WindowAction onMouseDown={() => hideAppHandler(_id)}>
               <img src={dash} alt="minimalize" />
             </WindowAction>
-            <WindowAction onClick={this.maximalizeAppHandler}>
+            <WindowAction onMouseDown={this.maximalizeAppHandler}>
               <img src={multi} alt="multi tabs" />
             </WindowAction>
-            <WindowAction onClick={() => closeAppHandler(_id)}>
+            <WindowAction onMouseDown={() => closeAppHandler(_id)}>
               <img src={close} alt="close" />
             </WindowAction>
           </WindowActions>
@@ -182,7 +188,8 @@ class systemWindow extends Component {
 
 const mapDispatchToProps = dispatch => ({
   hideAppHandler: id => dispatch(hideApp(id)),
-  closeAppHandler: id => dispatch(closeApp(id))
+  closeAppHandler: id => dispatch(closeApp(id)),
+  focusAppHandler: id => dispatch(focusApp(id))
 });
 
 export default connect(

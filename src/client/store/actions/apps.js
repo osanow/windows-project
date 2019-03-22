@@ -5,6 +5,11 @@ export const startOpeningApp = () => ({
   type: actionTypes.APP_START_OPENING
 });
 
+export const focusApp = id => ({
+  type: actionTypes.APP_FOCUS,
+  id
+});
+
 export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
   dispatch(startOpeningApp());
 
