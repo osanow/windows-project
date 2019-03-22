@@ -14,8 +14,12 @@ const WindowWrapper = styled.div`
   border: 1px solid rgb(100, 100, 100);
   transition: width 0.5s ease-in-out, height 0.5s ease-in-out,
     transform 0.5s ease-in-out;
+
+  filter: blur(0.000001px); /* for fix blured font */
+  -webkit-font-smoothing: antialiased; /* for fix blured font */
+
   transform: ${({ maximalized, left, top }) => (maximalized
-    ? `translate(calc((${left}) * (-1)), calc((${top}) * (-1)))`
+    ? `translate(calc((${left}) * (-1)), calc((${top} + .4px) * (-1)))` /* for fix blured font */
     : 'none')};
 
   top: ${({ top }) => `calc(${top})`};
