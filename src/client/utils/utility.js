@@ -56,35 +56,19 @@ export const onMoveHandler = (icon, e) => {
   icon.setState(prevState => updateObject(prevState, { dragPosition: { x: newX, y: newY } }));
 };
 
-export const onDropHandler = (icon, e) => {
+export const onDropHandler = (icon) => {
   const { _id } = icon.props;
 
+  icon.prevX = 0;
+  icon.prevY = 0;
   icon.draggingTime = 0;
   document.removeEventListener('mouseup', icon.onDropFunction, false);
   document.removeEventListener('mousemove', icon.throttledMouseMove, false);
 
-  icon.prevX = 0;
-  icon.prevY = 0;
-
   if (icon.state.gridPosition) {
-    const posX = e.clientX
-      - (e.target.offsetLeft > 94 || e.target.tagName !== 'DIV'
-        ? 0
-        : e.target.offsetLeft)
-      + (e.target.offsetWidth > 94 || e.target.tagName !== 'DIV'
-        ? 0
-        : e.target.offsetWidth)
-        / 2
-      - 22;
-    const posY = e.clientY
-      - (e.target.offsetTop > 70 || e.target.tagName !== 'DIV'
-        ? 0
-        : e.target.offsetTop)
-      + (e.target.offsetHeight > 70 || e.target.tagName !== 'DIV'
-        ? 0
-        : e.target.offsetHeight)
-        / 2
-      - 16;
+    const rect = icon.dragTarget.getBoundingClientRect();
+    const posX = rect.left + icon.dragTarget.offsetWidth / 2;
+    const posY = rect.top + icon.dragTarget.offsetHeight / 2;
 
     const maxRow = calculatePos('row', window.innerHeight - 128);
     const currRow = calculatePos('row', posY);
@@ -97,7 +81,7 @@ export const onDropHandler = (icon, e) => {
 
     icon.setState(prevState => updateObject(prevState, {
       isDragging: false,
-      position: { x: 0, y: 0 },
+      dragPosition: { x: 0, y: 0 },
       gridPosition: { rowPos: newRow, colPos: newCol }
     }));
 
@@ -114,35 +98,38 @@ export const onDropHandler = (icon, e) => {
     });
   } else {
     const rect = icon.dragTarget.getBoundingClientRect();
-    console.log(
-      rect.left,
-      e.clientX,
-      e.target.offsetWidth,
-      rect.top,
-      e.clientY,
-      e.target.offsetHeight
-    );
-    icon.setState(prevState => updateObject(prevState, {
-      isDragging: false,
-      dragPosition: {
-        x: 0,
-        y: 0
-      },
-      position: {
-        x: `${rect.left}px`,
-        y: `${rect.top}px`
+    icon.setState(
+      prevState => updateObject(prevState, {
+        isDragging: false,
+        positioning: true,
+        dragPosition: {
+          x: 0,
+          y: 0
+        },
+        position: {
+          x: `${rect.left}px`,
+          y: `${rect.top}px`
+        }
+      }),
+      () => {
+        setTimeout(() => {
+          icon.setState(prevState => updateObject(prevState, { positioning: false }));
+        }, 500);
       }
-    }));
+    );
   }
 };
 
 export const onCatchHandler = (icon, e) => {
+  if (e.target.parentElement.tagName === 'LI' || e.target.tagName === 'LI') return;
+  if (icon.state.maximalized) return;
+
   icon.prevX = e.clientX;
   icon.prevY = e.clientY;
 
   icon.dragTarget = e.target;
   icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 50);
-  icon.onDropFunction = ev => onDropHandler(icon, ev);
+  icon.onDropFunction = () => onDropHandler(icon);
   icon.setState({ isDragging: true }, () => {
     icon.draggingTime = 0;
     document.addEventListener('mouseup', icon.onDropFunction, false);

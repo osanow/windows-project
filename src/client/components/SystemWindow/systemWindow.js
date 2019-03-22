@@ -13,8 +13,6 @@ const WindowWrapper = styled.div`
   z-index: 5;
   background-color: whitesmoke;
   border: 1px solid rgb(100, 100, 100);
-  transition: width 0.5s ease-in-out, height 0.5s ease-in-out,
-    transform 0.5s ease-in-out;
 
   filter: blur(0.000001px); /* for fix blured font */
   -webkit-font-smoothing: antialiased; /* for fix blured font */
@@ -22,10 +20,14 @@ const WindowWrapper = styled.div`
   transform: ${({
     maximalized, dragLeft, dragTop, left, top
   }) => {
-    if (maximalized) return `translate(calc((${left}) * (-1)), calc((${top} + .4px) * (-1)))`; /* for fix blured font */
+    if (maximalized) return `translate(calc((${left}) * (-1)), calc((${top} + .7px) * (-1)))`; /* for fix blured font */
     return `translate( ${dragLeft}px, ${dragTop}px )`;
   }};
-  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .05s')};
+  transition: ${({ isDragging, positioning }) => {
+    if (isDragging) return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform .05s';
+    if (positioning) return 'width 0.5s ease-in-out, height 0.5s ease-in-out';
+    return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform 0.5s ease-in-out';
+  }};
 
   top: ${({ top }) => `calc(${top})`};
   left: ${({ left }) => `calc(${left})`};
@@ -105,6 +107,7 @@ const WindowAction = styled.li`
 class systemWindow extends Component {
   state = {
     isDragging: false,
+    positioning: false,
     maximalized: false,
     position: {
       x: 0,
@@ -124,7 +127,7 @@ class systemWindow extends Component {
   }
 
   maximalizeAppHandler = () => {
-    this.setState(prevState => updateObject(prevState, { maximalized: prevState.maximalized }));
+    this.setState(prevState => updateObject(prevState, { maximalized: !prevState.maximalized }));
   };
 
   render() {
@@ -138,7 +141,7 @@ class systemWindow extends Component {
     } = this.props;
 
     const {
-      position, dragPosition, maximalized, isDragging
+      position, dragPosition, maximalized, isDragging, positioning
     } = this.state;
 
     return (
@@ -151,6 +154,7 @@ class systemWindow extends Component {
         width={maximalized ? '100vw' : '60vw'}
         height={maximalized ? 'calc(100vh - 3rem)' : '60vh'}
         isDragging={isDragging}
+        positioning={positioning}
         maximalized={maximalized}
       >
         <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
