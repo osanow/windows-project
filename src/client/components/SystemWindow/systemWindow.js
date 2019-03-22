@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -6,6 +6,7 @@ import { hideApp, closeApp } from '../../store/actions/index';
 import dash from '../../assets/icons/delete.svg';
 import multi from '../../assets/icons/multi-tab.svg';
 import close from '../../assets/icons/close.svg';
+import { updateObject, onCatchHandler } from '../../utils/utility';
 
 const WindowWrapper = styled.div`
   position: absolute;
@@ -18,9 +19,13 @@ const WindowWrapper = styled.div`
   filter: blur(0.000001px); /* for fix blured font */
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 
-  transform: ${({ maximalized, left, top }) => (maximalized
-    ? `translate(calc((${left}) * (-1)), calc((${top} + .4px) * (-1)))` /* for fix blured font */
-    : 'none')};
+  transform: ${({
+    maximalized, dragLeft, dragTop, left, top
+  }) => {
+    if (maximalized) return `translate(calc((${left}) * (-1)), calc((${top} + .4px) * (-1)))`; /* for fix blured font */
+    return `translate( ${dragLeft}px, ${dragTop}px )`;
+  }};
+  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .05s')};
 
   top: ${({ top }) => `calc(${top})`};
   left: ${({ left }) => `calc(${left})`};
@@ -33,6 +38,7 @@ const NavBelt = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  user-select: none;
   width: 100%;
   height: 2rem;
   cursor: move;
@@ -48,7 +54,6 @@ const Description = styled.div`
   }
 
   & > img {
-    user-select: none;
     margin: 0 0.5rem;
     height: 1rem;
     width: 1rem;
@@ -97,55 +102,79 @@ const WindowAction = styled.li`
   }
 `;
 
-const systemWindow = (props) => {
-  const [data, setData] = useState({
-    maximalized: false
-  });
-
-  const {
-    _id,
-    icon,
-    top,
-    left,
-    name,
-    children,
-    hideAppHandler,
-    closeAppHandler
-  } = props;
-
-  const maximalizeAppHandler = () => {
-    setData({ maximalized: !data.maximalized });
+class systemWindow extends Component {
+  state = {
+    isDragging: false,
+    maximalized: false,
+    position: {
+      x: 0,
+      y: 0
+    },
+    dragPosition: {
+      x: 0,
+      y: 0
+    }
   };
 
-  return (
-    <WindowWrapper
-      top={top}
-      left={left}
-      width={data.maximalized ? '100vw' : '60vw'}
-      height={data.maximalized ? 'calc(100vh - 3rem)' : '60vh'}
-      maximalized={data.maximalized}
-    >
-      <NavBelt>
-        <Description>
-          <img src={icon} alt="icon" />
-          <p>{name}</p>
-        </Description>
-        <WindowActions>
-          <WindowAction onClick={() => hideAppHandler(_id)}>
-            <img src={dash} alt="minimalize" />
-          </WindowAction>
-          <WindowAction onClick={maximalizeAppHandler}>
-            <img src={multi} alt="multi tabs" />
-          </WindowAction>
-          <WindowAction onClick={() => closeAppHandler(_id)}>
-            <img src={close} alt="close" />
-          </WindowAction>
-        </WindowActions>
-      </NavBelt>
-      <ContentBox>{children}</ContentBox>
-    </WindowWrapper>
-  );
-};
+  componentWillMount() {
+    const { top, left } = this.props;
+    this.setState(prevState => updateObject(prevState, {
+      position: { x: left, y: top }
+    }));
+  }
+
+  maximalizeAppHandler = () => {
+    this.setState(prevState => updateObject(prevState, { maximalized: prevState.maximalized }));
+  };
+
+  render() {
+    const {
+      _id,
+      icon,
+      name,
+      children,
+      hideAppHandler,
+      closeAppHandler
+    } = this.props;
+
+    const {
+      position, dragPosition, maximalized, isDragging
+    } = this.state;
+
+    return (
+      <WindowWrapper
+        id={`Window${_id}`}
+        top={position.y}
+        left={position.x}
+        dragTop={dragPosition.y}
+        dragLeft={dragPosition.x}
+        width={maximalized ? '100vw' : '60vw'}
+        height={maximalized ? 'calc(100vh - 3rem)' : '60vh'}
+        isDragging={isDragging}
+        maximalized={maximalized}
+      >
+        <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
+          <Description>
+            <img src={icon} alt="icon" />
+            <p>{name}</p>
+          </Description>
+          <WindowActions>
+            <WindowAction onClick={() => hideAppHandler(_id)}>
+              <img src={dash} alt="minimalize" />
+            </WindowAction>
+            <WindowAction onClick={this.maximalizeAppHandler}>
+              <img src={multi} alt="multi tabs" />
+            </WindowAction>
+            <WindowAction onClick={() => closeAppHandler(_id)}>
+              <img src={close} alt="close" />
+            </WindowAction>
+          </WindowActions>
+        </NavBelt>
+        <ContentBox>{children}</ContentBox>
+      </WindowWrapper>
+    );
+  }
+}
 
 const mapDispatchToProps = dispatch => ({
   hideAppHandler: id => dispatch(hideApp(id)),

@@ -16,7 +16,7 @@ class Item extends Component {
       rowPos: 'auto',
       colPos: 'auto'
     },
-    position: {
+    dragPosition: {
       x: 0,
       y: 0
     }
@@ -64,7 +64,10 @@ class Item extends Component {
     const {
       runningApps, minimalizedApps, _id, openAppHandler
     } = this.props;
-    if (runningApps.find(app => app.props._id === _id) || minimalizedApps.find(app => app.props._id === _id)) return;
+
+    const findedApp = runningApps.find(app => app.props._id === _id)
+      || minimalizedApps.find(app => app.props._id === _id);
+    if (findedApp) return;
 
     const { clientX, clientY } = e;
     openAppHandler(this, { clientX, clientY }, runningApps.length);
@@ -75,10 +78,7 @@ class Item extends Component {
       _id, type, path, permanent, appLoading
     } = this.props;
     const {
-      position,
-      gridPosition,
-      displayIcon,
-      displayName
+      dragPosition, gridPosition, displayIcon, displayName
     } = this.state;
 
     return (
@@ -91,8 +91,8 @@ class Item extends Component {
         isDragging={this.state.isDragging}
         draggingTime={this.draggingTime}
         loading={appLoading}
-        left={position.x}
-        top={position.y}
+        left={dragPosition.x}
+        top={dragPosition.y}
         onMouseDown={e => onCatchHandler(this, e)}
         onDoubleClick={this.onOpenHandler}
         rowPos={gridPosition.rowPos}
@@ -130,4 +130,7 @@ const mapDispatchToProps = dispatch => ({
   openAppHandler: (app, event, runningAppsAmount) => dispatch(openApp(app, event, runningAppsAmount))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Item));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(Item));

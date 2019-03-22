@@ -1,4 +1,4 @@
-import * as itemsActions from './itemsActions';
+import * as itemsActions from './contextMenuActions';
 
 export const desktop = {
   new: {

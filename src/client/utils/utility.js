@@ -47,10 +47,13 @@ const calculatePos = (type, value) => {
 };
 
 export const onMoveHandler = (icon, e) => {
+  const { isDragging } = icon.state;
+  if (!isDragging) return;
+
   icon.draggingTime += 1;
   const newX = e.clientX - icon.prevX;
   const newY = e.clientY - icon.prevY;
-  icon.setState(prevState => updateObject(prevState, { position: { x: newX, y: newY } }));
+  icon.setState(prevState => updateObject(prevState, { dragPosition: { x: newX, y: newY } }));
 };
 
 export const onDropHandler = (icon, e) => {
@@ -63,7 +66,7 @@ export const onDropHandler = (icon, e) => {
   icon.prevX = 0;
   icon.prevY = 0;
 
-  if (icon.state && icon.state.gridPosition) {
+  if (icon.state.gridPosition) {
     const posX = e.clientX
       - (e.target.offsetLeft > 94 || e.target.tagName !== 'DIV'
         ? 0
@@ -92,7 +95,6 @@ export const onDropHandler = (icon, e) => {
     const newRow = currRow > maxRow ? maxRow.toString() : currRow.toString();
     const newCol = currCol > maxCol ? maxCol.toString() : currCol.toString();
 
-
     icon.setState(prevState => updateObject(prevState, {
       isDragging: false,
       position: { x: 0, y: 0 },
@@ -110,14 +112,35 @@ export const onDropHandler = (icon, e) => {
     }).catch((error) => {
       console.log(error);
     });
+  } else {
+    const rect = icon.dragTarget.getBoundingClientRect();
+    console.log(
+      rect.left,
+      e.clientX,
+      e.target.offsetWidth,
+      rect.top,
+      e.clientY,
+      e.target.offsetHeight
+    );
+    icon.setState(prevState => updateObject(prevState, {
+      isDragging: false,
+      dragPosition: {
+        x: 0,
+        y: 0
+      },
+      position: {
+        x: `${rect.left}px`,
+        y: `${rect.top}px`
+      }
+    }));
   }
 };
 
 export const onCatchHandler = (icon, e) => {
-  console.log(icon, e);
   icon.prevX = e.clientX;
   icon.prevY = e.clientY;
 
+  icon.dragTarget = e.target;
   icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 50);
   icon.onDropFunction = ev => onDropHandler(icon, ev);
   icon.setState({ isDragging: true }, () => {
