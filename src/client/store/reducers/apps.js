@@ -14,13 +14,12 @@ const openApp = (state, { openedApp }) => updateObject(state, {
   running: state.running.concat([openedApp])
 });
 
+const closeApp = (state, { id }) => updateObject(state, {
+  running: state.running.filter(app => app.props._id !== id)
+});
+
 const focusApp = (state, { id }) => {
   const focusedApp = state.running.find(app => app.props._id === id);
-  console.log(
-    state.running,
-    state.running.filter(app => app.props._id !== id),
-    state.running.filter(app => app.props._id !== id).concat([focusedApp])
-  );
   return updateObject(state, {
     running: state.running
       .filter(app => app.props._id !== id)
@@ -28,8 +27,9 @@ const focusApp = (state, { id }) => {
   });
 };
 
-const closeApp = (state, { id }) => updateObject(state, {
-  running: state.running.filter(app => app.props._id !== id)
+const hideApp = (state, { hiddenApp }) => updateObject(state, {
+  minimalized: state.minimalized.concat([hiddenApp]),
+  running: state.running.filter(app => app.props._id !== hiddenApp.props._id)
 });
 
 const reducer = (state = initialState, action) => {
@@ -43,6 +43,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.APP_FOCUS:
       return focusApp(state, action);
     case actionTypes.APP_HIDE:
+      return hideApp(state, action);
     case actionTypes.APP_SHOW:
     default:
       return state;

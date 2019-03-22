@@ -20,7 +20,7 @@ const WindowWrapper = styled.div`
   transform: ${({
     maximalized, dragLeft, dragTop, left, top
   }) => {
-    if (maximalized) return `translate(calc((${left}) * (-1)), calc((${top} + .7px) * (-1)))`; /* for fix blured font */
+    if (maximalized) return `translate(calc((${left}) * (-1)), calc((${top} - .7px) * (-1)))`; /* for fix blured font */
     return `translate( ${dragLeft}px, ${dragTop}px )`;
   }};
   transition: ${({ isDragging, positioning }) => {
@@ -161,7 +161,7 @@ class systemWindow extends Component {
         isDragging={isDragging}
         positioning={positioning}
         maximalized={maximalized}
-        onClick={() => focusAppHandler(_id)}
+        onMouseDown={() => focusAppHandler(_id)}
       >
         <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
           <Description>

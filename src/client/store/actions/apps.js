@@ -26,17 +26,16 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
         key={app.props._id}
         sourceX={`${event.clientX}px`}
         sourceY={`${event.clientY}px`}
-        left={`20vh + ${3 * (activeAppsAmount % 6)
-          + 3 * Math.floor(activeAppsAmount / 6)}vh`}
-        top={`10vh + ${3 * (activeAppsAmount % 6)
-          + 3 * Math.floor(activeAppsAmount / 6)}vh`}
+        left={`20vw + ${3 * (activeAppsAmount % 6)
+          + 5 * Math.floor(activeAppsAmount / 6)}vw`}
+        top={`10vh + ${3 * (activeAppsAmount % 6)}vh`}
         _id={app.props._id}
         name={app.state.displayName}
         path={app.props.path}
         icon={appIcon}
         type={app.props.type}
       >
-        <TextEditor value={app.props.content} itemId={app.props._id} />
+        <TextEditor value={app.props.content} updateDesktopIcon={app.props.updateIcon} itemId={app.props._id} />
       </SystemWindow>
     );
   }
@@ -51,10 +50,13 @@ export const closeApp = id => ({
   id
 });
 
-export const hideApp = id => ({
-  type: actionTypes.APP_HIDE,
-  id
-});
+export const hideApp = (hiddenApp) => {
+  console.log('hide');
+  return {
+    type: actionTypes.APP_HIDE,
+    hiddenApp
+  };
+};
 
 export const showApp = () => ({
   type: actionTypes.APP_SHOW

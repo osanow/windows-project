@@ -16,10 +16,9 @@ export const deleteItem = (id) => {
 };
 
 export const createItem = (type, data, updateIcons) => {
-  console.log(type);
   const newItem = {
     name: `New ${type}`,
-    type: (type === 'directory' ? ['directory', 'container'] : ['file']),
+    type: type === 'directory' ? ['directory', 'container'] : ['file'],
     icon: `${type}.png`,
     path: data.path,
     owner: data.userId

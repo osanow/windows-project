@@ -135,12 +135,31 @@ class Desktop extends Component {
       });
   };
 
+  updateIcon = (id, changes) => {
+    const { desktopItems } = this.state;
+    desktopItems.find((item) => {
+      if (item._id === id) {
+        const updatedItem = {
+          ...desktopItems.find(el => el._id === id),
+          ...changes
+        };
+        this.setState(prevState => updateObject(prevState, {
+          desktopItems: prevState.desktopItems
+            .filter(el => el._id !== id)
+            .concat([updatedItem])
+        }));
+        return true;
+      }
+      return false;
+    });
+  };
+
   render() {
     const { desktopItems, wallpaperUrl, contextMenu } = this.state;
     const { runningApps } = this.props;
 
     const itemsArray = desktopItems.map(item => (
-      <DesktopIcon key={item._id} {...item} />
+      <DesktopIcon key={item._id} updateIcon={this.updateIcon} {...item} />
     ));
 
     return (
