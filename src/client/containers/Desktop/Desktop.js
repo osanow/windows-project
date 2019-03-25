@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
+import * as menuOptions from '../../utils/contextMenuOptions';
+import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
-import DesktopIcon from '../../components/DesktopIcon/DesktopIcon';
+import DesktopIcon from './DesktopIcon/DesktopIcon';
+import { updateObject } from '../../utils/utility';
 
-const Desktop = styled.div`
+const DesktopWrapper = styled.div`
   width: 100vw;
   height: calc(100vh - 3rem);
   overflow: hidden;
@@ -26,25 +29,32 @@ const Desktop = styled.div`
   grid-auto-flow: column;
 `;
 
-const desktop = (props) => {
-  const [desktopConfig, setDesktopConfig] = useState({
+class Desktop extends Component {
+  state = {
     wallpaperUrl: '',
-    desktopItems: []
-  });
+    desktopItems: [],
+    contextMenu: {
+      opened: false,
+      options: {},
+      data: {},
+      left: 0,
+      top: 0
+    }
+  };
 
-  const { wallpaper, isAuth, token } = props;
+  componentDidMount() {
+    window.oncontextmenu = this.onContextMenu;
+  }
 
-  let ResItems = null;
+  componentDidUpdate(prevProps) {
+    const { isAuth, wallpaper } = this.props;
+    let ResItems = null;
 
-  useEffect(() => {
-    if (isAuth) {
+    if (prevProps.isAuth !== isAuth) {
       axios('items/', {
         method: 'GET',
         params: {
-          path: '/Desktop/'
-        },
-        headers: {
-          authorization: token
+          path: '/Desktop'
         }
       })
         .then((res) => {
@@ -52,30 +62,133 @@ const desktop = (props) => {
           return import(`../../assets/bgrounds/${wallpaper}`);
         })
         .then((res) => {
-          setDesktopConfig({
+          this.setState(prevState => updateObject(prevState, {
             wallpaperUrl: res.default,
             desktopItems: ResItems
-          });
+          }));
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [isAuth]);
+  }
 
-  return (
-    <Desktop wallpaperUrl={desktopConfig.wallpaperUrl} type="desktop">
-      {desktopConfig.desktopItems.map(item => (
-        <DesktopIcon key={item._id} token={token} {...item} />
-      ))}
-    </Desktop>
-  );
-};
+  closeContextMenuHandler = () => {
+    document.removeEventListener('click', this.closeContextMenuHandler);
+    this.setState(prevState => updateObject(prevState, {
+      contextMenu: {
+        opened: false,
+        options: {},
+        data: {},
+        left: 0,
+        top: 0
+      }
+    }));
+  };
+
+  onContextMenu = (e) => {
+    const { userId } = this.props;
+
+    const correctTarget = e.path.find(
+      val => val.getAttribute('data-type') || val.id === 'app-root'
+    );
+    if (!correctTarget.getAttribute('data-type')) return false;
+
+    const iconId = correctTarget.id;
+    const iconType = correctTarget.getAttribute('data-type').split(',');
+    const iconPath = correctTarget.getAttribute('data-path');
+
+    let options = {};
+    iconType.forEach((type) => {
+      options = {
+        ...options,
+        ...menuOptions[type]
+      };
+    });
+
+    this.setState(prevState => updateObject(prevState, {
+      contextMenu: {
+        opened: true,
+        left: e.clientX,
+        top: e.clientY,
+        data: {
+          path: iconPath,
+          owner: userId,
+          id: iconId
+        },
+        options
+      }
+    }));
+
+    document.addEventListener('click', this.closeContextMenuHandler);
+    return false;
+  };
+
+  updateIcons = () => {
+    axios('items/', {
+      method: 'GET',
+      params: {
+        path: '/Desktop'
+      }
+    })
+      .then(res => this.setState(prevState => updateObject(prevState, {
+        desktopItems: res.data
+      })))
+      .then(() => { document.body.style.cursor = 'default'; })
+      .catch((err) => {
+        document.body.style.cursor = 'default';
+        console.log(err);
+      });
+  };
+
+  updateIcon = (id, changes) => {
+    const { desktopItems } = this.state;
+    desktopItems.find((item) => {
+      if (item._id === id) {
+        const updatedItem = {
+          ...desktopItems.find(el => el._id === id),
+          ...changes
+        };
+        this.setState(prevState => updateObject(prevState, {
+          desktopItems: prevState.desktopItems
+            .filter(el => el._id !== id)
+            .concat([updatedItem])
+        }));
+        return true;
+      }
+      return false;
+    });
+  };
+
+  render() {
+    const { desktopItems, wallpaperUrl, contextMenu } = this.state;
+    const { runningApps } = this.props;
+
+    const itemsArray = desktopItems.map(item => (
+      <DesktopIcon key={item._id} updateIcon={this.updateIcon} {...item} />
+    ));
+
+    return (
+      <DesktopWrapper
+        wallpaperUrl={wallpaperUrl}
+        data-type="desktop"
+        data-path="/Desktop"
+      >
+        {itemsArray}
+        {runningApps}
+        {contextMenu.opened && (
+          <ContextMenu updateIcons={this.updateIcons} {...contextMenu} />
+        )}
+      </DesktopWrapper>
+    );
+  }
+}
 
 const mapStateToProps = state => ({
   isAuth: state.auth.token !== null,
-  token: state.auth.token,
-  wallpaper: state.auth.preferences.wallpaper
+  userId: state.auth.userId,
+  wallpaper: state.auth.preferences.wallpaper,
+  runningApps: state.apps.running
 });
 
-export default connect(mapStateToProps)(React.memo(desktop));
+export default connect(mapStateToProps)(Desktop);

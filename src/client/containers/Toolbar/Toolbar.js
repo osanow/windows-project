@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
-import ToolbarItem from '../../components/ToolbarItem/toolbarItem';
+import ToolbarItem from './ToolbarItem/toolbarItem';
 import ClockItem from '../../components/ClockItem/clockItem';
 
 const Bar = styled.nav`
@@ -24,12 +25,15 @@ class Toolbar extends Component {
   state = {};
 
   render() {
+    const { minimalizedApps } = this.props;
+
+    const itemsArray = minimalizedApps.map(item => (
+      <ToolbarItem key={item._id} {...item} />
+    ));
+
     return (
       <Bar>
-        <Box>
-          <ToolbarItem iconName="win10.png" isPermanent scale="medium" />
-          <ToolbarItem iconName="search.svg" isPermanent scale="medium" />
-        </Box>
+        <Box>{itemsArray}</Box>
         <Box>
           <ToolbarItem iconName="sound.png" isPermanent scale="small" />
           <ToolbarItem iconName="wifi.png" isPermanent scale="small" />
@@ -40,4 +44,8 @@ class Toolbar extends Component {
   }
 }
 
-export default React.memo(Toolbar);
+const mapStateToProps = state => ({
+  minimalizedApps: state.apps.minimalized
+});
+
+export default connect(mapStateToProps)(React.memo(Toolbar));
