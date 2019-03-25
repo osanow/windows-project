@@ -39,7 +39,7 @@ export const checkValidity = (value, rules) => {
 };
 
 export const changeFormatWithoutDashes = text => text.replace('_', ' ');
-export const changeFormatWithDashes = text => text.replace(' ', '_');
+export const changeFormatWithDashes = text => text.toLowerCase().replace(' ', '_');
 
 const calculatePos = (type, value) => {
   if (type === 'row') return Math.abs(Math.ceil(value / (4.8 * 16)));

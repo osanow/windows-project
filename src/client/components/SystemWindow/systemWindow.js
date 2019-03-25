@@ -18,9 +18,9 @@ const WindowWrapper = styled.div`
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 
   transition: ${({ isDragging, positioning }) => {
-    if (isDragging) return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform .1s';
-    if (positioning) return 'width 0.5s ease-in-out, height 0.5s ease-in-out';
-    return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform 0.5s ease-in-out';
+    if (isDragging) return 'width 0.5s ease-in, height 0.5s ease-in, transform .1s linear';
+    if (positioning) return 'width 0.5s ease-in, height 0.5s ease-in';
+    return 'width 0.4s ease-in 0.2s, height 0.4s ease-in 0.2s, transform 0.4s ease-in-out';
   }};
 
   top: ${({ top }) => `calc(${top})`};
@@ -50,7 +50,7 @@ const Description = styled.div`
   }
 
   & > img {
-    margin: 0 0.5rem;
+    margin: 0 0.2rem;
     height: 1rem;
     width: 1rem;
   }
@@ -156,13 +156,16 @@ class systemWindow extends Component {
         onMouseDown={() => focusAppHandler(_id)}
         style={{
           transform: maximalized
-            ? `translate(calc((${position.x}) * (-1)), calc((${position.y} - .7px) * (-1)))`
+            ? `translate(calc((${position.x}) * (-1)), calc((${
+              position.y
+            } - .7px) * (-1)))`
             : `translate( ${dragPosition.x}px, ${dragPosition.y}px )`
         }}
       >
         <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
           <Description>
-            <img draggable="false" src={icon} alt="icon" /> |
+            <img draggable="false" src={icon} alt="icon" />
+            <p style={{ margin: '0 0.5rem' }}> | </p>
             <p>{name}</p>
           </Description>
           <WindowActions onMouseDown={e => e.stopPropagation()}>

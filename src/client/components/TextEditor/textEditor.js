@@ -142,4 +142,4 @@ const textEditor = ({ value, itemId, updateDesktopIcon }) => {
   );
 };
 
-export default textEditor;
+export default React.memo(textEditor);

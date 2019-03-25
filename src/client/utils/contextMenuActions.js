@@ -23,6 +23,7 @@ export const createItem = (type, data, updateIcons) => {
     path: data.path,
     owner: data.userId
   };
+  document.body.style.cursor = 'progress';
 
   axios('/items/', {
     method: 'POST',

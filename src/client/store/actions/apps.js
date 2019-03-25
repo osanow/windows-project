@@ -35,19 +35,40 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
         icon={appIcon}
         type={app.props.type}
       >
-        <TextEditor value={app.props.content} updateDesktopIcon={app.props.updateIcon} itemId={app.props._id} />
+        <TextEditor
+          value={app.props.content}
+          updateDesktopIcon={app.props.updateIcon}
+          itemId={app.props._id}
+        />
       </SystemWindow>
     );
-  }
-  else if (app.props.type.find(type => type === 'file')){
-
+  } else if (app.props.type.find(type => type === 'directory')) {
+    const DirExplorer = (await import('../../components/dirExplorer/dirExplorer'))
+      .default;
+    openedApp = (
+      <SystemWindow
+        key={app.props._id}
+        sourceX={`${event.clientX}px`}
+        sourceY={`${event.clientY}px`}
+        left={`20vw + ${3 * (activeAppsAmount % 6)
+          + 5 * Math.floor(activeAppsAmount / 6)}vw`}
+        top={`10vh + ${3 * (activeAppsAmount % 6)}vh`}
+        _id={app.props._id}
+        name={`${app.props.path}/${app.state.displayName}`}
+        path={app.props.path}
+        icon={appIcon}
+        type={app.props.type}
+      >
+        <DirExplorer dirName={app.state.displayName} />
+      </SystemWindow>
+    );
   }
   setTimeout(() => {
     dispatch({
       type: actionTypes.APP_OPEN,
       openedApp
     });
-  }, 200);
+  }, 100);
 };
 
 export const closeApp = id => ({

@@ -18,7 +18,7 @@ export const file = {
   rename: ({ id }) => itemsActions.changeName(id)
 };
 
-export const container = {
+export const directory = {
   delete: ({ id }) => itemsActions.deleteItem(id),
   rename: ({ id }) => itemsActions.changeName(id)
 };

@@ -47,16 +47,14 @@ class Desktop extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('update');
     const { isAuth, wallpaper } = this.props;
     let ResItems = null;
 
     if (prevProps.isAuth !== isAuth) {
-      console.log('update2');
       axios('items/', {
         method: 'GET',
         params: {
-          path: '/Desktop/'
+          path: '/Desktop'
         }
       })
         .then((res) => {
@@ -100,7 +98,13 @@ class Desktop extends Component {
     const iconType = correctTarget.getAttribute('data-type').split(',');
     const iconPath = correctTarget.getAttribute('data-path');
 
-    const options = { ...menuOptions[[...iconType]] };
+    let options = {};
+    iconType.forEach((type) => {
+      options = {
+        ...options,
+        ...menuOptions[type]
+      };
+    });
 
     this.setState(prevState => updateObject(prevState, {
       contextMenu: {
@@ -124,15 +128,15 @@ class Desktop extends Component {
     axios('items/', {
       method: 'GET',
       params: {
-        path: '/Desktop/'
+        path: '/Desktop'
       }
     })
-      .then((res) => {
-        this.setState(prevState => updateObject(prevState, {
-          desktopItems: res.data
-        }));
-      })
+      .then(res => this.setState(prevState => updateObject(prevState, {
+        desktopItems: res.data
+      })))
+      .then(() => { document.body.style.cursor = 'default'; })
       .catch((err) => {
+        document.body.style.cursor = 'default';
         console.log(err);
       });
   };
@@ -168,7 +172,7 @@ class Desktop extends Component {
       <DesktopWrapper
         wallpaperUrl={wallpaperUrl}
         data-type="desktop"
-        data-path="/Desktop/"
+        data-path="/Desktop"
       >
         {itemsArray}
         {runningApps}
