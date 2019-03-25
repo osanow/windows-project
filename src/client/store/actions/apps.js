@@ -39,10 +39,12 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
       </SystemWindow>
     );
   }
-  dispatch({
-    type: actionTypes.APP_OPEN,
-    openedApp
-  });
+  setTimeout(() => {
+    dispatch({
+      type: actionTypes.APP_OPEN,
+      openedApp
+    });
+  }, 200);
 };
 
 export const closeApp = id => ({

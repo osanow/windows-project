@@ -165,11 +165,11 @@ class systemWindow extends Component {
       >
         <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
           <Description>
-            <img src={icon} alt="icon" />
+            <img draggable="false" src={icon} alt="icon" />
             <p>{name}</p>
           </Description>
           <WindowActions onMouseDown={e => e.stopPropagation()}>
-            <WindowAction onMouseDown={() => hideAppHandler(_id)}>
+            <WindowAction> {/* onMouseDown={() => hideAppHandler(_id)} */}
               <img src={dash} alt="minimalize" />
             </WindowAction>
             <WindowAction onMouseDown={this.maximalizeAppHandler}>

@@ -126,7 +126,9 @@ export const onCatchHandler = (icon, e) => {
   icon.prevX = e.clientX;
   icon.prevY = e.clientY;
 
-  icon.dragTarget = e.target;
+  if (e.target.tagName !== 'NAV' && e.target.tagName !== 'DIV') icon.dragTarget = e.target.parentElement;
+  else icon.dragTarget = e.target;
+
   icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 50);
   icon.onDropFunction = () => onDropHandler(icon);
   icon.setState({ isDragging: true }, () => {
