@@ -1,10 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://windows-project.herokuapp.com/',
-  headers: {
-    authorization: localStorage.getItem('token')
-  }
+  baseURL: 'https://windows-project.herokuapp.com/'
 });
 
 export default instance;

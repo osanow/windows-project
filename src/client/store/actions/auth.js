@@ -6,12 +6,15 @@ export const authStart = () => ({
   type: actionTypes.AUTH_START
 });
 
-export const authSuccess = (token, userId, preferences) => ({
-  type: actionTypes.AUTH_SUCCESS,
-  idToken: token,
-  preferences,
-  userId
-});
+export const authSuccess = (token, userId, preferences) => {
+  axios.defaults.headers.common.Authorization = token;
+  return {
+    type: actionTypes.AUTH_SUCCESS,
+    idToken: token,
+    preferences,
+    userId
+  };
+};
 
 export const authSigninFail = error => ({
   type: actionTypes.AUTH_SIGNIN_FAIL,

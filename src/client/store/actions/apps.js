@@ -39,6 +39,9 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
       </SystemWindow>
     );
   }
+  else if (app.props.type.find(type => type === 'file')){
+
+  }
   setTimeout(() => {
     dispatch({
       type: actionTypes.APP_OPEN,

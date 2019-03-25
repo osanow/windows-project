@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import axios from '../../../axios-instance';
@@ -7,7 +7,7 @@ import { openApp } from '../../../store/actions/index';
 import noIcon from '../../../assets/icons/noIcon.png';
 import * as Styles from './styles';
 
-class Item extends Component {
+class Item extends PureComponent {
   state = {
     displayIcon: noIcon,
     displayName: '',
@@ -133,4 +133,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(Item));
+)(Item);
