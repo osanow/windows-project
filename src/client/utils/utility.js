@@ -62,6 +62,8 @@ export const onDropHandler = (icon) => {
   icon.prevX = 0;
   icon.prevY = 0;
   icon.draggingTime = 0;
+  document.body.style.cursor = 'default';
+
   document.removeEventListener('mouseup', icon.onDropFunction, false);
   document.removeEventListener('mousemove', icon.throttledMouseMove, false);
 
@@ -129,10 +131,11 @@ export const onCatchHandler = (icon, e) => {
   if (e.target.tagName !== 'NAV' && e.target.tagName !== 'DIV') icon.dragTarget = e.target.parentElement;
   else icon.dragTarget = e.target;
 
-  icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 50);
+  icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 100);
   icon.onDropFunction = () => onDropHandler(icon);
   icon.setState({ isDragging: true }, () => {
     icon.draggingTime = 0;
+    document.body.style.cursor = 'grabbing';
     document.addEventListener('mouseup', icon.onDropFunction, false);
     document.addEventListener('mousemove', icon.throttledMouseMove, false);
   });

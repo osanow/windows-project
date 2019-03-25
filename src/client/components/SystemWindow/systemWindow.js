@@ -17,14 +17,8 @@ const WindowWrapper = styled.div`
   filter: blur(0.000001px); /* for fix blured font */
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 
-  transform: ${({
-    maximalized, dragLeft, dragTop, left, top
-  }) => {
-    if (maximalized) return `translate(calc((${left}) * (-1)), calc((${top} - .7px) * (-1)))`; /* for fix blured font */
-    return `translate( ${dragLeft}px, ${dragTop}px )`;
-  }};
   transition: ${({ isDragging, positioning }) => {
-    if (isDragging) return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform .05s';
+    if (isDragging) return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform .1s';
     if (positioning) return 'width 0.5s ease-in-out, height 0.5s ease-in-out';
     return 'width 0.5s ease-in-out, height 0.5s ease-in-out, transform 0.5s ease-in-out';
   }};
@@ -154,22 +148,26 @@ class systemWindow extends Component {
         id={`Window${_id}`}
         top={position.y}
         left={position.x}
-        dragTop={dragPosition.y}
-        dragLeft={dragPosition.x}
         width={maximalized ? '100vw' : '60vw'}
         height={maximalized ? 'calc(100vh - 3rem)' : '60vh'}
         isDragging={isDragging}
         positioning={positioning}
         maximalized={maximalized}
         onMouseDown={() => focusAppHandler(_id)}
+        style={{
+          transform: maximalized
+            ? `translate(calc((${position.x}) * (-1)), calc((${position.y} - .7px) * (-1)))`
+            : `translate( ${dragPosition.x}px, ${dragPosition.y}px )`
+        }}
       >
         <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
           <Description>
-            <img draggable="false" src={icon} alt="icon" />
+            <img draggable="false" src={icon} alt="icon" /> |
             <p>{name}</p>
           </Description>
           <WindowActions onMouseDown={e => e.stopPropagation()}>
-            <WindowAction> {/* onMouseDown={() => hideAppHandler(_id)} */}
+            <WindowAction>
+              {/* onMouseDown={() => hideAppHandler(_id)} */}
               <img src={dash} alt="minimalize" />
             </WindowAction>
             <WindowAction onMouseDown={this.maximalizeAppHandler}>

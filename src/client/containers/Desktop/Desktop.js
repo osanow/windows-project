@@ -47,10 +47,12 @@ class Desktop extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    console.log('update');
     const { isAuth, wallpaper } = this.props;
     let ResItems = null;
 
     if (prevProps.isAuth !== isAuth) {
+      console.log('update2');
       axios('items/', {
         method: 'GET',
         params: {

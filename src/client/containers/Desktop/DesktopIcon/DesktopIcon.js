@@ -78,7 +78,7 @@ class Item extends PureComponent {
       _id, type, path, permanent, appLoading
     } = this.props;
     const {
-      dragPosition, gridPosition, displayIcon, displayName
+      dragPosition, gridPosition, displayIcon, displayName, isDragging
     } = this.state;
 
     return (
@@ -87,16 +87,14 @@ class Item extends PureComponent {
         data-permanent={permanent}
         data-type={type.toString()}
         id={_id}
-        // eslint-disable-next-line react/destructuring-assignment
-        isDragging={this.state.isDragging}
+        isDragging={isDragging}
         draggingTime={this.draggingTime}
         loading={appLoading}
-        left={dragPosition.x}
-        top={dragPosition.y}
         onMouseDown={e => onCatchHandler(this, e)}
         onDoubleClick={this.onOpenHandler}
         rowPos={gridPosition.rowPos}
         colPos={gridPosition.colPos}
+        style={{ transform: (isDragging ? `translate( ${dragPosition.x}px, ${dragPosition.y}px )` : 'translate( 0px, 0px )') }}
       >
         <Styles.ItemIcon
           src={displayIcon}

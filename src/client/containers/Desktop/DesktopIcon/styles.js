@@ -10,11 +10,10 @@ export const Container = styled.div`
 
   cursor: ${({ isDragging, loading, draggingTime }) => {
     if (loading) return 'wait';
-    if (isDragging && draggingTime > 5) return 'grabbing';
+    if (isDragging && draggingTime > 2) return 'grabbing';
     return 'pointer';
   }};
-  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .05s')};
-  transform: ${({ left, top, isDragging }) => (isDragging ? `translate( ${left}px, ${top}px )` : 'translate( 0px, 0px )')};
+  transition: ${({ isDragging }) => (!isDragging ? 'none' : 'transform .1s linear')};
   grid-column-start: ${({ colPos }) => colPos};
   grid-row-start: ${({ rowPos }) => rowPos};
 

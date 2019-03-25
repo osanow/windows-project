@@ -69,7 +69,8 @@ const Title = styled.h1`
   font-size: 32px;
   font-weight: 700;
   color: whitesmoke;
-  animation: ${textAnimation} 2s ease-in-out 1 forwards;
+  opacity: 0;
+  animation: ${textAnimation} 2s ease-in-out 0.5s 1 forwards;
 
   &::after {
     content: '';
