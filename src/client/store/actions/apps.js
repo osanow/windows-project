@@ -43,7 +43,7 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
       </SystemWindow>
     );
   } else if (app.props.type.find(type => type === 'directory')) {
-    const DirExplorer = (await import('../../components/dirExplorer/dirExplorer'))
+    const DirExplorer = (await import('../../components/DirExplorer/dirExplorer'))
       .default;
     openedApp = (
       <SystemWindow
