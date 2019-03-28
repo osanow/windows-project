@@ -14,6 +14,7 @@ const Item = styled.div`
   color: #666;
   text-transform: capitalize;
   font-family: Monserrat, sans-serif;
+  overflow: hidden;
 
   &:hover,
   &:active {
@@ -43,6 +44,7 @@ const Item = styled.div`
 
 const MainItem = styled(Item)`
   padding-left: 1.5rem;
+  z-index: 1;
   color: black;
   text-align: left;
   font-family: 'lato', sans-serif;
@@ -59,14 +61,25 @@ const MainItem = styled(Item)`
 `;
 
 const dirItem = (props) => {
-  console.log(props);
   const {
-    iconPath, updatedAt, createdAt, type, size, name
+    iconPath,
+    updatedAt,
+    createdAt,
+    type,
+    size,
+    name,
+    _id,
+    changeDirHandler
   } = props;
 
   return (
     <>
-      <MainItem iconPath={iconPath}>{name}</MainItem>
+      <MainItem
+        iconPath={iconPath}
+        onDoubleClick={() => changeDirHandler(_id, name)}
+      >
+        {name}
+      </MainItem>
       <Item>
         {`
           ${new Date(updatedAt).toLocaleDateString()}

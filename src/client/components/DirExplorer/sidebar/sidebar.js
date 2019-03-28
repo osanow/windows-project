@@ -3,9 +3,10 @@ import styled from 'styled-components';
 
 const Sidebar = styled.ul`
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
   position: relative;
-  width: 12.5rem;
+  width: 10.5rem;
   list-style: none;
   margin: 0.5rem;
   border-right: 1px solid #eee;

@@ -14,7 +14,6 @@ const WindowWrapper = styled.div`
   background-color: whitesmoke;
   border: 1px solid rgb(100, 100, 100);
 
-  filter: blur(0.000001px); /* for fix blured font */
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 
   transition: ${({ isDragging, positioning }) => {

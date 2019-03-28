@@ -13,6 +13,11 @@ export const focusApp = id => ({
 });
 
 export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
+  if (document.getElementById(`Window${app.props._id}`)) {
+    focusApp(app.props._id);
+    return;
+  }
+
   dispatch(startOpeningApp());
 
   let openedApp;

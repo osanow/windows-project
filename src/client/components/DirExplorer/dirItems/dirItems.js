@@ -35,13 +35,16 @@ const Category = styled.div`
   }
 `;
 
-const dirItems = ({ items }) => {
-  console.log(items);
+const dirItems = (props) => {
+  const { items, changeDirHandler } = props;
+
   const categories = ['Name', 'Edited at', 'Created at', 'Type', 'Size'];
   const categoriesArray = categories.map(item => (
     <Category key={item}>{item}</Category>
   ));
-  const itemsArray = items.map(item => <DirItem key={item._id} {...item} />);
+  const itemsArray = items.map(item => (
+    <DirItem key={item._id} changeDirHandler={changeDirHandler} {...item} />
+  ));
   return (
     <Wrapper categoriesAmount={categories.length}>
       {categoriesArray}

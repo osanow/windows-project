@@ -140,6 +140,21 @@ const explorer = (props) => {
     });
   };
 
+  const changeDir = (id, name) => {
+    setData({
+      items: null,
+      history: {
+        position: history.position + 1,
+        data: history.data.splice(0, history.position + 1).concat([
+          {
+            path: currData.path.concat(id),
+            displayPath: currData.displayPath.concat(name)
+          }
+        ])
+      }
+    });
+  };
+
   useEffect(() => {
     fetchItems();
   }, [data.history.position]);
@@ -180,7 +195,7 @@ const explorer = (props) => {
           />
         ) : (
           <Content>
-            <DirItems items={items} />
+            <DirItems items={items} changeDirHandler={changeDir} />
           </Content>
         )}
       </Main>
