@@ -47,11 +47,11 @@ const PathItem = styled.li`
   }
 `;
 
-const pathList = ({ path, navigateHandler }) => {
-  const pathArray = path.map((item, index) => (
+const pathList = ({ path, displayPath, changeDir }) => {
+  const pathArray = displayPath.map((item, index) => (
     <PathItem
-      key={item}
-      onClick={() => navigateHandler(index + 1 - path.length)}
+      key={path[index]}
+      onClick={() => changeDir(path[index], displayPath[index])}
     >
       {item}
     </PathItem>

@@ -40,6 +40,9 @@ const NavOption = styled.li`
   margin: 0 0.3rem;
   height: 1rem;
   cursor: ${({ active }) => (active ? 'pointer' : 'default')};
+  user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
 
   & > img {
     filter: ${({ active }) => (active ? 'none' : 'invert(80%)')};
@@ -104,7 +107,6 @@ const explorer = (props) => {
   const currData = history.data[history.position];
 
   const fetchItems = async () => {
-    console.log(currData);
     const fetchedItems = (await axios('items/', {
       method: 'GET',
       params: {
@@ -141,16 +143,26 @@ const explorer = (props) => {
   };
 
   const changeDir = (id, name) => {
+    if (id === currData.path[currData.path.length - 1]) return;
+
+    let newPath = currData.path.concat(id);
+    let newDisplayPath = currData.displayPath.concat(name);
+
+    const duplicate = currData.path.findIndex(itemId => itemId === id);
+    if (duplicate !== -1) {
+      newPath = [id];
+      newDisplayPath = [name];
+    }
     setData({
       items: null,
       history: {
-        position: history.position + 1,
-        data: history.data.splice(0, history.position + 1).concat([
+        position: history.data.slice(0, history.position).length + 1,
+        data: history.data.slice(0, history.position + 1).concat(
           {
-            path: currData.path.concat(id),
-            displayPath: currData.displayPath.concat(name)
+            path: newPath,
+            displayPath: newDisplayPath
           }
-        ])
+        )
       }
     });
   };
@@ -178,7 +190,11 @@ const explorer = (props) => {
             <img src={rightArrow} alt="next" />
           </NavOption>
         </NavOptions>
-        <PathList path={currData.displayPath} navigateHandler={navigate} />
+        <PathList
+          displayPath={currData.displayPath}
+          path={currData.path}
+          changeDir={changeDir}
+        />
         <>
           <SearchBox placeholder={`Search in: ${dirName}`} />
           <img src={search} alt="search" />
