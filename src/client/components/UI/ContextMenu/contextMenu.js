@@ -45,14 +45,13 @@ const MenuOption = styled.li`
 const contextMenu = ({
   left, top, options, data, updateIcons
 }) => {
-
   const optionsArray = Object.entries(options).map((el) => {
     if (typeof el[1] === 'object') {
       return (
         <MenuOption key={el[0]}>
           <span>{changeFormatWithoutDashes(el[0])}</span>
           <span>{'>'}</span>
-          <ContextMenu left={13 * 16 - 0.5 * 16} top={-0.35 * 16}>
+          <ContextMenu left={13 * 16 - 0.7 * 16} top={-0.35 * 16}>
             {Object.entries(el[1]).map(nestedEl => (
               <MenuOption
                 key={nestedEl[0]}

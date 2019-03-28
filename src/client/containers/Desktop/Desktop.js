@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import * as menuOptions from '../../utils/contextMenuOptions';
+import * as menuOptions from '../../components/UI/ContextMenu/options';
 import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import axios from '../../axios-instance';
 import DesktopIcon from './DesktopIcon/DesktopIcon';

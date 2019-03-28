@@ -8,7 +8,11 @@ exports.getItems = (req, res) => {
 
   Item.find(query)
     .then((items) => {
-      res.status(200).json(items);
+      const newItems = items.map(item => ({
+        ...item._doc,
+        size: Buffer.byteLength(item.content, 'utf8')
+      }));
+      res.status(200).json(newItems);
     })
     .catch((error) => {
       console.log(error);

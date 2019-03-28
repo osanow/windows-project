@@ -1,4 +1,4 @@
-import axios from '../axios-instance';
+import axios from '../../../axios-instance';
 
 export const changeIconsSize = () => {
   console.log('change icon size');
@@ -18,8 +18,8 @@ export const deleteItem = (id) => {
 export const createItem = (type, data, updateIcons) => {
   const newItem = {
     name: `New ${type}`,
-    type: type === 'directory' ? ['directory', 'container'] : ['file'],
-    icon: `${type}.png`,
+    type: type === 'directory' ? ['directory', 'container'] : ['file', 'txt'],
+    icon: `${type === 'directory' ? 'directory-empty' : 'file'}.svg`,
     path: data.path,
     owner: data.userId
   };

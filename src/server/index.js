@@ -28,6 +28,7 @@ mongoose
   .connect(
     'mongodb+srv://user:DBEEO232zGYWFWMz@cluster0-gmyy5.mongodb.net/windowsProject?retryWrites=true',
     {
+      useFindAndModify: false,
       useCreateIndex: true,
       useNewUrlParser: true
     }

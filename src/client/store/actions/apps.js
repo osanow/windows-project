@@ -14,7 +14,7 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
   dispatch(startOpeningApp());
 
   let openedApp;
-  const appIcon = (await import(`../../assets/icons/${app.props.type[0]}.png`))
+  const appIcon = (await import(`../../assets/icons/${app.props.type[0]}.svg`))
     .default;
   const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
     .default;
@@ -26,9 +26,9 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
         key={app.props._id}
         sourceX={`${event.clientX}px`}
         sourceY={`${event.clientY}px`}
-        left={`20vw + ${3 * (activeAppsAmount % 6)
-          + 5 * Math.floor(activeAppsAmount / 6)}vw`}
-        top={`10vh + ${3 * (activeAppsAmount % 6)}vh`}
+        left={`10rem + ${1.5 * (activeAppsAmount % 6)
+          + 5 * Math.floor(activeAppsAmount / 6)}rem`}
+        top={`3rem + ${1.5 * (activeAppsAmount % 6)}rem`}
         _id={app.props._id}
         name={app.state.displayName}
         path={app.props.path}
@@ -50,16 +50,20 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
         key={app.props._id}
         sourceX={`${event.clientX}px`}
         sourceY={`${event.clientY}px`}
-        left={`20vw + ${3 * (activeAppsAmount % 6)
-          + 5 * Math.floor(activeAppsAmount / 6)}vw`}
-        top={`10vh + ${3 * (activeAppsAmount % 6)}vh`}
+        left={`10rem + ${1.5 * (activeAppsAmount % 6)
+          + 5 * Math.floor(activeAppsAmount / 6)}rem`}
+        top={`3rem + ${1.5 * (activeAppsAmount % 6)}rem`}
         _id={app.props._id}
         name={`${app.props.path}/${app.state.displayName}`}
         path={app.props.path}
         icon={appIcon}
         type={app.props.type}
       >
-        <DirExplorer dirName={app.state.displayName} />
+        <DirExplorer
+          dirName={app.state.displayName}
+          initPath={`${app.props.path}/${app.props._id}`}
+          initDisplayPath={`${app.props.path}/${app.state.displayName}`}
+        />
       </SystemWindow>
     );
   }

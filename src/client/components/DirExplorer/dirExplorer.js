@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from '../../axios-instance';
 
 import leftArrow from '../../assets/icons/left-arrow.svg';
 import rightArrow from '../../assets/icons/right-arrow.svg';
 import search from '../../assets/icons/search.svg';
-import computer from '../../assets/icons/computer.svg';
-import desktop from '../../assets/icons/desktop.svg';
+import { updateObject, asyncForEach } from '../../utils/utility';
+
+import RectangleSpinner from '../Spinners/rectangleSpinner';
+import DirItems from './dirItems/dirItems';
+import PathList from './pathList';
+import Sidebar from './sidebar/sidebar';
 
 const Wrapper = styled.div`
   position: relative;
@@ -41,13 +46,6 @@ const NavOption = styled.li`
   }
 `;
 
-const PathList = styled.nav`
-  width: 100%;
-  margin: 0 0.3rem;
-  height: 1.3rem;
-  border: 1px solid #ccc;
-`;
-
 const SearchBox = styled.input`
   position: relative;
   margin: 0 0.3rem;
@@ -70,63 +68,69 @@ const SearchBox = styled.input`
 const Main = styled.div`
   position: relative;
   height: calc(100% - 2rem);
-  width: 100%;
   display: flex;
-`;
-
-const Sidebar = styled.ul`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  width: 20%;
-  height: 100%;
-  min-width: 7rem;
-  max-width: 12rem;
-  list-style: none;
-  padding: 1rem 1.5rem;
-  margin: 0 0.5rem;
-  border-right: 1px solid #eee;
-  overflow: hidden;
-`;
-
-const SidebarItem = styled.li`
-  position: relative;
-  padding-left: 1rem;
-  width: 100%;
-  margin-top: 0.3rem;
-  font-size: 13px;
-
-  & + ul {
-    height: ${({ active }) => (active ? 'auto' : '0px')};
-  }
-
-  &::before {
-    position: absolute;
-    content: url(${({ icon }) => icon});
-    left: -0.5rem;
-    width: 1rem;
-    height: 1rem;
-  }
-`;
-
-const ItemsList = styled.ul`
-  list-style: none;
-  padding-left: 0.5rem;
-  overflow: hidden;
 `;
 
 const Content = styled.div`
   position: relative;
-  width: 70%;
+  display: inline-flex;
+  overflow-x: scroll;
   height: 100%;
-  padding: 0 1rem;
-  margin: 0 0.5rem;
+  margin: 0;
 `;
 
 const explorer = (props) => {
-  const { dirName } = props;
+  const { dirName, initPath, initDisplayPath } = props;
+  const [data, setData] = useState({
+    items: [],
+    history: {
+      position: 0,
+      data: [
+        {
+          path: initPath.substring(1).split('/'),
+          displayPath: initDisplayPath.substring(1).split('/')
+        }
+      ]
+    }
+  });
+
+  const { history, items } = data;
+  const currData = history.data[history.position];
+
+  const fetchItems = async () => {
+    const fetchedItems = (await axios('items/', {
+      method: 'GET',
+      params: {
+        path: `/${currData.path.join('/')}`
+      }
+    })).data;
+
+    const icons = {};
+    const newItems = [];
+    await asyncForEach(fetchedItems, async (item) => {
+      if (!icons[item.icon]) {
+        icons[item.icon] = (await import(`../../assets/icons/${
+          item.icon
+        }`)).default;
+      }
+      newItems.push({
+        ...item,
+        iconPath: icons[item.icon]
+      });
+    });
+
+    setData(updateObject(data, { items: newItems }));
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, [data.history.position]);
+
   return (
-    <Wrapper>
+    <Wrapper
+      data-type="container"
+      data-path={currData.path}
+    >
       <Navigation>
         <NavOptions>
           <NavOption>
@@ -136,23 +140,26 @@ const explorer = (props) => {
             <img src={rightArrow} alt="next" />
           </NavOption>
         </NavOptions>
-        <PathList />
-        <SearchBox placeholder={`Przeszukaj: ${dirName}`} />
-        <img src={search} alt="search" />
+        <PathList path={currData.displayPath} />
+        <>
+          <SearchBox placeholder={`Search in: ${dirName}`} />
+          <img src={search} alt="search" />
+        </>
       </Navigation>
       <Main>
-        <Sidebar>
-          <SidebarItem icon={computer} active="true">
-            Computer
-          </SidebarItem>
-          <ItemsList>
-            <SidebarItem icon={desktop}> Desktop </SidebarItem>
-            <ItemsList>
-              <SidebarItem icon={desktop}> Desktop </SidebarItem>
-            </ItemsList>
-          </ItemsList>
-        </Sidebar>
-        <Content />
+        <Sidebar />
+        {items.length < 1 ? (
+          <RectangleSpinner
+            style={{
+              margin: '15% 15%',
+              opacity: '0.5'
+            }}
+          />
+        ) : (
+          <Content>
+            <DirItems items={items} />
+          </Content>
+        )}
       </Main>
     </Wrapper>
   );
