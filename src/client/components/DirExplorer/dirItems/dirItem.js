@@ -35,7 +35,7 @@ const Item = styled.div`
     }
   }
 
-  &:last-child {
+  &:nth-child(5n) {
     justify-content: flex-end;
     padding-right: calc(50% - 2rem);
   }
@@ -46,6 +46,7 @@ const MainItem = styled(Item)`
   color: black;
   text-align: left;
   font-family: 'lato', sans-serif;
+  text-transform: none;
 
   &::before {
     position: absolute;
@@ -60,12 +61,12 @@ const MainItem = styled(Item)`
 const dirItem = (props) => {
   console.log(props);
   const {
-    iconPath, updatedAt, createdAt, type, size
+    iconPath, updatedAt, createdAt, type, size, name
   } = props;
 
   return (
     <>
-      <MainItem iconPath={iconPath}>dirItem</MainItem>
+      <MainItem iconPath={iconPath}>{name}</MainItem>
       <Item>
         {`
           ${new Date(updatedAt).toLocaleDateString()}
@@ -79,7 +80,11 @@ const dirItem = (props) => {
         `}
       </Item>
       <Item>{type.join(' ')}</Item>
-      <Item>{calculateSize(size)}</Item>
+      <Item>
+        {type[1] === 'container' || type[0] === 'computer'
+          ? ''
+          : calculateSize(size)}
+      </Item>
     </>
   );
 };

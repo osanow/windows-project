@@ -1,6 +1,8 @@
 import React from 'react';
 import * as actionTypes from './actionTypes';
 
+import noIcon from '../../assets/icons/noIcon.png';
+
 export const startOpeningApp = () => ({
   type: actionTypes.APP_START_OPENING
 });
@@ -14,8 +16,12 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
   dispatch(startOpeningApp());
 
   let openedApp;
-  const appIcon = (await import(`../../assets/icons/${app.props.type[0]}.svg`))
-    .default;
+  let appIcon;
+  try {
+    appIcon = (await import(`../../assets/icons/${app.props.icon}`)).default;
+  } catch (err) {
+    appIcon = noIcon;
+  }
   const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
     .default;
   if (app.props.type.find(type => type === 'file')) {

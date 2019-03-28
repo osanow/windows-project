@@ -47,8 +47,15 @@ const PathItem = styled.li`
   }
 `;
 
-const pathList = ({ path }) => {
-  const pathArray = path.map(item => <PathItem key={item}>{item}</PathItem>);
+const pathList = ({ path, navigateHandler }) => {
+  const pathArray = path.map((item, index) => (
+    <PathItem
+      key={item}
+      onClick={() => navigateHandler(index + 1 - path.length)}
+    >
+      {item}
+    </PathItem>
+  ));
   return (
     <PathList>
       <img src={directory} alt="source" />

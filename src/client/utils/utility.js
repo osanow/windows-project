@@ -147,6 +147,7 @@ export const onDropHandler = (icon) => {
 
 export const onCatchHandler = (icon, e) => {
   if (icon.state.maximalized) return;
+  e.preventDefault();
 
   icon.prevX = e.clientX;
   icon.prevY = e.clientY;

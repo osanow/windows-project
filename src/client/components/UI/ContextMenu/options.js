@@ -22,3 +22,10 @@ export const directory = {
   delete: ({ id }) => itemsActions.deleteItem(id),
   rename: ({ id }) => itemsActions.changeName(id)
 };
+
+export const container = {
+  new: {
+    file: (data, updateIcons) => itemsActions.createItem('file', data, updateIcons),
+    directory: (data, updateIcons) => itemsActions.createItem('directory', data, updateIcons)
+  }
+};
