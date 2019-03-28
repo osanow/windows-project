@@ -18,7 +18,6 @@ export const Container = styled.div`
   grid-column-start: ${({ colPos }) => colPos};
   grid-row-start: ${({ rowPos }) => rowPos};
 
-  pointer-events: all;
   user-select: none;
 
   &:hover {

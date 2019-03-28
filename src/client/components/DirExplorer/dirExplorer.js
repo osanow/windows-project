@@ -18,6 +18,7 @@ const Wrapper = styled.div`
   background-color: #fafafa;
   height: 100%;
   width: 100%;
+  user-select: none;
 `;
 
 const Navigation = styled.nav`
@@ -40,11 +41,10 @@ const NavOption = styled.li`
   margin: 0 0.3rem;
   height: 1rem;
   cursor: ${({ active }) => (active ? 'pointer' : 'default')};
-  user-select: none;
-  -webkit-user-drag: none;
-  -moz-user-drag: none;
 
   & > img {
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
     filter: ${({ active }) => (active ? 'none' : 'invert(80%)')};
     width: 1.5rem;
     height: 1rem;
@@ -79,7 +79,7 @@ const Main = styled.div`
 const Content = styled.div`
   position: relative;
   display: inline-flex;
-  overflow-x: scroll;
+  overflow-x: auto;
   height: 100%;
   margin: 0;
 `;
@@ -150,19 +150,17 @@ const explorer = (props) => {
 
     const duplicate = currData.path.findIndex(itemId => itemId === id);
     if (duplicate !== -1) {
-      newPath = [id];
-      newDisplayPath = [name];
+      newPath = newPath.slice(0, duplicate).concat(id);
+      newDisplayPath = newDisplayPath.slice(0, duplicate).concat(name);
     }
     setData({
       items: null,
       history: {
         position: history.data.slice(0, history.position).length + 1,
-        data: history.data.slice(0, history.position + 1).concat(
-          {
-            path: newPath,
-            displayPath: newDisplayPath
-          }
-        )
+        data: history.data.slice(0, history.position + 1).concat({
+          path: newPath,
+          displayPath: newDisplayPath
+        })
       }
     });
   };
