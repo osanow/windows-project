@@ -11,9 +11,10 @@ const PathList = styled.ul`
   height: 1.3rem;
   border: 1px solid #ccc;
   padding: 0 0.6rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: flex-start;
+  overflow: hidden;
   list-style: none;
 
   & > img {
@@ -28,6 +29,10 @@ const PathItem = styled.li`
   padding-left: 0.8rem;
   padding-right: 0.1rem;
   height: 100%;
+  flex-shrink: 0;
+  max-width: 6.5rem;
+  white-space: nowrap;
+  overflow: hidden;
   display: flex;
   font-size: 13px;
   align-items: center;
@@ -48,16 +53,29 @@ const PathItem = styled.li`
 `;
 
 const pathList = ({ path, displayPath, changeDir }) => {
-  const pathArray = displayPath.map((item, index) => (
-    <PathItem
-      key={path[index]}
-      onClick={() => changeDir(path[index], displayPath[index])}
-    >
-      {item}
-    </PathItem>
-  ));
+  let maxAmount;
+  const pathDisplay = document.getElementById(path);
+  if (pathDisplay) maxAmount = Math.floor(pathDisplay.offsetWidth / (6.5 * 16));
+  else maxAmount = 0;
+
+  const pathArray = [];
+  for (let i = displayPath.length - maxAmount; i < displayPath.length; i += 1) {
+    if (i >= 0) {
+      pathArray.push(
+        <PathItem
+          key={path[i]}
+          onClick={() => changeDir(path[i], displayPath[i])}
+        >
+          {displayPath[i].length > 13
+            ? `${displayPath[i].substring(0, 12)} ...`
+            : displayPath[i]}
+        </PathItem>
+      );
+    }
+  }
+
   return (
-    <PathList>
+    <PathList id={path}>
       <img src={directory} alt="source" />
       {pathArray}
     </PathList>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import _ from 'lodash';
 import axios from '../../axios-instance';
 
 import leftArrow from '../../assets/icons/left-arrow.svg';
@@ -41,6 +42,7 @@ const NavOption = styled.li`
   margin: 0 0.3rem;
   height: 1rem;
   cursor: ${({ active }) => (active ? 'pointer' : 'default')};
+  pointer-events: ${({ active }) => (active ? 'all' : 'none')};
 
   & > img {
     -webkit-user-drag: none;
@@ -177,13 +179,13 @@ const explorer = (props) => {
         <NavOptions>
           <NavOption
             active={allowPrev}
-            onClick={() => allowPrev && navigate(-1)}
+            onClick={_.throttle(() => navigate(-1), 800)}
           >
             <img src={leftArrow} alt="prev" />
           </NavOption>
           <NavOption
             active={allowNext}
-            onClick={() => allowNext && navigate(1)}
+            onClick={_.throttle(() => navigate(1), 800)}
           >
             <img src={rightArrow} alt="next" />
           </NavOption>
