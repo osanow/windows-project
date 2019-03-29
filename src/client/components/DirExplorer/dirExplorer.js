@@ -106,7 +106,9 @@ const explorer = (props) => {
   });
 
   const { history } = data;
-  const { items, loading, id } = props;
+  const {
+    items, loading, id, appFetchItemsHandler
+  } = props;
   const currData = history.data[history.position];
 
   const navigate = (value) => {
@@ -142,7 +144,6 @@ const explorer = (props) => {
   };
 
   useEffect(() => {
-    const { appFetchItemsHandler } = props;
     appFetchItemsHandler(`/${currData.path.join('/')}`, id);
   }, [data.history.position]);
 
@@ -190,7 +191,10 @@ const explorer = (props) => {
           />
         ) : (
           <Content>
-            <DirItems items={items} changeDirHandler={changeDir} />
+            <DirItems
+              items={items}
+              changeDirHandler={changeDir}
+            />
           </Content>
         )}
       </Main>

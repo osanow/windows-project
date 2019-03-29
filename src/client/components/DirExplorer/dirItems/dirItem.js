@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import axios from '../../../axios-instance';
 import { calculateSize } from '../../../utils/utility';
 
 const Item = styled.div`
@@ -60,6 +61,16 @@ const MainItem = styled(Item)`
   }
 `;
 
+const NameChanging = styled.input`
+  width: 90%;
+  margin: 0.2rem auto;
+  color: black;
+  text-align: center;
+  background-color: whitesmoke;
+  border: 1px solid gray;
+  z-index: 1;
+`;
+
 const dirItem = (props) => {
   const {
     iconPath,
@@ -73,6 +84,30 @@ const dirItem = (props) => {
     changeDirHandler
   } = props;
 
+  const [displayName, setDisplayName] = useState(name);
+
+  const onChangeNameHandler = (e) => {
+    const newValue = e.target.value.replace(/[^\w\s]/g, '');
+    setDisplayName(newValue);
+  };
+
+  const onSubmitNameHandler = (e) => {
+    if (e.keyCode === 13) {
+      axios(`/items/${_id}`, {
+        method: 'PUT',
+        data: {
+          changedValues: {
+            name: e.target.value
+          }
+        }
+      }).catch(error => console.log(error));
+
+      const icon = document.getElementById(`${path.substring(1)}/${_id}`);
+      icon.querySelector('p').style.display = 'block';
+      icon.lastChild.style.display = 'none';
+    }
+  };
+
   return (
     <>
       <MainItem
@@ -82,7 +117,13 @@ const dirItem = (props) => {
         iconPath={iconPath}
         onDoubleClick={() => changeDirHandler(_id, name)}
       >
-        <p>{name}</p>
+        <p>{displayName}</p>
+        <NameChanging
+          style={{ display: 'none' }}
+          value={displayName}
+          onKeyDown={onSubmitNameHandler}
+          onChange={onChangeNameHandler}
+        />
       </MainItem>
       <Item id={`${path.substring(1)}/${_id}/1`}>
         {`
