@@ -21,7 +21,6 @@ export const appStartFetchingItems = id => ({
 
 export const appFetchItems = (path, id) => async (dispatch) => {
   dispatch(appStartFetchingItems(id));
-  console.log(path, id);
 
   const fetchedItems = (await axios('items/', {
     method: 'GET',

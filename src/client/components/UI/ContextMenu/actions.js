@@ -10,14 +10,21 @@ export const personalize = () => {
 
 export const deleteItem = (id) => {
   document.getElementById(id).style.display = 'none';
-  axios.delete(`/items/${id}`).catch((error) => {
+  let iterator = 1;
+  while (document.getElementById(`${id}/${iterator}`)) {
+    document.getElementById(`${id}/${iterator}`).style.display = 'none';
+    iterator += 1;
+  }
+
+  const idArray = id.split('/');
+  const itemId = idArray[idArray.length - 1];
+  if (document.getElementById(itemId)) document.getElementById(itemId).style.display = 'none';
+  axios.delete(`/items/${itemId}`).catch((error) => {
     console.log(error);
   });
 };
 
 export const createItem = (type, data, updateItems) => {
-  console.log('createItem', data);
-
   const newItem = {
     name: `New ${type}`,
     type: type === 'directory' ? ['directory', 'container'] : ['file', 'txt'],

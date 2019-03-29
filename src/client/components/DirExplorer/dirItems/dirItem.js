@@ -72,34 +72,32 @@ const dirItem = (props) => {
     _id,
     changeDirHandler
   } = props;
-  console.log(props);
 
   return (
     <>
       <MainItem
         data-type={type}
         data-path={path}
-        id={_id}
+        id={`${path.substring(1)}/${_id}`}
         iconPath={iconPath}
         onDoubleClick={() => changeDirHandler(_id, name)}
       >
         <p>{name}</p>
-
       </MainItem>
-      <Item>
+      <Item id={`${path.substring(1)}/${_id}/1`}>
         {`
           ${new Date(updatedAt).toLocaleDateString()}
           ${new Date(updatedAt).toLocaleTimeString()}
         `}
       </Item>
-      <Item>
+      <Item id={`${path.substring(1)}/${_id}/2`}>
         {`
           ${new Date(createdAt).toLocaleDateString()}
           ${new Date(createdAt).toLocaleTimeString()}
         `}
       </Item>
-      <Item>{type.join(' ')}</Item>
-      <Item>
+      <Item id={`${path.substring(1)}/${_id}/3`}>{type.join(' ')}</Item>
+      <Item id={`${path.substring(1)}/${_id}/4`}>
         {type[1] === 'container' || type[0] === 'computer'
           ? ''
           : calculateSize(size)}

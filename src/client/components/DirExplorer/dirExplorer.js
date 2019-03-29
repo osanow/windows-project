@@ -149,7 +149,11 @@ const explorer = (props) => {
   const allowPrev = history.position > 0;
   const allowNext = history.position < history.data.length - 1;
   return (
-    <Wrapper data-type="container" data-path={`/${currData.path.join('/')}`} id={id}>
+    <Wrapper
+      data-type="container"
+      data-path={`/${currData.path.join('/')}`}
+      id={currData.path.toString() === 'Desktop' ? 'Desktop' : id}
+    >
       <Navigation>
         <NavOptions>
           <NavOption
