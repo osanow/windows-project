@@ -106,7 +106,7 @@ const explorer = (props) => {
   });
 
   const { history } = data;
-  const { items, loading } = props;
+  const { items, loading, id } = props;
   const currData = history.data[history.position];
 
   const navigate = (value) => {
@@ -119,15 +119,15 @@ const explorer = (props) => {
     });
   };
 
-  const changeDir = (id, name) => {
-    if (id === currData.path[currData.path.length - 1]) return;
+  const changeDir = (dirId, name) => {
+    if (dirId === currData.path[currData.path.length - 1]) return;
 
-    let newPath = currData.path.concat(id);
+    let newPath = currData.path.concat(dirId);
     let newDisplayPath = currData.displayPath.concat(name);
 
-    const duplicate = currData.path.findIndex(itemId => itemId === id);
+    const duplicate = currData.path.findIndex(itemId => itemId === dirId);
     if (duplicate !== -1) {
-      newPath = newPath.slice(0, duplicate).concat(id);
+      newPath = newPath.slice(0, duplicate).concat(dirId);
       newDisplayPath = newDisplayPath.slice(0, duplicate).concat(name);
     }
     setData({
@@ -142,14 +142,14 @@ const explorer = (props) => {
   };
 
   useEffect(() => {
-    const { appFetchItemsHandler, id } = props;
+    const { appFetchItemsHandler } = props;
     appFetchItemsHandler(`/${currData.path.join('/')}`, id);
   }, [data.history.position]);
 
   const allowPrev = history.position > 0;
   const allowNext = history.position < history.data.length - 1;
   return (
-    <Wrapper data-type="container" data-path={`/${currData.path.join('/')}`}>
+    <Wrapper data-type="container" data-path={`/${currData.path.join('/')}`} id={id}>
       <Navigation>
         <NavOptions>
           <NavOption

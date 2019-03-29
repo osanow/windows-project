@@ -66,19 +66,25 @@ const dirItem = (props) => {
     updatedAt,
     createdAt,
     type,
+    path,
     size,
     name,
     _id,
     changeDirHandler
   } = props;
+  console.log(props);
 
   return (
     <>
       <MainItem
+        data-type={type}
+        data-path={path}
+        id={_id}
         iconPath={iconPath}
         onDoubleClick={() => changeDirHandler(_id, name)}
       >
-        {name}
+        <p>{name}</p>
+
       </MainItem>
       <Item>
         {`

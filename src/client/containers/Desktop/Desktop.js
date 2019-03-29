@@ -76,8 +76,6 @@ class Desktop extends Component {
   };
 
   onContextMenu = (e) => {
-    const { userId } = this.props;
-
     const correctTarget = e.path.find(
       val => val.getAttribute('data-type') || val.id === 'app-root'
     );
@@ -102,7 +100,6 @@ class Desktop extends Component {
         top: e.clientY,
         data: {
           path: iconPath,
-          owner: userId,
           id: iconId
         },
         options
@@ -130,12 +127,13 @@ class Desktop extends Component {
         wallpaperUrl={wallpaperUrl}
         data-type="desktop"
         data-path="/Desktop"
+        id="Desktop"
       >
         {itemsArray}
         {runningApps}
         {contextMenu.opened && (
           <ContextMenu
-            updateItems={() => appFetchItemsHandler('/Desktop', 'Desktop')}
+            updateItems={(path, id) => appFetchItemsHandler(path, id)}
             {...contextMenu}
           />
         )}

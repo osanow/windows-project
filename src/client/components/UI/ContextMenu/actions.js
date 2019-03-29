@@ -16,12 +16,13 @@ export const deleteItem = (id) => {
 };
 
 export const createItem = (type, data, updateItems) => {
+  console.log('createItem', data);
+
   const newItem = {
     name: `New ${type}`,
     type: type === 'directory' ? ['directory', 'container'] : ['file', 'txt'],
     icon: `${type === 'directory' ? 'directory-empty' : 'file'}.svg`,
-    path: data.path,
-    owner: data.userId
+    path: data.path
   };
   document.body.style.cursor = 'progress';
 
@@ -32,7 +33,7 @@ export const createItem = (type, data, updateItems) => {
     }
   })
     .then(() => {
-      updateItems();
+      updateItems(data.path, data.id);
     })
     .catch((error) => {
       console.log(error);
