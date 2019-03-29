@@ -4,8 +4,28 @@ import { updateObject } from '../../utils/utility';
 const initialState = {
   running: [],
   minimalized: [],
+  data: {},
   loading: false
 };
+
+const appStartFetchingItems = (state, action) => updateObject(state, {
+  data: {
+    ...state.data,
+    [action.id]: updateObject(state.data[action.id], {
+      loading: true
+    })
+  }
+});
+
+const appFetchItems = (state, action) => updateObject(state, {
+  data: {
+    ...state.data,
+    [action.id]: {
+      items: action.newItems,
+      loading: false
+    }
+  }
+});
 
 const appStartOpening = state => updateObject(state, { loading: true });
 
@@ -34,6 +54,10 @@ const hideApp = (state, { hiddenApp }) => updateObject(state, {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case actionTypes.APP_START_FETCHING_ITEMS:
+      return appStartFetchingItems(state, action);
+    case actionTypes.APP_FETCH_ITEMS:
+      return appFetchItems(state, action);
     case actionTypes.APP_START_OPENING:
       return appStartOpening(state);
     case actionTypes.APP_OPEN:

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import _ from 'lodash';
-import axios from '../../axios-instance';
+
+import { openApp, appFetchItems } from '../../store/actions/index';
 
 import leftArrow from '../../assets/icons/left-arrow.svg';
 import rightArrow from '../../assets/icons/right-arrow.svg';
 import search from '../../assets/icons/search.svg';
-import { updateObject, asyncForEach } from '../../utils/utility';
 
 import RectangleSpinner from '../Spinners/rectangleSpinner';
 import DirItems from './dirItems/dirItems';
@@ -89,7 +90,6 @@ const Content = styled.div`
 const explorer = (props) => {
   const { dirName, initPath, initDisplayPath } = props;
   const [data, setData] = useState({
-    items: null,
     history: {
       position: 1,
       data: [
@@ -105,38 +105,13 @@ const explorer = (props) => {
     }
   });
 
-  const { history, items } = data;
+  const { history } = data;
+  const { items, loading } = props;
   const currData = history.data[history.position];
-
-  const fetchItems = async () => {
-    const fetchedItems = (await axios('items/', {
-      method: 'GET',
-      params: {
-        path: `/${currData.path.join('/')}`
-      }
-    })).data;
-
-    const icons = {};
-    const newItems = [];
-    await asyncForEach(fetchedItems, async (item) => {
-      if (!icons[item.icon]) {
-        icons[item.icon] = (await import(`../../assets/icons/${
-          item.icon
-        }`)).default;
-      }
-      newItems.push({
-        ...item,
-        iconPath: icons[item.icon]
-      });
-    });
-
-    setData(updateObject(data, { items: newItems }));
-  };
 
   const navigate = (value) => {
     if (value === 0) return;
     setData({
-      items: null,
       history: {
         position: history.position + value,
         data: history.data
@@ -156,7 +131,6 @@ const explorer = (props) => {
       newDisplayPath = newDisplayPath.slice(0, duplicate).concat(name);
     }
     setData({
-      items: null,
       history: {
         position: history.data.slice(0, history.position).length + 1,
         data: history.data.slice(0, history.position + 1).concat({
@@ -168,7 +142,8 @@ const explorer = (props) => {
   };
 
   useEffect(() => {
-    fetchItems();
+    const { appFetchItemsHandler, id } = props;
+    appFetchItemsHandler(`/${currData.path.join('/')}`, id);
   }, [data.history.position]);
 
   const allowPrev = history.position > 0;
@@ -202,7 +177,7 @@ const explorer = (props) => {
       </Navigation>
       <Main>
         <Sidebar />
-        {items === null ? (
+        {loading ? (
           <RectangleSpinner
             style={{
               margin: '15% 15%',
@@ -219,4 +194,25 @@ const explorer = (props) => {
   );
 };
 
-export default React.memo(explorer);
+const mapStateToProps = (state, ownProps) => {
+  const data = state.apps.data[ownProps.id];
+  const items = null;
+  const loading = false;
+  if (data) {
+    return {
+      items: data.items,
+      loading: data.loading
+    };
+  }
+  return { items, loading };
+};
+
+const mapDispatchToProps = dispatch => ({
+  openAppHandler: (app, event, runningAppsAmount) => dispatch(openApp(app, event, runningAppsAmount)),
+  appFetchItemsHandler: (path, id) => dispatch(appFetchItems(path, id))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(explorer));

@@ -134,7 +134,9 @@ class Desktop extends Component {
       .then(res => this.setState(prevState => updateObject(prevState, {
         desktopItems: res.data
       })))
-      .then(() => { document.body.style.cursor = 'default'; })
+      .then(() => {
+        document.body.style.cursor = 'default';
+      })
       .catch((err) => {
         document.body.style.cursor = 'default';
         console.log(err);
@@ -167,7 +169,7 @@ class Desktop extends Component {
     const itemsArray = desktopItems.map(item => (
       <DesktopIcon key={item._id} updateIcon={this.updateIcon} {...item} />
     ));
-
+    console.log(runningApps);
     return (
       <DesktopWrapper
         wallpaperUrl={wallpaperUrl}

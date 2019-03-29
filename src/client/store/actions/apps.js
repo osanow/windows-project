@@ -1,6 +1,8 @@
 import React from 'react';
 import * as actionTypes from './actionTypes';
 
+import axios from '../../axios-instance';
+import { asyncForEach } from '../../utils/utility';
 import noIcon from '../../assets/icons/noIcon.png';
 
 export const startOpeningApp = () => ({
@@ -11,6 +13,40 @@ export const focusApp = id => ({
   type: actionTypes.APP_FOCUS,
   id
 });
+
+export const appStartFetchingItems = id => ({
+  type: actionTypes.APP_START_FETCHING_ITEMS,
+  id
+});
+
+export const appFetchItems = (path, id) => async (dispatch) => {
+  dispatch(appStartFetchingItems(id));
+
+  const fetchedItems = (await axios('items/', {
+    method: 'GET',
+    params: { path }
+  })).data;
+
+  const icons = {};
+  const newItems = [];
+  await asyncForEach(fetchedItems, async (item) => {
+    if (!icons[item.icon]) {
+      icons[item.icon] = (await import(`../../assets/icons/${
+        item.icon
+      }`)).default;
+    }
+    newItems.push({
+      ...item,
+      iconPath: icons[item.icon]
+    });
+  });
+
+  dispatch({
+    type: actionTypes.APP_FETCH_ITEMS,
+    id,
+    newItems
+  });
+};
 
 export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
   if (document.getElementById(`Window${app.props._id}`)) {
@@ -71,6 +107,7 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
         type={app.props.type}
       >
         <DirExplorer
+          id={app.props._id}
           dirName={app.state.displayName}
           initPath={`${app.props.path}/${app.props._id}`}
           initDisplayPath={`${app.props.path}/${app.state.displayName}`}

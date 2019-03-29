@@ -142,6 +142,7 @@ class systemWindow extends Component {
       positioning
     } = this.state;
 
+    console.log('render SystemWindow', _id);
     return (
       <WindowWrapper
         id={`Window${_id}`}
@@ -195,4 +196,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   null,
   mapDispatchToProps
-)(React.memo(systemWindow));
+)(systemWindow);

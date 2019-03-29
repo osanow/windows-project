@@ -42,9 +42,11 @@ const dirItems = (props) => {
   const categoriesArray = categories.map(item => (
     <Category key={item}>{item}</Category>
   ));
-  const itemsArray = items.map(item => (
-    <DirItem key={item._id} changeDirHandler={changeDirHandler} {...item} />
-  ));
+  const itemsArray = items
+    ? items.map(item => (
+      <DirItem key={item._id} changeDirHandler={changeDirHandler} {...item} />
+    ))
+    : [];
   return (
     <Wrapper categoriesAmount={categories.length}>
       {categoriesArray}
