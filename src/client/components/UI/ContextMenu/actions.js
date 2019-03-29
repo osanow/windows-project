@@ -15,7 +15,7 @@ export const deleteItem = (id) => {
   });
 };
 
-export const createItem = (type, data, updateIcons) => {
+export const createItem = (type, data, updateItems) => {
   const newItem = {
     name: `New ${type}`,
     type: type === 'directory' ? ['directory', 'container'] : ['file', 'txt'],
@@ -32,7 +32,7 @@ export const createItem = (type, data, updateIcons) => {
     }
   })
     .then(() => {
-      updateIcons();
+      updateItems();
     })
     .catch((error) => {
       console.log(error);

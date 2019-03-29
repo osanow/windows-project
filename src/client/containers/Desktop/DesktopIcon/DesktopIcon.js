@@ -2,14 +2,12 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import axios from '../../../axios-instance';
-import { updateObject, onCatchHandler } from '../../../utils/utility';
+import { onCatchHandler } from '../../../utils/utility';
 import { openApp } from '../../../store/actions/index';
-import noIcon from '../../../assets/icons/noIcon.png';
 import * as Styles from './styles';
 
 class Item extends PureComponent {
   state = {
-    displayIcon: noIcon,
     displayName: '',
     isDragging: false,
     gridPosition: {
@@ -22,18 +20,12 @@ class Item extends PureComponent {
     }
   };
 
-  componentDidMount() {
-    const {
-      icon, rowPos, colPos, name
-    } = this.props;
-
-    import(`../../../assets/icons/${icon}`)
-      .then(res => this.setState(prevState => updateObject(prevState, {
-        displayIcon: res.default,
-        displayName: name,
-        gridPosition: { rowPos, colPos }
-      })))
-      .catch(err => console.log(err));
+  componentWillMount() {
+    const { rowPos, colPos, name } = this.props;
+    this.setState({
+      displayName: name,
+      gridPosition: { rowPos, colPos }
+    });
   }
 
   onChangeNameHandler = (e) => {
@@ -75,10 +67,13 @@ class Item extends PureComponent {
 
   render() {
     const {
-      _id, type, path, permanent, appLoading
+      _id, type, path, permanent, appLoading, iconPath
     } = this.props;
     const {
-      dragPosition, gridPosition, displayIcon, displayName, isDragging
+      dragPosition,
+      gridPosition,
+      displayName,
+      isDragging
     } = this.state;
 
     return (
@@ -94,10 +89,14 @@ class Item extends PureComponent {
         onDoubleClick={this.onOpenHandler}
         rowPos={gridPosition.rowPos}
         colPos={gridPosition.colPos}
-        style={{ transform: (isDragging ? `translate( ${dragPosition.x}px, ${dragPosition.y}px )` : 'translate( 0px, 0px )') }}
+        style={{
+          transform: isDragging
+            ? `translate( ${dragPosition.x}px, ${dragPosition.y}px )`
+            : 'translate( 0px, 0px )'
+        }}
       >
         <Styles.ItemIcon
-          src={displayIcon}
+          src={iconPath}
           draggable="false"
           alt="icon"
           scale="huge"

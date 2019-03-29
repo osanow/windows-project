@@ -2,8 +2,8 @@ import * as itemsActions from './actions';
 
 export const desktop = {
   new: {
-    file: (data, updateIcons) => itemsActions.createItem('file', data, updateIcons),
-    directory: (data, updateIcons) => itemsActions.createItem('directory', data, updateIcons)
+    file: (data, updateItems) => itemsActions.createItem('file', data, updateItems),
+    directory: (data, updateItems) => itemsActions.createItem('directory', data, updateItems)
   },
   personalize: () => itemsActions.personalize(),
   view: {
@@ -25,7 +25,7 @@ export const directory = {
 
 export const container = {
   new: {
-    file: (data, updateIcons) => itemsActions.createItem('file', data, updateIcons),
-    directory: (data, updateIcons) => itemsActions.createItem('directory', data, updateIcons)
+    file: (data, updateItems) => itemsActions.createItem('file', data, updateItems),
+    directory: (data, updateItems) => itemsActions.createItem('directory', data, updateItems)
   }
 };

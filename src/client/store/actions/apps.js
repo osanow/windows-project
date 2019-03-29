@@ -40,7 +40,7 @@ export const appFetchItems = (path, id) => async (dispatch) => {
       iconPath: icons[item.icon]
     });
   });
-
+  document.body.style.cursor = 'default';
   dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
     id,
