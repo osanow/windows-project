@@ -52,7 +52,14 @@ class Desktop extends Component {
   };
 
   componentDidMount() {
-    window.oncontextmenu = this.onContextMenu;
+    window.addEventListener(
+      'contextmenu',
+      (e) => {
+        e.preventDefault();
+        this.onContextMenu(e);
+      },
+      false
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -86,7 +93,8 @@ class Desktop extends Component {
   };
 
   onContextMenu = (e) => {
-    const correctTarget = e.path.find(
+    const path = e.path || (e.composedPath && e.composedPath());
+    const correctTarget = path.find(
       val => val.getAttribute('data-type') || val.id === 'app-root'
     );
     if (!correctTarget.getAttribute('data-type')) return false;
@@ -138,7 +146,11 @@ class Desktop extends Component {
     ));
 
     return (
-      <DesktopWrapper wallpaperUrl={wallpaperUrl} data-type="desktop,container" data-path="/Desktop">
+      <DesktopWrapper
+        wallpaperUrl={wallpaperUrl}
+        data-type="desktop,container"
+        data-path="/Desktop"
+      >
         {loading && <Backdrop />}
         {itemsArray}
         {runningApps}
