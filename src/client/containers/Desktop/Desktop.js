@@ -48,7 +48,7 @@ class Desktop extends Component {
   componentDidUpdate(prevProps) {
     const { isAuth, wallpaper, appFetchItemsHandler } = this.props;
 
-    if (prevProps.isAuth !== isAuth) {
+    if (prevProps.isAuth !== isAuth && isAuth) {
       appFetchItemsHandler('/Desktop');
       import(`../../assets/bgrounds/${wallpaper}`)
         .then((res) => {
@@ -141,16 +141,13 @@ class Desktop extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  const appData = state.apps.data['/Desktop'];
-  return {
-    isAuth: state.auth.token !== null,
-    userId: state.auth.userId,
-    wallpaper: state.auth.preferences.wallpaper,
-    runningApps: state.apps.running,
-    desktopItems: appData && appData.items ? appData.items : []
-  };
-};
+const mapStateToProps = state => ({
+  isAuth: state.auth.token !== null,
+  userId: state.auth.userId,
+  wallpaper: state.auth.preferences.wallpaper,
+  runningApps: state.apps.running,
+  desktopItems: state.apps.data['/Desktop'] && state.apps.data['/Desktop'].items ? state.apps.data['/Desktop'].items : []
+});
 
 const mapDispatchToProps = dispatch => ({
   appFetchItemsHandler: path => dispatch(appFetchItems(path))

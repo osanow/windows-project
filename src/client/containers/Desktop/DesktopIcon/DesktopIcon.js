@@ -1,12 +1,12 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import axios from '../../../axios-instance';
-import { onCatchHandler } from '../../../utils/utility';
+import { onCatchHandler, updateObject } from '../../../utils/utility';
 import { openApp } from '../../../store/actions/index';
 import * as Styles from './styles';
 
-class Item extends PureComponent {
+class Item extends Component {
   state = {
     displayName: '',
     isDragging: false,
@@ -28,6 +28,12 @@ class Item extends PureComponent {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(prevState => updateObject(prevState, {
+      displayName: nextProps.name
+    }));
+  }
+
   onChangeNameHandler = (e) => {
     const newValue = e.target.value.replace(/[^\w\s]/g, '');
     this.setState({ displayName: newValue });
@@ -35,7 +41,7 @@ class Item extends PureComponent {
 
   onSubmitNameHandler = (e) => {
     if (e.keyCode === 13) {
-      const { _id } = this.props;
+      const { _id, updateItems } = this.props;
 
       axios(`/items/${_id}`, {
         method: 'PUT',
@@ -44,7 +50,11 @@ class Item extends PureComponent {
             name: e.target.value
           }
         }
-      }).catch(error => console.log(error));
+      })
+        .then(() => {
+          updateItems();
+        })
+        .catch(error => console.log(error));
 
       const icon = document.getElementById(_id);
       icon.querySelector('p').style.display = 'block';
@@ -70,17 +80,14 @@ class Item extends PureComponent {
       _id, type, path, permanent, appLoading, iconPath
     } = this.props;
     const {
-      dragPosition,
-      gridPosition,
-      displayName,
-      isDragging
+      dragPosition, gridPosition, displayName, isDragging
     } = this.state;
 
     return (
       <Styles.Container
         data-path={path}
         data-permanent={permanent}
-        data-type={type.toString()}
+        data-type={type}
         id={_id}
         isDragging={isDragging}
         draggingTime={this.draggingTime}
@@ -130,4 +137,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Item);
+)(React.memo(Item));

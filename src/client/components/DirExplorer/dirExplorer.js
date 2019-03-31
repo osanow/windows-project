@@ -118,7 +118,6 @@ const explorer = (props) => {
     loading: false,
     items: []
   };
-
   const { loading } = currItemsData;
 
   const navigate = (value) => {
@@ -189,7 +188,7 @@ const explorer = (props) => {
       </Navigation>
       <Main>
         <Sidebar />
-        {loading ? (
+        {loading && currItemsData.items.length < 1 ? (
           <RectangleSpinner
             style={{
               margin: '15% 15%',
@@ -198,7 +197,7 @@ const explorer = (props) => {
           />
         ) : (
           <Content>
-            <DirItems items={currItemsData.items} changeDirHandler={changeDir} />
+            <DirItems items={currItemsData.items} changeDirHandler={changeDir} updateItemsHandler={() => appFetchItemsHandler(`/${currData.path.join('/')}`)} />
           </Content>
         )}
       </Main>

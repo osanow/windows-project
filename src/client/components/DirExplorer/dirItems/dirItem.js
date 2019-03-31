@@ -81,7 +81,8 @@ const dirItem = (props) => {
     size,
     name,
     _id,
-    changeDirHandler
+    changeDirHandler,
+    updateItemsHandler
   } = props;
 
   const [displayName, setDisplayName] = useState(name);
@@ -100,7 +101,11 @@ const dirItem = (props) => {
             name: e.target.value
           }
         }
-      }).catch(error => console.log(error));
+      })
+        .then(() => {
+          updateItemsHandler();
+        })
+        .catch(error => console.log(error));
 
       const icon = document.getElementById(`${path.substring(1)}/${_id}`);
       icon.querySelector('p').style.display = 'block';

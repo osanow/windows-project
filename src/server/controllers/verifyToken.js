@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
   if (!token) return res.status(403).send({ error: 'No token provided.' });
 
   return jsonwebtoken.verify(token, tokenConfig.secret, (err, decoded) => {
-    if (err || !decoded) res.status(500).send({ error: 'Failed to authenticate token.' });
+    if (err) res.status(500).send({ error: 'Failed to authenticate token.' });
     req.userId = decoded.id;
     next();
   });

@@ -11,9 +11,12 @@ const initialState = {
 const appStartFetchingItems = (state, action) => updateObject(state, {
   data: {
     ...state.data,
-    [action.path]: updateObject(state.data[action.path], {
-      loading: true
-    })
+    [action.path]: {
+      items: [],
+      ...updateObject(state.data[action.path], {
+        loading: true
+      })
+    }
   }
 });
 
