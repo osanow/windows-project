@@ -10,5 +10,11 @@ export {
 } from './auth';
 
 export {
-  openApp, closeApp, hideApp, showApp, focusApp
+  openApp,
+  closeApp,
+  hideApp,
+  showApp,
+  focusApp,
+  appFetchItems,
+  appStartFetchingItems
 } from './apps';

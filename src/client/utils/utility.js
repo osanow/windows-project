@@ -41,6 +41,29 @@ export const checkValidity = (value, rules) => {
 export const changeFormatWithoutDashes = text => text.replace('_', ' ');
 export const changeFormatWithDashes = text => text.toLowerCase().replace(' ', '_');
 
+export const calculateSize = (size) => {
+  let scale;
+  let newSize;
+  if (size > 1024 * 1024) {
+    newSize = Math.round(size / (1024 * 1024));
+    scale = 'KB';
+  } else if (size > 1024) {
+    newSize = Math.round(size / 1024);
+    scale = 'KB';
+  } else {
+    newSize = size;
+    scale = 'B';
+  }
+  return `${newSize} ${scale}`;
+};
+
+export async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await callback(array[index], index, array);
+  }
+}
+
 const calculatePos = (type, value) => {
   if (type === 'row') return Math.abs(Math.ceil(value / (4.8 * 16)));
   return Math.abs(Math.ceil(value / (6.3 * 16)));
@@ -124,6 +147,7 @@ export const onDropHandler = (icon) => {
 
 export const onCatchHandler = (icon, e) => {
   if (icon.state.maximalized) return;
+  e.preventDefault();
 
   icon.prevX = e.clientX;
   icon.prevY = e.clientY;

@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
-import * as menuOptions from '../../utils/contextMenuOptions';
+import * as menuOptions from '../../components/UI/ContextMenu/options';
 import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
-import axios from '../../axios-instance';
 import DesktopIcon from './DesktopIcon/DesktopIcon';
 import { updateObject } from '../../utils/utility';
+import { appFetchItems } from '../../store/actions/index';
 
 const DesktopWrapper = styled.div`
   width: 100vw;
@@ -32,7 +32,6 @@ const DesktopWrapper = styled.div`
 class Desktop extends Component {
   state = {
     wallpaperUrl: '',
-    desktopItems: [],
     contextMenu: {
       opened: false,
       options: {},
@@ -47,24 +46,14 @@ class Desktop extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { isAuth, wallpaper } = this.props;
-    let ResItems = null;
+    const { isAuth, wallpaper, appFetchItemsHandler } = this.props;
 
     if (prevProps.isAuth !== isAuth) {
-      axios('items/', {
-        method: 'GET',
-        params: {
-          path: '/Desktop'
-        }
-      })
-        .then((res) => {
-          ResItems = res.data;
-          return import(`../../assets/bgrounds/${wallpaper}`);
-        })
+      appFetchItemsHandler('/Desktop', 'Desktop');
+      import(`../../assets/bgrounds/${wallpaper}`)
         .then((res) => {
           this.setState(prevState => updateObject(prevState, {
-            wallpaperUrl: res.default,
-            desktopItems: ResItems
+            wallpaperUrl: res.default
           }));
         })
         .catch((err) => {
@@ -87,8 +76,6 @@ class Desktop extends Component {
   };
 
   onContextMenu = (e) => {
-    const { userId } = this.props;
-
     const correctTarget = e.path.find(
       val => val.getAttribute('data-type') || val.id === 'app-root'
     );
@@ -113,7 +100,6 @@ class Desktop extends Component {
         top: e.clientY,
         data: {
           path: iconPath,
-          owner: userId,
           id: iconId
         },
         options
@@ -124,48 +110,16 @@ class Desktop extends Component {
     return false;
   };
 
-  updateIcons = () => {
-    axios('items/', {
-      method: 'GET',
-      params: {
-        path: '/Desktop'
-      }
-    })
-      .then(res => this.setState(prevState => updateObject(prevState, {
-        desktopItems: res.data
-      })))
-      .then(() => { document.body.style.cursor = 'default'; })
-      .catch((err) => {
-        document.body.style.cursor = 'default';
-        console.log(err);
-      });
-  };
-
-  updateIcon = (id, changes) => {
-    const { desktopItems } = this.state;
-    desktopItems.find((item) => {
-      if (item._id === id) {
-        const updatedItem = {
-          ...desktopItems.find(el => el._id === id),
-          ...changes
-        };
-        this.setState(prevState => updateObject(prevState, {
-          desktopItems: prevState.desktopItems
-            .filter(el => el._id !== id)
-            .concat([updatedItem])
-        }));
-        return true;
-      }
-      return false;
-    });
-  };
-
   render() {
-    const { desktopItems, wallpaperUrl, contextMenu } = this.state;
-    const { runningApps } = this.props;
+    const { wallpaperUrl, contextMenu } = this.state;
+    const { runningApps, appFetchItemsHandler, desktopItems } = this.props;
 
     const itemsArray = desktopItems.map(item => (
-      <DesktopIcon key={item._id} updateIcon={this.updateIcon} {...item} />
+      <DesktopIcon
+        key={item._id}
+        updateItems={() => appFetchItemsHandler('/Desktop', 'Desktop')}
+        {...item}
+      />
     ));
 
     return (
@@ -173,22 +127,37 @@ class Desktop extends Component {
         wallpaperUrl={wallpaperUrl}
         data-type="desktop"
         data-path="/Desktop"
+        id="Desktop"
       >
         {itemsArray}
         {runningApps}
         {contextMenu.opened && (
-          <ContextMenu updateIcons={this.updateIcons} {...contextMenu} />
+          <ContextMenu
+            updateItems={(path, id) => appFetchItemsHandler(path, id)}
+            {...contextMenu}
+          />
         )}
       </DesktopWrapper>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  isAuth: state.auth.token !== null,
-  userId: state.auth.userId,
-  wallpaper: state.auth.preferences.wallpaper,
-  runningApps: state.apps.running
+const mapStateToProps = (state) => {
+  const appData = state.apps.data.Desktop;
+  return {
+    isAuth: state.auth.token !== null,
+    userId: state.auth.userId,
+    wallpaper: state.auth.preferences.wallpaper,
+    runningApps: state.apps.running,
+    desktopItems: appData && appData.items ? appData.items : []
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  appFetchItemsHandler: (path, id) => dispatch(appFetchItems(path, id))
 });
 
-export default connect(mapStateToProps)(Desktop);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Desktop);

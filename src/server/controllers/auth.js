@@ -55,17 +55,17 @@ exports.postSignin = (req, res) => {
         {
           name: 'My computer',
           type: ['computer'],
-          icon: 'computer.png',
+          icon: 'computer.svg',
           path: '/Desktop',
           permanent: true,
           owner: newUser._id,
           colPos: 0,
-          rowPos: 1
+          rowPos: 0
         },
         {
           name: 'Trash',
           type: ['trash', 'container'],
-          icon: 'trash-empty.png',
+          icon: 'trash-empty.svg',
           path: '/Desktop',
           permanent: true,
           owner: newUser._id,

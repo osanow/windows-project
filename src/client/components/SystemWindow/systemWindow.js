@@ -14,7 +14,6 @@ const WindowWrapper = styled.div`
   background-color: whitesmoke;
   border: 1px solid rgb(100, 100, 100);
 
-  filter: blur(0.000001px); /* for fix blured font */
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 
   transition: ${({ isDragging, positioning }) => {
@@ -148,8 +147,8 @@ class systemWindow extends Component {
         id={`Window${_id}`}
         top={position.y}
         left={position.x}
-        width={maximalized ? '100vw' : '60vw'}
-        height={maximalized ? 'calc(100vh - 3rem)' : '60vh'}
+        width={maximalized ? '100vw' : '45rem'}
+        height={maximalized ? 'calc(100vh - 3rem)' : '25rem'}
         isDragging={isDragging}
         positioning={positioning}
         maximalized={maximalized}
@@ -196,4 +195,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   null,
   mapDispatchToProps
-)(React.memo(systemWindow));
+)(systemWindow);
