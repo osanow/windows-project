@@ -76,7 +76,7 @@ const Checkmark = styled.svg`
   }
 `;
 
-const textEditor = ({ value, itemId, updateDesktopIcon }) => {
+const textEditor = ({ value, itemId, updateItems }) => {
   const [config, setConfig] = useState({
     visibility: false,
     text: value
@@ -85,7 +85,6 @@ const textEditor = ({ value, itemId, updateDesktopIcon }) => {
   const saveContent = (editor) => {
     const content = editor.getData();
 
-    updateDesktopIcon(itemId, { content });
     axios(`/items/${itemId}`, {
       method: 'PUT',
       data: {
@@ -95,6 +94,7 @@ const textEditor = ({ value, itemId, updateDesktopIcon }) => {
       }
     })
       .then(() => {
+        updateItems();
         if (document.getElementById(`Window${itemId}`)) {
           setConfig({
             visibility: true,

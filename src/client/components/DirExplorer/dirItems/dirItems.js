@@ -36,7 +36,7 @@ const Category = styled.div`
 `;
 
 const dirItems = (props) => {
-  const { items, changeDirHandler, updateItemsHandler } = props;
+  const { items, updateItems, onDoubleClickHandler } = props;
 
   const categories = ['Name', 'Edited at', 'Created at', 'Type', 'Size'];
   const categoriesArray = categories.map(item => (
@@ -47,8 +47,8 @@ const dirItems = (props) => {
     ? items.map(item => (
       <DirItem
         key={item._id}
-        changeDirHandler={changeDirHandler}
-        updateItemsHandler={updateItemsHandler}
+        updateItems={updateItems}
+        onDoubleClickHandler={onDoubleClickHandler}
         {...item}
       />
     ))

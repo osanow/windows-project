@@ -3,11 +3,6 @@ import * as actionTypes from './actionTypes';
 
 import axios from '../../axios-instance';
 import { asyncForEach } from '../../utils/utility';
-import noIcon from '../../assets/icons/noIcon.png';
-
-export const startOpeningApp = () => ({
-  type: actionTypes.APP_START_OPENING
-});
 
 export const focusApp = id => ({
   type: actionTypes.APP_FOCUS,
@@ -48,43 +43,38 @@ export const appFetchItems = path => async (dispatch) => {
   });
 };
 
-export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
+export const startOpeningApp = () => ({
+  type: actionTypes.APP_START_OPENING
+});
+
+export const openApp = app => async (dispatch) => {
   if (document.getElementById(`Window${app.props._id}`)) {
     focusApp(app.props._id);
     return;
   }
-
   dispatch(startOpeningApp());
 
-  let openedApp;
+  let OpenedApp;
   let appIcon;
-  try {
-    appIcon = (await import(`../../assets/icons/${app.props.icon}`)).default;
-  } catch (err) {
-    appIcon = noIcon;
-  }
   const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
     .default;
   if (app.props.type.find(type => type === 'file')) {
     const TextEditor = (await import('../../components/TextEditor/textEditor'))
       .default;
-    openedApp = (
+    OpenedApp = (left, top) => (
       <SystemWindow
         key={app.props._id}
-        sourceX={`${event.clientX}px`}
-        sourceY={`${event.clientY}px`}
-        left={`10rem + ${1.5 * (activeAppsAmount % 6)
-          + 5 * Math.floor(activeAppsAmount / 6)}rem`}
-        top={`3rem + ${1.5 * (activeAppsAmount % 6)}rem`}
         _id={app.props._id}
-        name={app.state.displayName}
+        name={app.props.name}
         path={app.props.path}
-        icon={appIcon}
+        icon={app.props.iconPath}
         type={app.props.type}
+        left={left}
+        top={top}
       >
         <TextEditor
           value={app.props.content}
-          updateDesktopIcon={app.props.updateIcon}
+          updateItems={app.props.updateItems}
           itemId={app.props._id}
         />
       </SystemWindow>
@@ -92,25 +82,22 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
   } else if (app.props.type.find(type => type === 'directory')) {
     const DirExplorer = (await import('../../components/DirExplorer/dirExplorer'))
       .default;
-    openedApp = (
+    OpenedApp = (left, top) => (
       <SystemWindow
         key={app.props._id}
-        sourceX={`${event.clientX}px`}
-        sourceY={`${event.clientY}px`}
-        left={`10rem + ${1.5 * (activeAppsAmount % 6)
-          + 5 * Math.floor(activeAppsAmount / 6)}rem`}
-        top={`3rem + ${1.5 * (activeAppsAmount % 6)}rem`}
         _id={app.props._id}
-        name={`${app.props.path}/${app.state.displayName}`}
+        name={`${app.props.path}/${app.props.name}`}
         path={app.props.path}
-        icon={appIcon}
+        icon={app.props.iconPath}
         type={app.props.type}
+        left={left}
+        top={top}
       >
         <DirExplorer
           id={app.props._id}
-          dirName={app.state.displayName}
+          dirName={app.props.name}
           initPath={`${app.props.path}/${app.props._id}`}
-          initDisplayPath={`${app.props.path}/${app.state.displayName}`}
+          initDisplayPath={`${app.props.path}/${app.props.name}`}
         />
       </SystemWindow>
     );
@@ -118,7 +105,7 @@ export const openApp = (app, event, activeAppsAmount) => async (dispatch) => {
   setTimeout(() => {
     dispatch({
       type: actionTypes.APP_OPEN,
-      openedApp
+      OpenedApp
     });
   }, 100);
 };

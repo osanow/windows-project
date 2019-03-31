@@ -111,9 +111,14 @@ const explorer = (props) => {
       ]
     }
   });
-
   const { history } = data;
   const currData = history.data[history.position];
+
+  useEffect(() => {
+    appFetchItemsHandler(`/${currData.path.join('/')}`);
+  }, [history.position]);
+
+
   const currItemsData = allItemsData[`/${currData.path.join('/')}`] || {
     loading: false,
     items: []
@@ -152,9 +157,15 @@ const explorer = (props) => {
     });
   };
 
-  useEffect(() => {
-    appFetchItemsHandler(`/${currData.path.join('/')}`);
-  }, [history.position]);
+  const onDoubleClickHandler = (item) => {
+    if (item.props.type.find(type => type === 'directory')) {
+      const { _id, name } = item.props;
+      changeDir(_id, name);
+      return;
+    }
+    const { openAppHandler } = props;
+    openAppHandler(item);
+  };
 
   const allowPrev = history.position > 0;
   const allowNext = history.position < history.data.length - 1;
@@ -197,7 +208,12 @@ const explorer = (props) => {
           />
         ) : (
           <Content>
-            <DirItems items={currItemsData.items} changeDirHandler={changeDir} updateItemsHandler={() => appFetchItemsHandler(`/${currData.path.join('/')}`)} />
+            <DirItems
+              items={currItemsData.items}
+              onDoubleClickHandler={onDoubleClickHandler}
+              updateItems={() => appFetchItemsHandler(`/${currData.path.join('/')}`)
+              }
+            />
           </Content>
         )}
       </Main>
@@ -210,7 +226,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  openAppHandler: (app, event, runningAppsAmount) => dispatch(openApp(app, event, runningAppsAmount)),
+  openAppHandler: app => dispatch(openApp(app)),
   appFetchItemsHandler: path => dispatch(appFetchItems(path))
 });
 

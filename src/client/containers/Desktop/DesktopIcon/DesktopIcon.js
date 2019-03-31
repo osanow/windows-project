@@ -62,7 +62,7 @@ class Item extends Component {
     }
   };
 
-  onOpenHandler = (e) => {
+  onOpenHandler = () => {
     const {
       runningApps, minimalizedApps, _id, openAppHandler
     } = this.props;
@@ -71,13 +71,12 @@ class Item extends Component {
       || minimalizedApps.find(app => app.props._id === _id);
     if (findedApp) return;
 
-    const { clientX, clientY } = e;
-    openAppHandler(this, { clientX, clientY }, runningApps.length);
+    openAppHandler(this);
   };
 
   render() {
     const {
-      _id, type, path, permanent, appLoading, iconPath
+      _id, type, path, permanent, iconPath
     } = this.props;
     const {
       dragPosition, gridPosition, displayName, isDragging
@@ -91,7 +90,6 @@ class Item extends Component {
         id={_id}
         isDragging={isDragging}
         draggingTime={this.draggingTime}
-        loading={appLoading}
         onMouseDown={e => onCatchHandler(this, e)}
         onDoubleClick={this.onOpenHandler}
         rowPos={gridPosition.rowPos}
@@ -125,13 +123,12 @@ class Item extends Component {
 }
 
 const mapStateToProps = state => ({
-  appLoading: state.apps.loading,
   runningApps: state.apps.running,
   minimalizedApps: state.apps.minimalized
 });
 
 const mapDispatchToProps = dispatch => ({
-  openAppHandler: (app, event, runningAppsAmount) => dispatch(openApp(app, event, runningAppsAmount))
+  openAppHandler: app => dispatch(openApp(app))
 });
 
 export default connect(

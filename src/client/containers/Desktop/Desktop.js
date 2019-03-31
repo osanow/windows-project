@@ -29,6 +29,16 @@ const DesktopWrapper = styled.div`
   grid-auto-flow: column;
 `;
 
+const Backdrop = styled.div`
+  cursor: wait;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
 class Desktop extends Component {
   state = {
     wallpaperUrl: '',
@@ -112,7 +122,12 @@ class Desktop extends Component {
 
   render() {
     const { wallpaperUrl, contextMenu } = this.state;
-    const { runningApps, appFetchItemsHandler, desktopItems } = this.props;
+    const {
+      runningApps,
+      appFetchItemsHandler,
+      desktopItems,
+      loading
+    } = this.props;
 
     const itemsArray = desktopItems.map(item => (
       <DesktopIcon
@@ -123,11 +138,8 @@ class Desktop extends Component {
     ));
 
     return (
-      <DesktopWrapper
-        wallpaperUrl={wallpaperUrl}
-        data-type="desktop,container"
-        data-path="/Desktop"
-      >
+      <DesktopWrapper wallpaperUrl={wallpaperUrl} data-type="desktop,container" data-path="/Desktop">
+        {loading && <Backdrop />}
         {itemsArray}
         {runningApps}
         {contextMenu.opened && (
@@ -142,11 +154,15 @@ class Desktop extends Component {
 }
 
 const mapStateToProps = state => ({
+  loading: state.apps.loading,
   isAuth: state.auth.token !== null,
   userId: state.auth.userId,
   wallpaper: state.auth.preferences.wallpaper,
   runningApps: state.apps.running,
-  desktopItems: state.apps.data['/Desktop'] && state.apps.data['/Desktop'].items ? state.apps.data['/Desktop'].items : []
+  desktopItems:
+    state.apps.data['/Desktop'] && state.apps.data['/Desktop'].items
+      ? state.apps.data['/Desktop'].items
+      : []
 });
 
 const mapDispatchToProps = dispatch => ({
