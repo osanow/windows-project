@@ -36,7 +36,7 @@ const Category = styled.div`
 `;
 
 const dirItems = (props) => {
-  const { items, changeDirHandler } = props;
+  const { items, updateItems, onDoubleClickHandler } = props;
 
   const categories = ['Name', 'Edited at', 'Created at', 'Type', 'Size'];
   const categoriesArray = categories.map(item => (
@@ -47,11 +47,13 @@ const dirItems = (props) => {
     ? items.map(item => (
       <DirItem
         key={item._id}
-        changeDirHandler={changeDirHandler}
+        updateItems={updateItems}
+        onDoubleClickHandler={onDoubleClickHandler}
         {...item}
       />
     ))
     : [];
+
   return (
     <Wrapper categoriesAmount={categories.length}>
       {categoriesArray}
@@ -60,4 +62,4 @@ const dirItems = (props) => {
   );
 };
 
-export default dirItems;
+export default React.memo(dirItems);

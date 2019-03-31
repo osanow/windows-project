@@ -29,6 +29,16 @@ const DesktopWrapper = styled.div`
   grid-auto-flow: column;
 `;
 
+const Backdrop = styled.div`
+  cursor: wait;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
 class Desktop extends Component {
   state = {
     wallpaperUrl: '',
@@ -48,8 +58,8 @@ class Desktop extends Component {
   componentDidUpdate(prevProps) {
     const { isAuth, wallpaper, appFetchItemsHandler } = this.props;
 
-    if (prevProps.isAuth !== isAuth) {
-      appFetchItemsHandler('/Desktop', 'Desktop');
+    if (prevProps.isAuth !== isAuth && isAuth) {
+      appFetchItemsHandler('/Desktop');
       import(`../../assets/bgrounds/${wallpaper}`)
         .then((res) => {
           this.setState(prevState => updateObject(prevState, {
@@ -112,28 +122,29 @@ class Desktop extends Component {
 
   render() {
     const { wallpaperUrl, contextMenu } = this.state;
-    const { runningApps, appFetchItemsHandler, desktopItems } = this.props;
+    const {
+      runningApps,
+      appFetchItemsHandler,
+      desktopItems,
+      loading
+    } = this.props;
 
     const itemsArray = desktopItems.map(item => (
       <DesktopIcon
         key={item._id}
-        updateItems={() => appFetchItemsHandler('/Desktop', 'Desktop')}
+        updateItems={() => appFetchItemsHandler('/Desktop')}
         {...item}
       />
     ));
 
     return (
-      <DesktopWrapper
-        wallpaperUrl={wallpaperUrl}
-        data-type="desktop"
-        data-path="/Desktop"
-        id="Desktop"
-      >
+      <DesktopWrapper wallpaperUrl={wallpaperUrl} data-type="desktop,container" data-path="/Desktop">
+        {loading && <Backdrop />}
         {itemsArray}
         {runningApps}
         {contextMenu.opened && (
           <ContextMenu
-            updateItems={(path, id) => appFetchItemsHandler(path, id)}
+            updateItems={path => appFetchItemsHandler(path)}
             {...contextMenu}
           />
         )}
@@ -142,22 +153,23 @@ class Desktop extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  const appData = state.apps.data.Desktop;
-  return {
-    isAuth: state.auth.token !== null,
-    userId: state.auth.userId,
-    wallpaper: state.auth.preferences.wallpaper,
-    runningApps: state.apps.running,
-    desktopItems: appData && appData.items ? appData.items : []
-  };
-};
+const mapStateToProps = state => ({
+  loading: state.apps.loading,
+  isAuth: state.auth.token !== null,
+  userId: state.auth.userId,
+  wallpaper: state.auth.preferences.wallpaper,
+  runningApps: state.apps.running,
+  desktopItems:
+    state.apps.data['/Desktop'] && state.apps.data['/Desktop'].items
+      ? state.apps.data['/Desktop'].items
+      : []
+});
 
 const mapDispatchToProps = dispatch => ({
-  appFetchItemsHandler: (path, id) => dispatch(appFetchItems(path, id))
+  appFetchItemsHandler: path => dispatch(appFetchItems(path))
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Desktop);
+)(React.memo(Desktop));

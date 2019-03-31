@@ -81,7 +81,8 @@ const dirItem = (props) => {
     size,
     name,
     _id,
-    changeDirHandler
+    updateItems,
+    onDoubleClickHandler
   } = props;
 
   const [displayName, setDisplayName] = useState(name);
@@ -100,7 +101,11 @@ const dirItem = (props) => {
             name: e.target.value
           }
         }
-      }).catch(error => console.log(error));
+      })
+        .then(() => {
+          updateItems();
+        })
+        .catch(error => console.log(error));
 
       const icon = document.getElementById(`${path.substring(1)}/${_id}`);
       icon.querySelector('p').style.display = 'block';
@@ -115,7 +120,7 @@ const dirItem = (props) => {
         data-path={path}
         id={`${path.substring(1)}/${_id}`}
         iconPath={iconPath}
-        onDoubleClick={() => changeDirHandler(_id, name)}
+        onDoubleClick={() => onDoubleClickHandler({ props: { ...props } })}
       >
         <p>{displayName}</p>
         <NameChanging

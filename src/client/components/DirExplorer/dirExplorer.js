@@ -88,7 +88,14 @@ const Content = styled.div`
 `;
 
 const explorer = (props) => {
-  const { dirName, initPath, initDisplayPath } = props;
+  const {
+    dirName,
+    initPath,
+    initDisplayPath,
+    allItemsData,
+    appFetchItemsHandler
+  } = props;
+
   const [data, setData] = useState({
     history: {
       position: 1,
@@ -104,12 +111,19 @@ const explorer = (props) => {
       ]
     }
   });
-
   const { history } = data;
-  const {
-    items, loading, id, appFetchItemsHandler
-  } = props;
   const currData = history.data[history.position];
+
+  useEffect(() => {
+    appFetchItemsHandler(`/${currData.path.join('/')}`);
+  }, [history.position]);
+
+
+  const currItemsData = allItemsData[`/${currData.path.join('/')}`] || {
+    loading: false,
+    items: []
+  };
+  const { loading } = currItemsData;
 
   const navigate = (value) => {
     if (value === 0) return;
@@ -143,18 +157,21 @@ const explorer = (props) => {
     });
   };
 
-  useEffect(() => {
-    appFetchItemsHandler(`/${currData.path.join('/')}`, id);
-  }, [data.history.position]);
+  const onDoubleClickHandler = (item) => {
+    if (item.props.type.find(type => type === 'directory')) {
+      const { _id, name } = item.props;
+      changeDir(_id, name);
+      return;
+    }
+    const { openAppHandler } = props;
+    openAppHandler(item);
+  };
 
   const allowPrev = history.position > 0;
   const allowNext = history.position < history.data.length - 1;
+
   return (
-    <Wrapper
-      data-type="container"
-      data-path={`/${currData.path.join('/')}`}
-      id={currData.path.toString() === 'Desktop' ? 'Desktop' : id}
-    >
+    <Wrapper data-type="container" data-path={`/${currData.path.join('/')}`}>
       <Navigation>
         <NavOptions>
           <NavOption
@@ -182,7 +199,7 @@ const explorer = (props) => {
       </Navigation>
       <Main>
         <Sidebar />
-        {loading ? (
+        {loading && currItemsData.items.length < 1 ? (
           <RectangleSpinner
             style={{
               margin: '15% 15%',
@@ -192,8 +209,10 @@ const explorer = (props) => {
         ) : (
           <Content>
             <DirItems
-              items={items}
-              changeDirHandler={changeDir}
+              items={currItemsData.items}
+              onDoubleClickHandler={onDoubleClickHandler}
+              updateItems={() => appFetchItemsHandler(`/${currData.path.join('/')}`)
+              }
             />
           </Content>
         )}
@@ -202,22 +221,13 @@ const explorer = (props) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const data = state.apps.data[ownProps.id];
-  const items = null;
-  const loading = false;
-  if (data) {
-    return {
-      items: data.items,
-      loading: data.loading
-    };
-  }
-  return { items, loading };
-};
+const mapStateToProps = state => ({
+  allItemsData: state.apps.data
+});
 
 const mapDispatchToProps = dispatch => ({
-  openAppHandler: (app, event, runningAppsAmount) => dispatch(openApp(app, event, runningAppsAmount)),
-  appFetchItemsHandler: (path, id) => dispatch(appFetchItems(path, id))
+  openAppHandler: app => dispatch(openApp(app)),
+  appFetchItemsHandler: path => dispatch(appFetchItems(path))
 });
 
 export default connect(

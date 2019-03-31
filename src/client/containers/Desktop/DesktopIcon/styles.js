@@ -8,8 +8,7 @@ export const Container = styled.div`
   align-items: center;
   border: 1px solid transparent;
 
-  cursor: ${({ isDragging, loading, draggingTime }) => {
-    if (loading) return 'wait';
+  cursor: ${({ isDragging, draggingTime }) => {
     if (isDragging && draggingTime > 2) return 'grabbing';
     return 'pointer';
   }};

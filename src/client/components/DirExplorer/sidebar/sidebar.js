@@ -14,9 +14,6 @@ const Sidebar = styled.ul`
   padding: 0 0.5rem;
 `;
 
-const sidebar = (props) => {
-  console.log(props);
-  return <Sidebar />;
-};
+const sidebar = props => <Sidebar />;
 
 export default sidebar;
