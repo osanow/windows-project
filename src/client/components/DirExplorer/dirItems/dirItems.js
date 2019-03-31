@@ -45,13 +45,10 @@ const dirItems = (props) => {
 
   const itemsArray = items
     ? items.map(item => (
-      <DirItem
-        key={item._id}
-        changeDirHandler={changeDirHandler}
-        {...item}
-      />
+      <DirItem key={item._id} changeDirHandler={changeDirHandler} {...item} />
     ))
     : [];
+
   return (
     <Wrapper categoriesAmount={categories.length}>
       {categoriesArray}
@@ -60,4 +57,4 @@ const dirItems = (props) => {
   );
 };
 
-export default dirItems;
+export default React.memo(dirItems);

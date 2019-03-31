@@ -8,20 +8,17 @@ export const personalize = () => {
   console.log('personalize');
 };
 
-export const deleteItem = (id) => {
-  document.getElementById(id).style.display = 'none';
-  let iterator = 1;
-  while (document.getElementById(`${id}/${iterator}`)) {
-    document.getElementById(`${id}/${iterator}`).style.display = 'none';
-    iterator += 1;
-  }
-
+export const deleteItem = ({ path, id }, updateItems) => {
   const idArray = id.split('/');
   const itemId = idArray[idArray.length - 1];
-  if (document.getElementById(itemId)) document.getElementById(itemId).style.display = 'none';
-  axios.delete(`/items/${itemId}`).catch((error) => {
-    console.log(error);
-  });
+  axios
+    .delete(`/items/${itemId}`)
+    .then(() => {
+      updateItems(path);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const createItem = (type, data, updateItems) => {
@@ -40,7 +37,7 @@ export const createItem = (type, data, updateItems) => {
     }
   })
     .then(() => {
-      updateItems(data.path, data.id);
+      updateItems(data.path);
     })
     .catch((error) => {
       console.log(error);

@@ -14,14 +14,13 @@ export const focusApp = id => ({
   id
 });
 
-export const appStartFetchingItems = id => ({
+export const appStartFetchingItems = path => ({
   type: actionTypes.APP_START_FETCHING_ITEMS,
-  id
+  path
 });
 
-export const appFetchItems = (path, id) => async (dispatch) => {
-  dispatch(appStartFetchingItems(id));
-  console.log(path, id);
+export const appFetchItems = path => async (dispatch) => {
+  dispatch(appStartFetchingItems(path));
 
   const fetchedItems = (await axios('items/', {
     method: 'GET',
@@ -44,7 +43,7 @@ export const appFetchItems = (path, id) => async (dispatch) => {
   document.body.style.cursor = 'default';
   dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
-    id,
+    path,
     newItems
   });
 };

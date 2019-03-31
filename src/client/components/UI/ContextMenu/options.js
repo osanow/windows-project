@@ -14,12 +14,12 @@ export const desktop = {
 };
 
 export const file = {
-  delete: ({ id }) => itemsActions.deleteItem(id),
+  delete: (data, updateItems) => itemsActions.deleteItem(data, updateItems),
   rename: ({ id }) => itemsActions.changeName(id)
 };
 
 export const directory = {
-  delete: ({ id }) => itemsActions.deleteItem(id),
+  delete: (data, updateItems) => itemsActions.deleteItem(data, updateItems),
   rename: ({ id }) => itemsActions.changeName(id)
 };
 
