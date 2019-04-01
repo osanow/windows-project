@@ -2,7 +2,7 @@ import React from 'react';
 import * as actionTypes from './actionTypes';
 
 import axios from '../../axios-instance';
-import { asyncForEach } from '../../utils/utility';
+import { fetchIcons } from '../../utils/utility';
 
 export const focusApp = id => ({
   type: actionTypes.APP_FOCUS,
@@ -21,20 +21,7 @@ export const appFetchItems = path => async (dispatch) => {
     method: 'GET',
     params: { path }
   })).data;
-
-  const icons = {};
-  const newItems = [];
-  await asyncForEach(fetchedItems, async (item) => {
-    if (!icons[item.icon]) {
-      icons[item.icon] = (await import(`../../assets/icons/${
-        item.icon
-      }`)).default;
-    }
-    newItems.push({
-      ...item,
-      iconPath: icons[item.icon]
-    });
-  });
+  const newItems = await fetchIcons(fetchedItems);
   document.body.style.cursor = 'default';
   dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
@@ -55,7 +42,6 @@ export const openApp = app => async (dispatch) => {
   dispatch(startOpeningApp());
 
   let OpenedApp;
-  let appIcon;
   const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
     .default;
   if (app.props.type.find(type => type === 'file')) {

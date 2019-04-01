@@ -11,6 +11,12 @@ export const personalize = () => {
 export const deleteItem = ({ path, id }, updateItems) => {
   const idArray = id.split('/');
   const itemId = idArray[idArray.length - 1];
+  document.getElementById(id).style.display = 'none';
+  let iterator = 1;
+  while (document.getElementById(`${id}/${iterator}`)) {
+    document.getElementById(`${id}/${iterator}`).style.display = 'none';
+    iterator += 1;
+  }
   axios
     .delete(`/items/${itemId}`)
     .then(() => {

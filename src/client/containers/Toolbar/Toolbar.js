@@ -8,7 +8,7 @@ import ClockItem from '../../components/ClockItem/clockItem';
 const Bar = styled.nav`
   position: absolute;
   bottom: 0;
-  height: 3rem;
+  height: 2.5rem;
   width: 100vw;
   background-color: rgba(45, 45, 45, 0.9);
   display: flex;

@@ -164,3 +164,20 @@ export const onCatchHandler = (icon, e) => {
     document.addEventListener('mousemove', icon.throttledMouseMove, false);
   });
 };
+
+export const fetchIcons = async (items) => {
+  const icons = {};
+  const newItems = [];
+  await asyncForEach(items, async (item) => {
+    if (!icons[item.icon]) {
+      icons[item.icon] = (await import(`../assets/icons/${
+        item.icon
+      }`)).default;
+    }
+    newItems.push({
+      ...item,
+      iconPath: icons[item.icon]
+    });
+  });
+  return newItems;
+};

@@ -10,7 +10,7 @@ import { appFetchItems } from '../../store/actions/index';
 
 const DesktopWrapper = styled.div`
   width: 100vw;
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 2.5rem);
   overflow: hidden;
   margin: 0;
   padding: 1rem 0.3rem 1rem 0.3rem;

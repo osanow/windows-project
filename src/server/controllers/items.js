@@ -1,9 +1,18 @@
 const Item = require('../models/item');
 
 exports.getItems = (req, res) => {
-  const { path } = req.query;
+  const { path, name } = req.query;
+  const { userId } = req;
 
-  const query = { path, owner: req.userId };
+  let query;
+  if (name) {
+    const nameQuery = new RegExp(name, 'gi');
+    const pathQuery = new RegExp(`^${path}`);
+    query = { name: nameQuery, path: pathQuery, owner: userId };
+  } else {
+    query = { path, owner: userId };
+  }
+
   if (!path) delete query.path;
 
   Item.find(query)
