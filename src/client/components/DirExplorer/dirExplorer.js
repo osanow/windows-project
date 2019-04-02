@@ -126,6 +126,7 @@ const explorer = (props) => {
     <Styles.Wrapper
       data-type="container"
       data-path={`/${currData.path.join('/')}`}
+      data-name={currData.displayPath.join('/')}
     >
       <Styles.Navigation>
         <Styles.NavOptions>

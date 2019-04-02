@@ -17,7 +17,7 @@ const WindowWrapper = styled.div`
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 
   transition: ${({ isDragging, positioning }) => {
-    if (isDragging) return 'width 0.5s ease-in, height 0.5s ease-in, transform .1s linear';
+    if (isDragging) return 'width 0.5s ease-in, height 0.5s ease-in, transform .06s linear';
     if (positioning) return 'width 0.5s ease-in, height 0.5s ease-in';
     return 'width 0.4s ease-in 0.2s, height 0.4s ease-in 0.2s, transform 0.4s ease-in-out';
   }};
