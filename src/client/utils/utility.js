@@ -144,6 +144,9 @@ export const onDropHandler = (icon) => {
     const newRow = currRow > maxRow ? maxRow.toString() : currRow.toString();
     const newCol = currCol > maxCol ? maxCol.toString() : currCol.toString();
 
+    const prevCol = icon.state.gridPosition.colPos;
+    const prevRow = icon.state.gridPosition.rowPos;
+
     icon.setState(prevState => updateObject(prevState, {
       isDragging: false,
       dragPosition: { x: 0, y: 0 },
@@ -152,9 +155,17 @@ export const onDropHandler = (icon) => {
 
     const newPath = icon.dragContainer
       ? `${icon.dragContainer.getAttribute('data-path')}${
-        icon.dragContainer.id ? `/${icon.dragContainer.id}` : ''
+        icon.dragContainer.id ? `/${icon.dragContainer.id.split('/').slice(-1)}` : ''
       }`
       : '';
+
+    if (
+      !newPath
+      && newRow === prevRow
+      && newCol === prevCol
+    ) return;
+    // If nothing changes -> stop
+
     const changedValues = {
       rowPos: newRow,
       colPos: newCol,
@@ -180,7 +191,8 @@ export const onDropHandler = (icon) => {
         ) {
           updateItems(
             `${icon.dragContainer.getAttribute('data-path')}${
-              icon.dragContainer.id ? `/${icon.dragContainer.id}` : ''}`
+              icon.dragContainer.id ? `/${icon.dragContainer.id}` : ''
+            }`
           );
           updateItems(icon.dragTarget.getAttribute('data-path'));
         }

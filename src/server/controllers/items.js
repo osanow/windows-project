@@ -55,7 +55,23 @@ exports.putItem = (req, res) => {
   const { id } = req.params;
 
   Item.findByIdAndUpdate(id, { $set: { ...changedValues } })
-    .then(() => {
+    .then((prevItem) => {
+      if (
+        prevItem.type.find(type => type === 'container')
+        && changedValues.path
+        && prevItem.path !== changedValues.path
+      ) {
+        const itemsInsidePath = new RegExp(`^${prevItem.path}/${prevItem._id}`);
+        return Item.find({ path: itemsInsidePath }).then((itemsInside) => {
+          itemsInside.forEach((item) => {
+            const newPath = item.path.replace(item.path, changedValues.path);
+            // eslint-disable-next-line no-param-reassign
+            item.path = `${newPath}/${prevItem._id}`;
+            item.save();
+          });
+          res.status(200).json({ message: 'Updated item' });
+        });
+      }
       res.status(200).json({ message: 'Updated item' });
     })
     .catch((error) => {
@@ -68,7 +84,13 @@ exports.deleteItem = (req, res) => {
   const { id } = req.params;
 
   Item.findByIdAndDelete(id)
-    .then(() => {
+    .then((prevItem) => {
+      if (prevItem.type.find(type => type === 'container')) {
+        const itemsInsidePath = new RegExp(`^${prevItem.path}/${prevItem._id}`);
+        return Item.deleteMany({ path: itemsInsidePath }).then(() => {
+          res.status(200).json({ message: 'Deleted item' });
+        });
+      }
       res.status(200).json({ message: 'Deleted item' });
     })
     .catch((error) => {

@@ -22,7 +22,6 @@ export const appFetchItems = path => async (dispatch) => {
     params: { path }
   })).data;
   const newItems = await fetchIcons(fetchedItems);
-  document.body.style.cursor = 'default';
   dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
     path,
@@ -65,7 +64,7 @@ export const openApp = app => async (dispatch) => {
         />
       </SystemWindow>
     );
-  } else if (app.props.type.find(type => type === 'directory')) {
+  } else if (app.props.type.find(type => type === 'container')) {
     const DirExplorer = (await import('../../components/DirExplorer/dirExplorer'))
       .default;
     OpenedApp = (left, top) => (

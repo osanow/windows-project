@@ -59,8 +59,8 @@ exports.postSignin = (req, res) => {
           path: '/Desktop',
           permanent: true,
           owner: newUser._id,
-          colPos: 0,
-          rowPos: 0
+          colPos: 1,
+          rowPos: 1
         },
         {
           name: 'Trash',
@@ -69,8 +69,8 @@ exports.postSignin = (req, res) => {
           path: '/Desktop',
           permanent: true,
           owner: newUser._id,
-          colPos: 0,
-          rowPos: 1
+          colPos: 1,
+          rowPos: 2
         }
       ];
       req.newUser = newUser;

@@ -33,6 +33,8 @@ const Message = styled.p`
   font-size: 13px;
   margin: 0;
   font-family: Monserrat, sans-serif;
+  display: flex;
+  align-items: center;
 
   &::before {
     position: absolute;
@@ -45,6 +47,7 @@ const Message = styled.p`
 `;
 
 const Target = styled.span`
+  margin-left: 0.2rem;
   color: black;
 `;
 
@@ -61,9 +64,9 @@ const dragHint = ({
   >
     {type !== 'not allowed' && (
       <Message>
-        Move to:{' '}
+        Move to:
         <Target>
-          {`/${target.getAttribute('data-name')}`}
+          {`  /${target.getAttribute('data-name').split('/').slice(-2).join('/')}`}
         </Target>
       </Message>
     )}

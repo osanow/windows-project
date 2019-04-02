@@ -17,10 +17,12 @@ export const deleteItem = ({ path, id }, updateItems) => {
     document.getElementById(`${id}/${iterator}`).style.display = 'none';
     iterator += 1;
   }
+  document.body.style.cursor = 'progress';
   axios
     .delete(`/items/${itemId}`)
+    .then(() => updateItems(path))
     .then(() => {
-      updateItems(path);
+      document.body.style.cursor = 'default';
     })
     .catch((error) => {
       console.log(error);
@@ -42,8 +44,9 @@ export const createItem = (type, data, updateItems) => {
       items: [newItem]
     }
   })
+    .then(() => updateItems(data.path))
     .then(() => {
-      updateItems(data.path);
+      document.body.style.cursor = 'default';
     })
     .catch((error) => {
       console.log(error);
