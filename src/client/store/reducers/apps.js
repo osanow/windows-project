@@ -58,10 +58,22 @@ const focusApp = (state, { id }) => {
   });
 };
 
-const hideApp = (state, { hiddenApp }) => updateObject(state, {
-  minimalized: state.minimalized.concat([hiddenApp]),
-  running: state.running.filter(app => app.props._id !== hiddenApp.props._id)
-});
+const hideApp = (state, { hiddenApp }) => {
+  console.log(hiddenApp);
+  return updateObject(state, {
+    minimalized: state.minimalized.concat([hiddenApp]),
+    running: state.running.filter(app => app.props._id !== hiddenApp.props._id)
+  });
+};
+
+const showApp = (state, { id }) => {
+  const app = state.minimalized.find(el => el.props._id === id);
+  console.log(app);
+  return updateObject(state, {
+    minimalized: state.minimalized.filter(el => el.props._id !== id),
+    running: state.running.concat([app])
+  });
+};
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -77,9 +89,12 @@ const reducer = (state = initialState, action) => {
       return closeApp(state, action);
     case actionTypes.APP_FOCUS:
       return focusApp(state, action);
+    case actionTypes.APP_START_HIDING:
+      return state;
     case actionTypes.APP_HIDE:
       return hideApp(state, action);
     case actionTypes.APP_SHOW:
+      return showApp(state, action);
     default:
       return state;
   }

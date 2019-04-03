@@ -259,6 +259,7 @@ class AuthLayer extends Component {
         key={`signinForm ${formItem[0]}`}
         inputConfig={formItem[1].inputConfig}
         changeHandler={e => this.inputChangedHandler(e, formItem[0])}
+        spellCheck="false"
       />
     ));
 

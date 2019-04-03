@@ -10,7 +10,7 @@ import { appFetchItems } from '../../store/actions/index';
 
 const DesktopWrapper = styled.div`
   width: 100vw;
-  height: calc(100vh - 3rem);
+  height: 101vh;
   overflow: hidden;
   margin: 0;
   padding: 1rem 0.3rem 1rem 0.3rem;
@@ -140,7 +140,7 @@ class Desktop extends Component {
     const itemsArray = desktopItems.map(item => (
       <DesktopIcon
         key={item._id}
-        updateItems={() => appFetchItemsHandler('/Desktop')}
+        updateItems={appFetchItemsHandler}
         {...item}
       />
     ));
@@ -150,6 +150,7 @@ class Desktop extends Component {
         wallpaperUrl={wallpaperUrl}
         data-type="desktop,container"
         data-path="/Desktop"
+        data-name="Desktop"
       >
         {loading && <Backdrop />}
         {itemsArray}

@@ -76,7 +76,7 @@ const Checkmark = styled.svg`
   }
 `;
 
-const textEditor = ({ value, itemId, updateItems }) => {
+const textEditor = ({ value, id, updateItems }) => {
   const [config, setConfig] = useState({
     visibility: false,
     text: value
@@ -85,7 +85,7 @@ const textEditor = ({ value, itemId, updateItems }) => {
   const saveContent = (editor) => {
     const content = editor.getData();
 
-    axios(`/items/${itemId}`, {
+    axios(`/items/${id}`, {
       method: 'PUT',
       data: {
         changedValues: {
@@ -95,13 +95,13 @@ const textEditor = ({ value, itemId, updateItems }) => {
     })
       .then(() => {
         updateItems();
-        if (document.getElementById(`Window${itemId}`)) {
+        if (document.getElementById(`Window${id}`)) {
           setConfig({
             visibility: true,
             text: editor.getData()
           });
           setTimeout(() => {
-            if (document.getElementById(`Window${itemId}`)) {
+            if (document.getElementById(`Window${id}`)) {
               setConfig({
                 visibility: false,
                 text: editor.getData()

@@ -15,7 +15,7 @@ const Wrapper = styled.section`
   align-items: center;
   flex-direction: column;
   background: linear-gradient(60deg, #3f51b5, #00bcd4);
-  animation: ${({ closed }) => (closed ? 'smooth-toggle 1.5s ease-in 3s forwards' : 'none')};
+  animation: ${({ closed }) => (closed ? 'smooth-toggle 1.5s ease-in 2s forwards' : 'none')};
 
   &::before {
     content: '';
@@ -82,7 +82,7 @@ const Title = styled.h1`
     position: absolute;
     bottom: 0;
     left: 0;
-    animation: ${underlineAnimation} 2s ease-in-out 2s forwards;
+    animation: ${underlineAnimation} 1s ease-in-out 2s forwards;
   }
 `;
 

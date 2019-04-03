@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import axios from '../../../axios-instance';
 import { onCatchHandler, updateObject } from '../../../utils/utility';
 import { openApp } from '../../../store/actions/index';
+import DragHint from '../../../components/UI/DragHint/dragHint';
 import * as Styles from './styles';
 
 class Item extends Component {
@@ -19,6 +20,10 @@ class Item extends Component {
       y: 0
     }
   };
+
+  cursorType = null;
+
+  targetPath = null;
 
   componentWillMount() {
     const { rowPos, colPos, name } = this.props;
@@ -42,7 +47,6 @@ class Item extends Component {
   onSubmitNameHandler = (e) => {
     if (e.keyCode === 13) {
       const { _id, updateItems } = this.props;
-
       axios(`/items/${_id}`, {
         method: 'PUT',
         data: {
@@ -52,7 +56,7 @@ class Item extends Component {
         }
       })
         .then(() => {
-          updateItems();
+          updateItems('/Desktop');
         })
         .catch(error => console.log(error));
 
@@ -84,7 +88,9 @@ class Item extends Component {
 
     return (
       <Styles.Container
+        draggable="true"
         data-path={path}
+        data-name={displayName}
         data-permanent={permanent}
         data-type={type}
         id={_id}
@@ -117,6 +123,7 @@ class Item extends Component {
           onKeyDown={this.onSubmitNameHandler}
           onChange={this.onChangeNameHandler}
         />
+        { isDragging && this.draggingTime > 2 && this.dragContainer && <DragHint target={this.dragContainer} type={this.cursorType} prevX={this.prevX} prevY={this.prevY} left={dragPosition.x + 10} top={dragPosition.y + 20} /> }
       </Styles.Container>
     );
   }

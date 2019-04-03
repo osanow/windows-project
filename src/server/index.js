@@ -34,7 +34,9 @@ mongoose
     }
   )
   .then(() => {
-    app.listen(process.env.PORT || 8080);
+    const PORT = process.env.PORT || 8080;
+    console.log(`listening on port: ${PORT}`);
+    app.listen(PORT);
   })
   .catch((err) => {
     console.log(`Cant connect with DB - ${err}`);

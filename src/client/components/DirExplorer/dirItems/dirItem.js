@@ -118,6 +118,7 @@ const dirItem = (props) => {
       <MainItem
         data-type={type}
         data-path={path}
+        data-name={name}
         id={`${path.substring(1)}/${_id}`}
         iconPath={iconPath}
         onDoubleClick={() => onDoubleClickHandler({ props: { ...props } })}

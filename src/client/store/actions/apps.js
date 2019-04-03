@@ -2,7 +2,7 @@ import React from 'react';
 import * as actionTypes from './actionTypes';
 
 import axios from '../../axios-instance';
-import { asyncForEach } from '../../utils/utility';
+import { fetchIcons } from '../../utils/utility';
 
 export const focusApp = id => ({
   type: actionTypes.APP_FOCUS,
@@ -21,21 +21,7 @@ export const appFetchItems = path => async (dispatch) => {
     method: 'GET',
     params: { path }
   })).data;
-
-  const icons = {};
-  const newItems = [];
-  await asyncForEach(fetchedItems, async (item) => {
-    if (!icons[item.icon]) {
-      icons[item.icon] = (await import(`../../assets/icons/${
-        item.icon
-      }`)).default;
-    }
-    newItems.push({
-      ...item,
-      iconPath: icons[item.icon]
-    });
-  });
-  document.body.style.cursor = 'default';
+  const newItems = await fetchIcons(fetchedItems);
   dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
     path,
@@ -43,7 +29,7 @@ export const appFetchItems = path => async (dispatch) => {
   });
 };
 
-export const startOpeningApp = () => ({
+const startOpeningApp = () => ({
   type: actionTypes.APP_START_OPENING
 });
 
@@ -55,7 +41,6 @@ export const openApp = app => async (dispatch) => {
   dispatch(startOpeningApp());
 
   let OpenedApp;
-  let appIcon;
   const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
     .default;
   if (app.props.type.find(type => type === 'file')) {
@@ -75,11 +60,11 @@ export const openApp = app => async (dispatch) => {
         <TextEditor
           value={app.props.content}
           updateItems={app.props.updateItems}
-          itemId={app.props._id}
+          id={app.props._id}
         />
       </SystemWindow>
     );
-  } else if (app.props.type.find(type => type === 'directory')) {
+  } else if (app.props.type.find(type => type === 'container')) {
     const DirExplorer = (await import('../../components/DirExplorer/dirExplorer'))
       .default;
     OpenedApp = (left, top) => (
@@ -115,14 +100,38 @@ export const closeApp = id => ({
   id
 });
 
-export const hideApp = (hiddenApp) => {
-  console.log('hide');
-  return {
+const startHidingApp = () => ({
+  type: actionTypes.APP_START_HIDING
+});
+
+export const hideApp = appData => async (dispatch) => {
+  dispatch(startHidingApp());
+  const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
+    .default;
+  console.log(appData);
+  const hiddenApp = (
+    <SystemWindow
+      key={appData.props._id}
+      _id={appData.props._id}
+      name={appData.props.name}
+      path={appData.props.path}
+      icon={appData.props.icon}
+      type={appData.props.type}
+      maximalized={appData.state.maximalized}
+      left={appData.state.position.x}
+      top={appData.state.position.y}
+    >
+      {appData.props.children}
+    </SystemWindow>
+  );
+  console.log(hiddenApp);
+  dispatch({
     type: actionTypes.APP_HIDE,
     hiddenApp
-  };
+  });
 };
 
-export const showApp = () => ({
-  type: actionTypes.APP_SHOW
+export const showApp = id => ({
+  type: actionTypes.APP_SHOW,
+  id
 });
