@@ -93,9 +93,13 @@ export const onMoveHandler = (icon, e) => {
         === `${el.getAttribute('data-path')}${el.id ? `/${el.id}` : ''}`
       ) {
         icon.dragContainer = null;
+        icon.cursorType = 'move';
       } else if (icon.dragContainer && el.id === icon.dragContainer.id) {
         break;
-      } else if (el.getAttribute('data-type').includes('container')) {
+      } else if (
+        el.getAttribute('data-type').includes('container')
+        && !icon.props.permanent // Not allowed to change path -> set cursor to not allowed
+      ) {
         icon.dragContainer = el;
         icon.cursorType = 'move';
       } else {
@@ -121,7 +125,7 @@ export const onDropHandler = (icon) => {
   document.removeEventListener('mouseup', icon.onDropFunction, false);
   document.removeEventListener('mousemove', icon.throttledMouseMove, false);
 
-  if (icon.cursorType === 'not allowed') {
+  if (icon.cursorType === 'not allowed' && !icon.props.permanent) {
     icon.setState(prevState => updateObject(prevState, {
       isDragging: false,
       dragPosition: { x: 0, y: 0 }
@@ -147,23 +151,28 @@ export const onDropHandler = (icon) => {
     const prevCol = icon.state.gridPosition.colPos;
     const prevRow = icon.state.gridPosition.rowPos;
 
-    icon.setState(prevState => updateObject(prevState, {
+    const newState = {
       isDragging: false,
       dragPosition: { x: 0, y: 0 },
       gridPosition: { rowPos: newRow, colPos: newCol }
-    }));
+    };
+    if (icon.props.permanent && icon.dragContainer) delete newState.gridPosition;
+    // Not allowed to change path -> Prevent glitch
+
+    icon.setState(prevState => updateObject(prevState, newState));
+
+    if (icon.props.permanent) return;
+    // Not allowed to change path -> stop
 
     const newPath = icon.dragContainer
       ? `${icon.dragContainer.getAttribute('data-path')}${
-        icon.dragContainer.id ? `/${icon.dragContainer.id.split('/').slice(-1)}` : ''
+        icon.dragContainer.id
+          ? `/${icon.dragContainer.id.split('/').slice(-1)}`
+          : ''
       }`
       : '';
 
-    if (
-      !newPath
-      && newRow === prevRow
-      && newCol === prevCol
-    ) return;
+    if (!newPath && newRow === prevRow && newCol === prevCol) return;
     // If nothing changes -> stop
 
     const changedValues = {

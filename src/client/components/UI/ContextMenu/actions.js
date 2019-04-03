@@ -48,7 +48,6 @@ export const createItem = (type, data, updateItems) => {
   const newPath = `${data.path}${
     data.id ? `/${data.id.split('/').slice(-1)}` : ''
   }`;
-  console.log(data.path, data.id, newPath);
   const newItem = {
     name: `New ${type}`,
     type: type === 'directory' ? ['directory', 'container'] : ['file', 'txt'],
