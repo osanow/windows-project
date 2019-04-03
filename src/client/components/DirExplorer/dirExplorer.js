@@ -29,12 +29,8 @@ const explorer = (props) => {
   const [data, setData] = useState({
     searchedItems: null,
     history: {
-      position: 1,
+      position: 0,
       data: [
-        {
-          path: [initPath.substring(1).split('/')[0]],
-          displayPath: [initDisplayPath.substring(1).split('/')[0]]
-        },
         {
           path: initPath.substring(1).split('/'),
           displayPath: initDisplayPath.substring(1).split('/')
@@ -42,13 +38,30 @@ const explorer = (props) => {
       ]
     }
   });
-  const { history } = data;
-  const currData = history.data[history.position];
 
   useEffect(() => {
-    appFetchItemsHandler(`/${currData.path.join('/')}`);
-  }, [history.position]);
+    const newData = [];
+    const initPathArray = initPath.substring(1).split('/');
+    const initDisplayPathArray = initDisplayPath.substring(1).split('/');
+    initPathArray.forEach((el, index) => {
+      const dataItem = {
+        path: initPathArray.slice(0, index + 1),
+        displayPath: initDisplayPathArray.slice(0, index + 1)
+      };
+      newData.push(dataItem);
+    });
+    const newHistory = {
+      position: initPathArray.length - 1,
+      data: newData
+    };
+    setData({
+      searchedItems: null,
+      history: newHistory
+    });
+  }, []);
 
+  const { history } = data;
+  const currData = history.data[history.position];
   const currItemsData = allItemsData[`/${currData.path.join('/')}`] || {
     loading: false,
     items: []
@@ -65,6 +78,10 @@ const explorer = (props) => {
       }
     });
   };
+
+  useEffect(() => {
+    appFetchItemsHandler(`/${currData.path.join('/')}`);
+  }, [history.position]);
 
   const changeDir = (dirId, name) => {
     if (dirId === currData.path[currData.path.length - 1]) return;
@@ -130,20 +147,14 @@ const explorer = (props) => {
       data-path={`/${currData.path.join('/')}`}
       data-name={currData.displayPath.join('/')}
       data-display-path={`/${currData.displayPath.join('/')}`}
-      data-history-position={history.position}
+      data-history-position9={history.position}
     >
       <Styles.Navigation>
         <Styles.NavOptions>
-          <Styles.NavOption
-            active={allowPrev}
-            onClick={_.throttle(() => navigate(-1), 800)}
-          >
+          <Styles.NavOption active={allowPrev} onClick={() => navigate(-1)}>
             <img src={leftArrow} alt="prev" />
           </Styles.NavOption>
-          <Styles.NavOption
-            active={allowNext}
-            onClick={_.throttle(() => navigate(1), 800)}
-          >
+          <Styles.NavOption active={allowNext} onClick={() => navigate(1)}>
             <img src={rightArrow} alt="next" />
           </Styles.NavOption>
         </Styles.NavOptions>

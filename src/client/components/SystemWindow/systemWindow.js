@@ -98,25 +98,22 @@ const WindowAction = styled.li`
 `;
 
 class systemWindow extends Component {
-  state = {
-    isDragging: false,
-    positioning: false,
-    maximalized: false,
-    position: {
-      x: 0,
-      y: 0
-    },
-    dragPosition: {
-      x: 0,
-      y: 0
-    }
-  };
-
-  componentWillMount() {
-    const { top, left } = this.props;
-    this.setState(prevState => updateObject(prevState, {
-      position: { x: left, y: top }
-    }));
+  constructor(props) {
+    super(props);
+    const { maximalized, left, top } = this.props;
+    this.state = {
+      isDragging: false,
+      positioning: false,
+      maximalized: maximalized || false,
+      position: {
+        x: left || 0,
+        y: top || 0
+      },
+      dragPosition: {
+        x: 0,
+        y: 0
+      }
+    };
   }
 
   maximalizeAppHandler = () => {
@@ -129,9 +126,9 @@ class systemWindow extends Component {
       icon,
       name,
       children,
-      hideAppHandler,
       closeAppHandler,
-      focusAppHandler
+      focusAppHandler,
+      hideAppHandler
     } = this.props;
 
     const {
@@ -144,6 +141,7 @@ class systemWindow extends Component {
 
     return (
       <WindowWrapper
+        ref={this.window}
         id={`Window${_id}`}
         top={position.y}
         left={position.x}
@@ -168,8 +166,7 @@ class systemWindow extends Component {
             <p>{name}</p>
           </Description>
           <WindowActions onMouseDown={e => e.stopPropagation()}>
-            <WindowAction>
-              {/* onMouseDown={() => hideAppHandler(_id)} */}
+            <WindowAction onMouseDown={() => hideAppHandler(this)}>
               <img src={dash} alt="minimalize" />
             </WindowAction>
             <WindowAction onMouseDown={this.maximalizeAppHandler}>
@@ -187,7 +184,7 @@ class systemWindow extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  hideAppHandler: id => dispatch(hideApp(id)),
+  hideAppHandler: app => dispatch(hideApp(app)),
   closeAppHandler: id => dispatch(closeApp(id)),
   focusAppHandler: id => dispatch(focusApp(id))
 });

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
+import { showApp } from '../../store/actions/index';
 import ToolbarItem from './ToolbarItem/toolbarItem';
 import ClockItem from '../../components/ClockItem/clockItem';
+import noIcon from '../../assets/icons/noIcon.png';
 
 const Bar = styled.nav`
   position: absolute;
@@ -18,22 +20,42 @@ const Bar = styled.nav`
 const Box = styled.section`
   display: flex;
   align-items: center;
-  margin: 0 0.5rem;
+  margin-right: 0.5rem;
 `;
 
 const toolbar = (props) => {
-  const { minimalizedApps } = props;
+  const [icons, setIcons] = useState({
+    soundIcon: noIcon,
+    wifiIcon: noIcon
+  });
+  const { minimalizedApps, showAppHandler } = props;
 
+  const fetchIcons = async () => {
+    const soundIcon = (await import('../../assets/icons/sound.png')).default;
+    const wifiIcon = (await import('../../assets/icons/wifi.png')).default;
+    setIcons({ soundIcon, wifiIcon });
+  };
+  useEffect(() => {
+    fetchIcons();
+  }, []);
+
+  console.log(minimalizedApps);
   const itemsArray = minimalizedApps.map(item => (
-    <ToolbarItem key={item._id} {...item} />
+    <ToolbarItem
+      {...item.props}
+      active="true"
+      key={item.props._id}
+      scale="medium"
+      showAppHandler={() => showAppHandler(item.props._id)}
+    />
   ));
 
   return (
     <Bar>
       <Box>{itemsArray}</Box>
       <Box>
-        <ToolbarItem iconName="sound.png" isPermanent scale="small" />
-        <ToolbarItem iconName="wifi.png" isPermanent scale="small" />
+        <ToolbarItem icon={icons.soundIcon} isPermanent scale="small" />
+        <ToolbarItem icon={icons.wifiIcon} isPermanent scale="small" />
         <ClockItem />
       </Box>
     </Bar>
@@ -44,4 +66,11 @@ const mapStateToProps = state => ({
   minimalizedApps: state.apps.minimalized
 });
 
-export default connect(mapStateToProps)(React.memo(toolbar));
+const mapDispatchToProps = dispatch => ({
+  showAppHandler: id => dispatch(showApp(id))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(toolbar));

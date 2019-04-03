@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { imageContainer } from '../../../assets/styles/globalStyles';
-import noIcon from '../../../assets/icons/noIcon.png';
 
 const BarItem = styled.div`
   display: flex;
@@ -22,17 +21,12 @@ const ImageContainer = styled(imageContainer)`
   filter: ${props => (props.permanent ? 'invert(100%)' : 'none')};
 `;
 
-const item = ({ iconName, isPermanent, scale }) => {
-  const [icon, setIcon] = useState(noIcon);
-
-  if (icon === noIcon) {
-    import(`../../../assets/icons/${iconName}`)
-      .then(res => setIcon(res.default))
-      .catch(err => console.log(err));
-  }
-
+const item = (props) => {
+  const {
+    icon, isPermanent, scale, showAppHandler, active
+  } = props;
   return (
-    <BarItem scale={scale}>
+    <BarItem scale={scale} onClick={showAppHandler} active={active}>
       <ImageContainer
         src={icon}
         alt="icon"

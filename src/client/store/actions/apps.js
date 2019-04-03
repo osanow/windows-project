@@ -29,7 +29,7 @@ export const appFetchItems = path => async (dispatch) => {
   });
 };
 
-export const startOpeningApp = () => ({
+const startOpeningApp = () => ({
   type: actionTypes.APP_START_OPENING
 });
 
@@ -100,14 +100,38 @@ export const closeApp = id => ({
   id
 });
 
-export const hideApp = (hiddenApp) => {
-  console.log('hide');
-  return {
+const startHidingApp = () => ({
+  type: actionTypes.APP_START_HIDING
+});
+
+export const hideApp = appData => async (dispatch) => {
+  dispatch(startHidingApp());
+  const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
+    .default;
+  console.log(appData);
+  const hiddenApp = (
+    <SystemWindow
+      key={appData.props._id}
+      _id={appData.props._id}
+      name={appData.props.name}
+      path={appData.props.path}
+      icon={appData.props.icon}
+      type={appData.props.type}
+      maximalized={appData.state.maximalized}
+      left={appData.state.position.x}
+      top={appData.state.position.y}
+    >
+      {appData.props.children}
+    </SystemWindow>
+  );
+  console.log(hiddenApp);
+  dispatch({
     type: actionTypes.APP_HIDE,
     hiddenApp
-  };
+  });
 };
 
-export const showApp = () => ({
-  type: actionTypes.APP_SHOW
+export const showApp = id => ({
+  type: actionTypes.APP_SHOW,
+  id
 });
