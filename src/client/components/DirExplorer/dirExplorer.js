@@ -89,7 +89,7 @@ const explorer = (props) => {
   };
 
   const onDoubleClickHandler = (item) => {
-    if (item.props.type.find(type => type === 'directory')) {
+    if (item.props.type.find(type => type === 'container')) {
       const { _id, name } = item.props;
       changeDir(_id, name);
       return;

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Item = require('../models/item');
 
 exports.getItems = (req, res) => {
@@ -85,11 +86,14 @@ exports.deleteItem = (req, res) => {
 
   Item.findByIdAndDelete(id)
     .then((prevItem) => {
+      if (prevItem.type.find(type => type === 'trash')) {
+        const oldTrash = { ...prevItem._doc };
+        const newTrash = new Item(_.omit(oldTrash, ['_id', '__v']));
+        newTrash.save();
+      }
       if (prevItem.type.find(type => type === 'container')) {
         const itemsInsidePath = new RegExp(`^${prevItem.path}/${prevItem._id}`);
-        return Item.deleteMany({ path: itemsInsidePath }).then(() => {
-          res.status(200).json({ message: 'Deleted item' });
-        });
+        return Item.deleteMany({ path: itemsInsidePath }).then(() => res.status(200).json({ message: 'Deleted item' }));
       }
       res.status(200).json({ message: 'Deleted item' });
     })

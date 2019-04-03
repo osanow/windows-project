@@ -1,5 +1,19 @@
 import axios from '../../../axios-instance';
 
+export const emptyTrash = (updateItems) => {
+  document.body.style.cursor = 'progress';
+  const trashItem = document.querySelector('[data-type*="trash"]');
+  axios
+    .delete(`/items/${trashItem.id}`)
+    .then(() => updateItems(`/Desktop/${trashItem.id}`))
+    .then(() => {
+      document.body.style.cursor = 'default';
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const changeIconsSize = () => {
   console.log('change icon size');
 };
