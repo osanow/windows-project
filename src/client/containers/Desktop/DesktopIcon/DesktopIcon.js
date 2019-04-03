@@ -47,7 +47,6 @@ class Item extends Component {
   onSubmitNameHandler = (e) => {
     if (e.keyCode === 13) {
       const { _id, updateItems } = this.props;
-
       axios(`/items/${_id}`, {
         method: 'PUT',
         data: {
