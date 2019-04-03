@@ -18,6 +18,7 @@ import { updateObject, fetchIcons } from '../../utils/utility';
 
 const explorer = (props) => {
   const {
+    id,
     dirName,
     initPath,
     initDisplayPath,
@@ -124,6 +125,7 @@ const explorer = (props) => {
 
   return (
     <Styles.Wrapper
+      id={`WindowExplorer${id}`}
       data-type="container"
       data-path={`/${currData.path.join('/')}`}
       data-name={currData.displayPath.join('/')}

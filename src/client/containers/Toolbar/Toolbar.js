@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
@@ -21,31 +21,27 @@ const Box = styled.section`
   margin: 0 0.5rem;
 `;
 
-class Toolbar extends Component {
-  state = {};
+const toolbar = (props) => {
+  const { minimalizedApps } = props;
 
-  render() {
-    const { minimalizedApps } = this.props;
+  const itemsArray = minimalizedApps.map(item => (
+    <ToolbarItem key={item._id} {...item} />
+  ));
 
-    const itemsArray = minimalizedApps.map(item => (
-      <ToolbarItem key={item._id} {...item} />
-    ));
-
-    return (
-      <Bar>
-        <Box>{itemsArray}</Box>
-        <Box>
-          <ToolbarItem iconName="sound.png" isPermanent scale="small" />
-          <ToolbarItem iconName="wifi.png" isPermanent scale="small" />
-          <ClockItem />
-        </Box>
-      </Bar>
-    );
-  }
-}
+  return (
+    <Bar>
+      <Box>{itemsArray}</Box>
+      <Box>
+        <ToolbarItem iconName="sound.png" isPermanent scale="small" />
+        <ToolbarItem iconName="wifi.png" isPermanent scale="small" />
+        <ClockItem />
+      </Box>
+    </Bar>
+  );
+};
 
 const mapStateToProps = state => ({
   minimalizedApps: state.apps.minimalized
 });
 
-export default connect(mapStateToProps)(React.memo(Toolbar));
+export default connect(mapStateToProps)(React.memo(toolbar));

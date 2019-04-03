@@ -60,7 +60,7 @@ export const openApp = app => async (dispatch) => {
         <TextEditor
           value={app.props.content}
           updateItems={app.props.updateItems}
-          itemId={app.props._id}
+          id={app.props._id}
         />
       </SystemWindow>
     );
