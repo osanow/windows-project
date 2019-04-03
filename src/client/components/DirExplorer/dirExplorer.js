@@ -125,10 +125,12 @@ const explorer = (props) => {
 
   return (
     <Styles.Wrapper
-      id={`WindowExplorer${id}`}
+      data-id={id}
       data-type="container"
       data-path={`/${currData.path.join('/')}`}
       data-name={currData.displayPath.join('/')}
+      data-display-path={`/${currData.displayPath.join('/')}`}
+      data-history-position={history.position}
     >
       <Styles.Navigation>
         <Styles.NavOptions>
