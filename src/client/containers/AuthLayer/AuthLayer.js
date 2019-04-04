@@ -118,7 +118,7 @@ class AuthLayer extends Component {
         console.log('HQ background');
       })
       .catch((err) => {
-        if (err.message.includes('network')) {
+        if (err.message.includes('Network')) {
           alert('Check your internet connection!');
         } else {
           disableLoadingPageHandler();

@@ -30,7 +30,7 @@ const toolbar = (props) => {
     win: noIcon,
     search: noIcon
   });
-  const { minimalizedApps, showAppHandler } = props;
+  const { minimalizedApps, showAppHandler, runningApps } = props;
 
   const fetchIcons = async () => {
     const sound = (await import('../../assets/icons/sound.png')).default;
@@ -38,17 +38,26 @@ const toolbar = (props) => {
     const win = (await import('../../assets/icons/win10.png')).default;
     const search = (await import('../../assets/icons/search.svg')).default;
     setIcons({
-      sound, wifi, win, search
+      sound,
+      wifi,
+      win,
+      search
     });
   };
   useEffect(() => {
     fetchIcons();
   }, []);
 
+  const focusedRunningApp = runningApps.slice(-1);
+  console.log(focusedRunningApp);
   const itemsArray = minimalizedApps.map(item => (
     <ToolbarItem
       {...item.props}
       active="true"
+      focused={
+        focusedRunningApp.length > 0
+        && focusedRunningApp.props._id === item.props._id
+      }
       key={item.props._id}
       scale="medium"
       showAppHandler={() => showAppHandler(item.props._id)}
@@ -76,7 +85,8 @@ const toolbar = (props) => {
 };
 
 const mapStateToProps = state => ({
-  minimalizedApps: state.apps.minimalized
+  minimalizedApps: state.apps.minimalized,
+  runningApps: state.apps.running
 });
 
 const mapDispatchToProps = dispatch => ({
