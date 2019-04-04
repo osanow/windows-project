@@ -15,5 +15,6 @@ export {
   hideApp,
   showApp,
   focusApp,
-  appFetchItems
+  appFetchItems,
+  appError
 } from './apps';

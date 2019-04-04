@@ -37,7 +37,7 @@ const NavBelt = styled.nav`
   user-select: none;
   width: 100%;
   height: 2rem;
-  cursor: move;
+  cursor: ${({ draggable }) => (draggable ? 'move' : 'default')};
 `;
 
 const Description = styled.div`
@@ -129,7 +129,11 @@ class systemWindow extends Component {
       children,
       closeAppHandler,
       focusAppHandler,
-      hideAppHandler
+      hideAppHandler,
+      closeMode,
+      width,
+      height,
+      draggable
     } = this.props;
 
     const {
@@ -146,8 +150,8 @@ class systemWindow extends Component {
         id={`Window${_id}`}
         top={position.y}
         left={position.x}
-        width={maximalized ? '100vw' : '45rem'}
-        height={maximalized ? 'calc(100vh - 3rem)' : '25rem'}
+        width={width || (maximalized ? '100vw' : '45rem')}
+        height={height || (maximalized ? 'calc(100vh - 3rem)' : '25rem')}
         isDragging={isDragging}
         positioning={positioning}
         maximalized={maximalized}
@@ -160,19 +164,26 @@ class systemWindow extends Component {
             : `translate( ${dragPosition.x}px, ${dragPosition.y}px )`
         }}
       >
-        <NavBelt onMouseDown={e => onCatchHandler(this, e)}>
+        <NavBelt
+          draggable={draggable}
+          onMouseDown={e => (draggable ? onCatchHandler(this, e) : null)}
+        >
           <Description>
             <img draggable="false" src={icon} alt="icon" />
             <p style={{ margin: '0 0.5rem' }}> | </p>
             <p>{name}</p>
           </Description>
           <WindowActions onMouseDown={e => e.stopPropagation()}>
-            <WindowAction onMouseDown={() => hideAppHandler(this)}>
-              <img src={dash} alt="minimalize" />
-            </WindowAction>
-            <WindowAction onMouseDown={this.maximalizeAppHandler}>
-              <img src={multi} alt="multi tabs" />
-            </WindowAction>
+            {!closeMode && (
+              <>
+                <WindowAction onMouseDown={() => hideAppHandler(this)}>
+                  <img src={dash} alt="minimalize" />
+                </WindowAction>
+                <WindowAction onMouseDown={this.maximalizeAppHandler}>
+                  <img src={multi} alt="multi tabs" />
+                </WindowAction>
+              </>
+            )}
             <WindowAction onMouseDown={() => closeAppHandler(_id)}>
               <img src={close} alt="close" />
             </WindowAction>

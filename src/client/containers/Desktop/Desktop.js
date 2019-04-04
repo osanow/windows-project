@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 
 import * as menuOptions from '../../components/UI/ContextMenu/options';
+import ErrorWindow from '../../components/UI/ErrorWindow/errorWindow';
 import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import DesktopIcon from './DesktopIcon/DesktopIcon';
 import { updateObject } from '../../utils/utility';
@@ -29,7 +30,7 @@ const DesktopWrapper = styled.div`
   grid-auto-flow: column;
 `;
 
-const Backdrop = styled.div`
+const LoadingBackdrop = styled.div`
   cursor: wait;
   z-index: 100;
   width: 100vw;
@@ -134,7 +135,8 @@ class Desktop extends Component {
       runningApps,
       appFetchItemsHandler,
       desktopItems,
-      loading
+      loading,
+      appError
     } = this.props;
 
     const itemsArray = desktopItems.map(item => (
@@ -152,7 +154,8 @@ class Desktop extends Component {
         data-path="/Desktop"
         data-name="Desktop"
       >
-        {loading && <Backdrop />}
+        {appError && <ErrorWindow message={appError} />}
+        {loading && <LoadingBackdrop />}
         {itemsArray}
         {runningApps}
         {contextMenu.opened && (
@@ -167,6 +170,7 @@ class Desktop extends Component {
 }
 
 const mapStateToProps = state => ({
+  appError: state.apps.error,
   loading: state.apps.loading,
   isAuth: state.auth.token !== null,
   userId: state.auth.userId,
