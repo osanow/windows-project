@@ -48,14 +48,13 @@ const toolbar = (props) => {
     fetchIcons();
   }, []);
 
-  const focusedRunningApp = runningApps.slice(-1);
-  console.log(focusedRunningApp);
+  const [focusedRunningApp] = runningApps.slice(-1);
   const itemsArray = minimalizedApps.map(item => (
     <ToolbarItem
       {...item.props}
       active="true"
       focused={
-        focusedRunningApp.length > 0
+        focusedRunningApp
         && focusedRunningApp.props._id === item.props._id
       }
       key={item.props._id}
