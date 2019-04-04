@@ -79,31 +79,41 @@ export const onMoveHandler = (icon, e) => {
 
   const containers = document.querySelectorAll('[data-type]');
   for (let i = containers.length - 1; i >= 0; i -= 1) {
-    const el = containers[i];
-    const rect = el.getBoundingClientRect();
-    if (icon.dragTarget.id === el.id) continue;
+    const destEl = containers[i];
+    const rect = destEl.getBoundingClientRect();
+    if (icon.dragTarget.id === destEl.id) continue;
+
+    const destPath = `${destEl.getAttribute('data-path')}${
+      destEl.id ? `/${destEl.id}` : ''
+    }`;
+    const draggedElInsidePath = `${icon.dragTarget.getAttribute('data-path')}${
+      icon.dragTarget.id ? `/${icon.dragTarget.id}` : ''
+    }`;
+
     if (
       e.clientX > rect.left
-      && e.clientX < rect.left + el.offsetWidth
+      && e.clientX < rect.left + destEl.offsetWidth
       && e.clientY > rect.top
-      && e.clientY < rect.top + el.offsetHeight
+      && e.clientY < rect.top + destEl.offsetHeight
     ) {
-      if (
-        icon.dragTarget.getAttribute('data-path')
-        === `${el.getAttribute('data-path')}${el.id ? `/${el.id}` : ''}`
-      ) {
+      if (icon.dragTarget.getAttribute('data-path') === destPath) {
         icon.dragContainer = null;
         icon.cursorType = 'move';
-      } else if (icon.dragContainer && el.id === icon.dragContainer.id) {
+      } else if (icon.dragContainer && destEl.id === icon.dragContainer.id) {
         break;
       } else if (
-        el.getAttribute('data-type').includes('container')
+        destEl.getAttribute('data-type').includes('container')
         && !icon.props.permanent // Not allowed to change path -> set cursor to not allowed
+        && !destPath.includes(draggedElInsidePath)
       ) {
-        icon.dragContainer = el;
+        console.log(
+          destEl.getAttribute('data-path'),
+          icon.dragTarget.getAttribute('data-path')
+        );
+        icon.dragContainer = destEl;
         icon.cursorType = 'move';
       } else {
-        icon.dragContainer = el;
+        icon.dragContainer = destEl;
         icon.cursorType = 'not allowed';
       }
       break;
@@ -125,7 +135,17 @@ export const onDropHandler = (icon) => {
   document.removeEventListener('mouseup', icon.onDropFunction, false);
   document.removeEventListener('mousemove', icon.throttledMouseMove, false);
 
-  if (icon.cursorType === 'not allowed' && !icon.props.permanent) {
+  const destPath = icon.dragContainer && `${icon.dragContainer.getAttribute('data-path')}${
+    icon.dragContainer.id ? `/${icon.dragContainer.id}` : ''
+  }`;
+  const draggedElInsidePath = `${icon.dragTarget.getAttribute('data-path')}${
+    icon.dragTarget.id ? `/${icon.dragTarget.id}` : ''
+  }`;
+
+  if (
+    (icon.cursorType === 'not allowed' && !icon.props.permanent)
+    || (icon.dragContainer && destPath.includes(draggedElInsidePath))
+  ) {
     icon.setState(prevState => updateObject(prevState, {
       isDragging: false,
       dragPosition: { x: 0, y: 0 }
@@ -174,6 +194,10 @@ export const onDropHandler = (icon) => {
 
     if (!newPath && newRow === prevRow && newCol === prevCol) return;
     // If nothing changes -> stop
+
+    const { closeAppHandler } = icon.props;
+    if (newPath) closeAppHandler(_id);
+    // If path changed -> close window
 
     const changedValues = {
       rowPos: newRow,

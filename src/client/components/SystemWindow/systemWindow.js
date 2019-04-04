@@ -13,6 +13,7 @@ const WindowWrapper = styled.div`
   z-index: 5;
   background-color: whitesmoke;
   border: 1px solid rgb(100, 100, 100);
+  overflow: hidden;
 
   -webkit-font-smoothing: antialiased; /* for fix blured font */
 

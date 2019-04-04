@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import axios from '../../../axios-instance';
 import { onCatchHandler, updateObject } from '../../../utils/utility';
-import { openApp } from '../../../store/actions/index';
+import { openApp, closeApp } from '../../../store/actions/index';
 import DragHint from '../../../components/UI/DragHint/dragHint';
 import * as Styles from './styles';
 
@@ -135,7 +135,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  openAppHandler: app => dispatch(openApp(app))
+  openAppHandler: app => dispatch(openApp(app)),
+  closeAppHandler: id => dispatch(closeApp(id))
 });
 
 export default connect(
