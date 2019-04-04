@@ -10,6 +10,7 @@ export const emptyTrash = (updateItems) => {
       document.body.style.cursor = 'default';
     })
     .catch((error) => {
+      document.body.style.cursor = 'default';
       console.log(error);
     });
 };
@@ -40,6 +41,7 @@ export const deleteItem = ({ path, id }, updateItems) => {
       document.body.style.cursor = 'default';
     })
     .catch((error) => {
+      document.body.style.cursor = 'default';
       console.log(error);
     });
 };
@@ -67,6 +69,7 @@ export const createItem = (type, data, updateItems) => {
       document.body.style.cursor = 'default';
     })
     .catch((error) => {
+      document.body.style.cursor = 'default';
       console.log(error);
     });
 };
