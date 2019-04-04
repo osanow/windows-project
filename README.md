@@ -1,8 +1,8 @@
 # windows-project
 A simple windows10-like interface created via React &amp; Node.js
 
-** MOST FEATURES DOESN'T WORK FOR MOBILE **
 Live: https://windows-project.herokuapp.com/ 
+** MOST FEATURES DOESN'T WORK FOR MOBILE **
 
 In progress..
 
@@ -11,16 +11,19 @@ STACK:
     React
     Redux
     Styled Components
+    
   Back:
     Node
     Express
     MongoDB
     Mongoose
+    
   Tools:
     Webpack
     Nodemon
     eslint
     prettier
+    
   Others:
     Axios
     Unsplash
