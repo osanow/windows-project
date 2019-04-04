@@ -14,6 +14,7 @@ const BarItem = styled.div`
   transition: border 300ms ease-in-out;
   background: ${({ focused }) => (focused ? 'rgba(150, 150, 150, 0.3)' : 'transparent')};
   cursor: pointer;
+  margin: 0 0.1rem;
 
   &:hover {
     background: ${({ focused }) => (focused ? 'rgba(150, 150, 150, 0.3)' : 'rgba(150, 150, 150, 0.1)')};

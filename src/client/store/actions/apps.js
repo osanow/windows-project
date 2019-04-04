@@ -97,7 +97,7 @@ export const openApp = app => async (dispatch) => {
   }
 
   if (!OpenedApp) {
-    dispatch(appError('This app is not working yet'));
+    dispatch(appError('This app does not work yet'));
     return;
   }
 
