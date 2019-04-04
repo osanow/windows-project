@@ -25,21 +25,26 @@ const Box = styled.section`
 
 const toolbar = (props) => {
   const [icons, setIcons] = useState({
-    soundIcon: noIcon,
-    wifiIcon: noIcon
+    sound: noIcon,
+    wifi: noIcon,
+    win: noIcon,
+    search: noIcon
   });
   const { minimalizedApps, showAppHandler } = props;
 
   const fetchIcons = async () => {
-    const soundIcon = (await import('../../assets/icons/sound.png')).default;
-    const wifiIcon = (await import('../../assets/icons/wifi.png')).default;
-    setIcons({ soundIcon, wifiIcon });
+    const sound = (await import('../../assets/icons/sound.png')).default;
+    const wifi = (await import('../../assets/icons/wifi.png')).default;
+    const win = (await import('../../assets/icons/win10.png')).default;
+    const search = (await import('../../assets/icons/search.svg')).default;
+    setIcons({
+      sound, wifi, win, search
+    });
   };
   useEffect(() => {
     fetchIcons();
   }, []);
 
-  console.log(minimalizedApps);
   const itemsArray = minimalizedApps.map(item => (
     <ToolbarItem
       {...item.props}
@@ -50,12 +55,20 @@ const toolbar = (props) => {
     />
   ));
 
+  const {
+    win, sound, wifi, search
+  } = icons;
+
   return (
     <Bar>
-      <Box>{itemsArray}</Box>
       <Box>
-        <ToolbarItem icon={icons.soundIcon} isPermanent scale="small" />
-        <ToolbarItem icon={icons.wifiIcon} isPermanent scale="small" />
+        <ToolbarItem icon={win} isPermanent scale="medium" />
+        <ToolbarItem icon={search} isPermanent scale="medium" />
+        {itemsArray}
+      </Box>
+      <Box>
+        <ToolbarItem icon={sound} isPermanent scale="small" />
+        <ToolbarItem icon={wifi} isPermanent scale="small" />
         <ClockItem />
       </Box>
     </Bar>
