@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { underlineAnimation } from '../../assets/styles/globalStyles';
+import RotatingSpinner from '../Spinners/rotatingSpinner';
 
 const Wrapper = styled.section`
   width: 100vw;
@@ -86,9 +87,29 @@ const Title = styled.h1`
   }
 `;
 
+const SpinnerBox = styled.div`
+  margin-top: 3rem;
+  opacity: 0;
+  animation: fadeWithTimeout 0.6s ease-in-out 4s forwards;
+
+  @keyframes fadeWithTimeout {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
 const appLoader = ({ closed }) => (
   <Wrapper closed={closed}>
     <Title>Windows 10 simulator</Title>
+    <SpinnerBox>
+      <RotatingSpinner />
+    </SpinnerBox>
   </Wrapper>
 );
 

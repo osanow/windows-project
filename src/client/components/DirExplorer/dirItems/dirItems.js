@@ -11,7 +11,8 @@ const Wrapper = styled.div`
   grid-template-columns:
     14rem repeat(${({ categoriesAmount }) => categoriesAmount - 2}, 9rem)
     5rem;
-  grid-template-rows: 2rem repeat(auto-fit, 1.5rem);
+  grid-template-rows: 2rem;
+  grid-auto-rows: 1.5rem;
   grid-auto-flow: row;
   align-items: center;
 `;

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 
-import { auth, authLoginFail, authSigninFail } from '../../store/actions/index';
+import {
+  auth, authLoginFail, authSigninFail, appError
+} from '../../store/actions/index';
 import Spinner from '../../components/Spinners/dottedSpinner';
 import Input from '../../components/UI/Input/input';
 import arrowIcon from '../../assets/icons/right-arrow.svg';
@@ -106,7 +108,7 @@ class AuthLayer extends Component {
   };
 
   componentDidMount() {
-    const { disableLoadingPageHandler } = this.props;
+    const { disableLoadingPageHandler, onAppError } = this.props;
 
     axios
       .get(
@@ -118,15 +120,14 @@ class AuthLayer extends Component {
         console.log('HQ background');
       })
       .catch((err) => {
-        if (err.message.includes('network')) {
-          alert('Check your internet connection!');
+        if (err.message.includes('Network')) {
+          onAppError(`Error type: ${err.message}`);
         } else {
-          disableLoadingPageHandler();
           console.log('Low quality background due to too much queries :c');
-          this.setState(prevState => updateObject(prevState, {
+          return this.setState(prevState => updateObject(prevState, {
             backgroundUrl:
                 'https://source.unsplash.com/random/2000×1400/?nature'
-          }));
+          })).then(() => disableLoadingPageHandler());
         }
       });
   }
@@ -304,7 +305,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onAuth: (email, password, isSignup) => dispatch(auth(email, password, isSignup)),
   failedLoginAuth: err => dispatch(authLoginFail(err)),
-  failedSigninAuth: err => dispatch(authSigninFail(err))
+  failedSigninAuth: err => dispatch(authSigninFail(err)),
+  onAppError: message => dispatch(appError(message))
 });
 
 export default connect(

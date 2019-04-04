@@ -5,7 +5,8 @@ const initialState = {
   running: [],
   minimalized: [],
   data: {},
-  loading: false
+  loading: false,
+  error: false
 };
 
 const appStartFetchingItems = (state, action) => updateObject(state, {
@@ -37,6 +38,7 @@ const openApp = (state, { OpenedApp }) => {
   const left = `10rem + ${1.5 * (activeAppsAmount % 6)
     + 5 * Math.floor(activeAppsAmount / 6)}rem`;
   const top = `3rem + ${1.5 * (activeAppsAmount % 6)}rem`;
+
   const newOpenedApp = OpenedApp(left, top);
 
   return updateObject(state, {
@@ -46,11 +48,13 @@ const openApp = (state, { OpenedApp }) => {
 };
 
 const closeApp = (state, { id }) => updateObject(state, {
-  running: state.running.filter(app => app.props._id !== id)
+  running: state.running.filter(app => app.props._id !== id),
+  error: false
 });
 
 const focusApp = (state, { id }) => {
-  const focusedApp = state.running.find(app => app.props._id === id);
+  const focusedApp = state.running > 0 && state.running.find(app => app.props._id === id);
+  if (!focusedApp) return state;
   return updateObject(state, {
     running: state.running
       .filter(app => app.props._id !== id)
@@ -58,20 +62,24 @@ const focusApp = (state, { id }) => {
   });
 };
 
-const hideApp = (state, { hiddenApp }) => {
-  console.log(hiddenApp);
-  return updateObject(state, {
-    minimalized: state.minimalized.concat([hiddenApp]),
-    running: state.running.filter(app => app.props._id !== hiddenApp.props._id)
-  });
-};
+const hideApp = (state, { hiddenApp }) => updateObject(state, {
+  minimalized: state.minimalized.concat([hiddenApp]),
+  running: state.running.filter(app => app.props._id !== hiddenApp.props._id)
+});
 
 const showApp = (state, { id }) => {
   const app = state.minimalized.find(el => el.props._id === id);
-  console.log(app);
   return updateObject(state, {
     minimalized: state.minimalized.filter(el => el.props._id !== id),
     running: state.running.concat([app])
+  });
+};
+
+const errorApp = (state, { message }) => {
+  console.log(message);
+  return updateObject(state, {
+    error: message,
+    loading: false
   });
 };
 
@@ -90,11 +98,13 @@ const reducer = (state = initialState, action) => {
     case actionTypes.APP_FOCUS:
       return focusApp(state, action);
     case actionTypes.APP_START_HIDING:
-      return state;
+      return state; // temp
     case actionTypes.APP_HIDE:
       return hideApp(state, action);
     case actionTypes.APP_SHOW:
       return showApp(state, action);
+    case actionTypes.APP_ERROR:
+      return errorApp(state, action);
     default:
       return state;
   }

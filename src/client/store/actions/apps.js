@@ -9,6 +9,11 @@ export const focusApp = id => ({
   id
 });
 
+export const appError = message => ({
+  type: actionTypes.APP_ERROR,
+  message
+});
+
 export const appStartFetchingItems = path => ({
   type: actionTypes.APP_START_FETCHING_ITEMS,
   path
@@ -22,6 +27,7 @@ export const appFetchItems = path => async (dispatch) => {
     params: { path }
   })).data;
   const newItems = await fetchIcons(fetchedItems);
+
   dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
     path,
@@ -56,6 +62,7 @@ export const openApp = app => async (dispatch) => {
         type={app.props.type}
         left={left}
         top={top}
+        draggable="true"
       >
         <TextEditor
           value={app.props.content}
@@ -77,6 +84,7 @@ export const openApp = app => async (dispatch) => {
         type={app.props.type}
         left={left}
         top={top}
+        draggable="true"
       >
         <DirExplorer
           id={app.props._id}
@@ -87,6 +95,12 @@ export const openApp = app => async (dispatch) => {
       </SystemWindow>
     );
   }
+
+  if (!OpenedApp) {
+    dispatch(appError('This app is not working yet'));
+    return;
+  }
+
   setTimeout(() => {
     dispatch({
       type: actionTypes.APP_OPEN,
@@ -120,11 +134,11 @@ export const hideApp = appData => async (dispatch) => {
       maximalized={appData.state.maximalized}
       left={appData.state.position.x}
       top={appData.state.position.y}
+      draggable="true"
     >
       {appData.props.children}
     </SystemWindow>
   );
-  console.log(hiddenApp);
   dispatch({
     type: actionTypes.APP_HIDE,
     hiddenApp
