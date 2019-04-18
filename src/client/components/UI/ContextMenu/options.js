@@ -1,7 +1,8 @@
 import * as itemsActions from './actions';
 
 export const trash = {
-  empty_trash: (_data, updateItems) => itemsActions.emptyTrash(updateItems)
+  empty_trash: (_data, updateItems) => itemsActions.emptyTrash(updateItems),
+  new: null
 };
 
 export const desktop = {

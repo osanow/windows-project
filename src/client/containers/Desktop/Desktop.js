@@ -105,11 +105,14 @@ class Desktop extends Component {
     const iconPath = correctTarget.getAttribute('data-path');
 
     let options = {};
-    iconType.forEach((type) => {
+    iconType.reverse().forEach((type) => {
       options = {
         ...options,
         ...menuOptions[type]
       };
+    });
+    Object.entries(options).forEach((el) => {
+      if (el[1] === null) delete options[el[0]];
     });
 
     this.setState(prevState => updateObject(prevState, {

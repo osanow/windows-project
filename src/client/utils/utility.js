@@ -1,4 +1,5 @@
-import _ from 'lodash';
+/* eslint-disable no-param-reassign */
+import throttle from 'lodash/throttle';
 import axios from '../axios-instance';
 
 export const updateObject = (oldObject, updatedProperties) => ({
@@ -268,7 +269,7 @@ export const onCatchHandler = (icon, e) => {
   else icon.dragTarget = e.target;
 
   icon.dragContainer = null;
-  icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 50);
+  icon.throttledMouseMove = throttle(ev => onMoveHandler(icon, ev), 50);
   icon.onDropFunction = () => onDropHandler(icon);
   icon.setState({ isDragging: true }, () => {
     icon.draggingTime = 0;
