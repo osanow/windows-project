@@ -84,7 +84,6 @@ const textEditor = ({ value, id, updateItems }) => {
 
   const saveContent = (editor) => {
     const content = editor.getData();
-
     axios(`/items/${id}`, {
       method: 'PUT',
       data: {

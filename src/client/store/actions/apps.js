@@ -19,7 +19,7 @@ export const appStartFetchingItems = path => ({
   path
 });
 
-export const appFetchItems = path => async (dispatch) => {
+export const appFetchItems = (path = '/Desktop') => async (dispatch) => {
   dispatch(appStartFetchingItems(path));
 
   const fetchedItems = (await axios('items/', {
