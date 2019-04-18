@@ -37,7 +37,7 @@ const NavBelt = styled.nav`
   user-select: none;
   width: 100%;
   height: 2rem;
-  cursor: ${({ draggable }) => (draggable ? 'move' : 'default')};
+  cursor: ${({ isDragging }) => (isDragging ? 'move' : 'default')};
 `;
 
 const Description = styled.div`
@@ -165,7 +165,7 @@ class systemWindow extends Component {
         }}
       >
         <NavBelt
-          draggable={draggable}
+          isDragging={isDragging}
           onMouseDown={e => (draggable ? onCatchHandler(this, e) : null)}
         >
           <Description>
