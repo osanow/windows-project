@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import axios from '../axios-instance';
 
@@ -142,18 +141,18 @@ export const onDropHandler = (icon) => {
     icon.dragTarget.id ? `/${icon.dragTarget.id}` : ''
   }`;
 
-  if (
-    (icon.cursorType === 'not allowed' && !icon.props.permanent)
-    || (icon.dragContainer && destPath.includes(draggedElInsidePath))
-  ) {
-    icon.setState(prevState => updateObject(prevState, {
-      isDragging: false,
-      dragPosition: { x: 0, y: 0 }
-    }));
-    return;
-  }
-
   if (icon.state.gridPosition) {
+    if (
+      (icon.cursorType === 'not allowed' && !icon.props.permanent)
+      || (icon.dragContainer && destPath.includes(draggedElInsidePath))
+    ) {
+      icon.setState(prevState => updateObject(prevState, {
+        isDragging: false,
+        dragPosition: { x: 0, y: 0 }
+      }));
+      return;
+    }
+
     // for desktop icons
     const rect = icon.dragTarget.getBoundingClientRect();
     const posX = rect.left + icon.dragTarget.offsetWidth / 2;
