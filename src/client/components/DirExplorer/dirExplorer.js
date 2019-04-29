@@ -24,7 +24,6 @@ const spinnerStyles = {
 const explorer = (props) => {
   const {
     id,
-    dirName,
     initPath,
     initDisplayPath,
     allItemsData,
@@ -190,7 +189,7 @@ const explorer = (props) => {
           changeDir={changeDir}
         />
         <SearchBox
-          dirName={dirName}
+          dirName={currData.displayPath.slice(-1)}
           debouncedSearchHandler={debouncedSearchHandler}
         />
       </Styles.Navigation>
