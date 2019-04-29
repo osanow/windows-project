@@ -56,7 +56,7 @@ const pathList = ({ path, displayPath, changeDir }) => {
   let maxAmount;
   const pathDisplay = document.getElementById(path);
   if (pathDisplay) maxAmount = Math.floor(pathDisplay.offsetWidth / (6.5 * 16));
-  else maxAmount = 0;
+  else maxAmount = 4;
 
   const pathArray = [];
   for (let i = displayPath.length - maxAmount; i < displayPath.length; i += 1) {

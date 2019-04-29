@@ -106,10 +106,6 @@ export const onMoveHandler = (icon, e) => {
         && !icon.props.permanent // Not allowed to change path -> set cursor to not allowed
         && !destPath.includes(draggedElInsidePath)
       ) {
-        console.log(
-          destEl.getAttribute('data-path'),
-          icon.dragTarget.getAttribute('data-path')
-        );
         icon.dragContainer = destEl;
         icon.cursorType = 'move';
       } else {
@@ -292,4 +288,25 @@ export const fetchIcons = async (items) => {
     });
   });
   return newItems;
+};
+
+export const getAbsoluteDisplayPath = async (pathArray) => {
+  const promiseArray = [];
+  await pathArray.forEach((id) => {
+    if (id === 'Desktop') return;
+    promiseArray.push(new Promise((resolve, reject) => {
+      axios(`/items/${id}`, {
+        method: 'GET'
+      })
+        .then((res) => {
+          resolve(res.data.name);
+        })
+        .catch((err) => {
+          reject(err.message);
+        });
+    }));
+  });
+
+  const names = await Promise.all(promiseArray);
+  return ['Desktop', ...names];
 };

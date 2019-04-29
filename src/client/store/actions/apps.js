@@ -122,7 +122,6 @@ export const hideApp = appData => async (dispatch) => {
   dispatch(startHidingApp());
   const SystemWindow = (await import('../../components/SystemWindow/systemWindow'))
     .default;
-  console.log(appData);
   const hiddenApp = (
     <SystemWindow
       key={appData.props._id}

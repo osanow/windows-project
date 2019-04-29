@@ -1,6 +1,13 @@
 const _ = require('lodash');
 const Item = require('../models/item');
 
+exports.getItem = (req, res) => {
+  const { id } = req.params;
+  Item.findById(id)
+    .then(item => res.status(200).json(item))
+    .catch(error => res.status(404).json({ error }));
+};
+
 exports.getItems = (req, res) => {
   const { path, name } = req.query;
   const { userId } = req;
