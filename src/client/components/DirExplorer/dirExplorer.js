@@ -14,7 +14,12 @@ import RectangleSpinner from '../Spinners/rectangleSpinner';
 import DirItems from './dirItems/dirItems';
 import PathList from './pathList';
 import Sidebar from './sidebar/sidebar';
-import { updateObject, fetchIcons } from '../../utils/utility';
+import { updateObject, fetchIcons, getAbsoluteDisplayPath } from '../../utils/utility';
+
+const spinnerStyles = {
+  margin: '15% 20%',
+  opacity: '0.5'
+};
 
 const explorer = (props) => {
   const {
@@ -83,27 +88,48 @@ const explorer = (props) => {
     appFetchItemsHandler(`/${currData.path.join('/')}`);
   }, [history.position]);
 
-  const changeDir = (dirId, name) => {
-    if (dirId === currData.path[currData.path.length - 1]) return;
+  const changeDir = (dirId, name, absolutePath = false) => {
+    let newPath;
+    let newDisplayPath;
 
-    let newPath = currData.path.concat(dirId);
-    let newDisplayPath = currData.displayPath.concat(name);
+    if (absolutePath) {
+      newPath = absolutePath.slice(1).split('/');
+      getAbsoluteDisplayPath(newPath)
+        .then((absoluteDisplayPath) => {
+          setData(prevData => ({
+            searchedItems: null,
+            history: {
+              position: prevData.history.data.length,
+              data: prevData.history.data.concat({
+                path: newPath,
+                displayPath: absoluteDisplayPath
+              })
+            }
+          }));
+        })
+        .catch(err => console.log(err));
+      return;
+    }
+
+    if (dirId === currData.path[currData.path.length - 1]) return;
+    newPath = currData.path.concat(dirId);
+    newDisplayPath = currData.displayPath.concat(name);
 
     const duplicate = currData.path.findIndex(itemId => itemId === dirId);
     if (duplicate !== -1) {
       newPath = newPath.slice(0, duplicate).concat(dirId);
       newDisplayPath = newDisplayPath.slice(0, duplicate).concat(name);
     }
-    setData({
+    setData(prevData => ({
       searchedItems: null,
       history: {
-        position: history.data.slice(0, history.position).length + 1,
-        data: history.data.slice(0, history.position + 1).concat({
+        position: prevData.history.data.slice(0, history.position).length + 1,
+        data: prevData.history.data.slice(0, history.position + 1).concat({
           path: newPath,
           displayPath: newDisplayPath
         })
       }
-    });
+    }));
   };
 
   const onDoubleClickHandler = (item) => {
@@ -118,7 +144,7 @@ const explorer = (props) => {
 
   const debouncedSearchHandler = _.debounce((value) => {
     if (value === '') {
-      setData(updateObject(data, { searchedItems: null }));
+      setData(prevData => updateObject(prevData, { searchedItems: null }));
       return;
     }
     axios
@@ -130,12 +156,12 @@ const explorer = (props) => {
       })
       .then(async (response) => {
         const items = await fetchIcons(response.data);
-        setData(updateObject(data, { searchedItems: items }));
+        setData(prevData => updateObject(prevData, { searchedItems: items }));
       })
       .catch((err) => {
         console.log(err);
       });
-  }, 500);
+  }, 300);
 
   const allowPrev = history.position > 0;
   const allowNext = history.position < history.data.length - 1;
@@ -169,13 +195,10 @@ const explorer = (props) => {
         />
       </Styles.Navigation>
       <Styles.Main>
-        <Sidebar />
+        <Sidebar changeDirHandler={changeDir} />
         {loading && currItemsData.items.length < 1 ? (
           <RectangleSpinner
-            style={{
-              margin: '15% 15%',
-              opacity: '0.5'
-            }}
+            style={spinnerStyles}
           />
         ) : (
           <Styles.Content>
@@ -207,4 +230,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(explorer));
+)(explorer);

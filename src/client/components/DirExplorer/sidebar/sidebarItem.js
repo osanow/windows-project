@@ -1,25 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import computer from '../../../assets/icons/computer.svg';
-import desktop from '../../../assets/icons/desktop.svg';
-
 const SidebarItem = styled.li`
   position: relative;
-  padding-left: 2rem;
+  padding-left: 2.5rem;
   width: 100%;
   margin-top: 0.3rem;
   font-size: 13px;
   text-align: left;
-
-  & + ul {
-    height: ${({ active }) => (active ? 'auto' : '0px')};
-  }
+  display: flex;
+  align-items: center;
+  height: 1rem;
 
   &::before {
     position: absolute;
     content: url(${({ icon }) => icon});
-    left: 0.5rem;
+    left: 1.2rem;
     width: 1rem;
     height: 1rem;
   }
@@ -30,21 +26,11 @@ const SidebarItem = styled.li`
 `;
 
 const sidebarItem = (props) => {
-  console.log(props);
+  const { icon, children, changeDirHandler } = props;
   return (
-    <>
-      <SidebarItem icon={computer} active="true">
-        Computer
-      </SidebarItem>
-      <ItemsList>
-        <SidebarItem icon={desktop} active="true">
-          Desktop
-        </SidebarItem>
-        <ItemsList>
-          <SidebarItem icon={desktop}> Desktop </SidebarItem>
-        </ItemsList>
-      </ItemsList>
-    </>
+    <SidebarItem icon={icon} onClick={changeDirHandler}>
+      <p>{children}</p>
+    </SidebarItem>
   );
 };
 

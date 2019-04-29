@@ -53,7 +53,7 @@ const closeApp = (state, { id }) => updateObject(state, {
 });
 
 const focusApp = (state, { id }) => {
-  const focusedApp = state.running > 0 && state.running.find(app => app.props._id === id);
+  const focusedApp = state.running.length > 0 && state.running.find(app => app.props._id === id);
   if (!focusedApp) return state;
   return updateObject(state, {
     running: state.running

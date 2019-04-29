@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import _ from 'lodash';
+import throttle from 'lodash/throttle';
 import axios from '../axios-instance';
 
 export const updateObject = (oldObject, updatedProperties) => ({
@@ -106,10 +106,6 @@ export const onMoveHandler = (icon, e) => {
         && !icon.props.permanent // Not allowed to change path -> set cursor to not allowed
         && !destPath.includes(draggedElInsidePath)
       ) {
-        console.log(
-          destEl.getAttribute('data-path'),
-          icon.dragTarget.getAttribute('data-path')
-        );
         icon.dragContainer = destEl;
         icon.cursorType = 'move';
       } else {
@@ -142,18 +138,18 @@ export const onDropHandler = (icon) => {
     icon.dragTarget.id ? `/${icon.dragTarget.id}` : ''
   }`;
 
-  if (
-    (icon.cursorType === 'not allowed' && !icon.props.permanent)
-    || (icon.dragContainer && destPath.includes(draggedElInsidePath))
-  ) {
-    icon.setState(prevState => updateObject(prevState, {
-      isDragging: false,
-      dragPosition: { x: 0, y: 0 }
-    }));
-    return;
-  }
-
   if (icon.state.gridPosition) {
+    if (
+      (icon.cursorType === 'not allowed' && !icon.props.permanent)
+      || (icon.dragContainer && destPath.includes(draggedElInsidePath))
+    ) {
+      icon.setState(prevState => updateObject(prevState, {
+        isDragging: false,
+        dragPosition: { x: 0, y: 0 }
+      }));
+      return;
+    }
+
     // for desktop icons
     const rect = icon.dragTarget.getBoundingClientRect();
     const posX = rect.left + icon.dragTarget.offsetWidth / 2;
@@ -269,7 +265,7 @@ export const onCatchHandler = (icon, e) => {
   else icon.dragTarget = e.target;
 
   icon.dragContainer = null;
-  icon.throttledMouseMove = _.throttle(ev => onMoveHandler(icon, ev), 50);
+  icon.throttledMouseMove = throttle(ev => onMoveHandler(icon, ev), 50);
   icon.onDropFunction = () => onDropHandler(icon);
   icon.setState({ isDragging: true }, () => {
     icon.draggingTime = 0;
@@ -292,4 +288,25 @@ export const fetchIcons = async (items) => {
     });
   });
   return newItems;
+};
+
+export const getAbsoluteDisplayPath = async (pathArray) => {
+  const promiseArray = [];
+  await pathArray.forEach((id) => {
+    if (id === 'Desktop') return;
+    promiseArray.push(new Promise((resolve, reject) => {
+      axios(`/items/${id}`, {
+        method: 'GET'
+      })
+        .then((res) => {
+          resolve(res.data.name);
+        })
+        .catch((err) => {
+          reject(err.message);
+        });
+    }));
+  });
+
+  const names = await Promise.all(promiseArray);
+  return ['Desktop', ...names];
 };
