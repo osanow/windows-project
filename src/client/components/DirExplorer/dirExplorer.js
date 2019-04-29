@@ -161,7 +161,7 @@ const explorer = (props) => {
       .catch((err) => {
         console.log(err);
       });
-  }, 500);
+  }, 300);
 
   const allowPrev = history.position > 0;
   const allowNext = history.position < history.data.length - 1;

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+// eslint-disable-next-line import/no-self-import
+import ThisComponentWithState from './itemsList';
 
-import axios from '../../../axios-instance';
+import { appFetchItems } from '../../../store/actions/index';
 import SidebarItem from './sidebarItem';
-
-import { fetchIcons } from '../../../utils/utility';
 
 import expandIcon from '../../../assets/icons/keyboard-right-arrow.svg';
 
@@ -35,7 +36,9 @@ const ExpandIcon = styled.span`
 `;
 
 const ItemsList = (props) => {
-  const { path, active, changeDirHandler } = props;
+  const {
+    path, active, changeDirHandler, parentActive, storeItems, storeFetchItems, loading
+  } = props;
 
   const [items, setItems] = useState([]);
   const [isActive, setIsActive] = useState(active);
@@ -46,14 +49,8 @@ const ItemsList = (props) => {
 
   const fetchItems = async () => {
     try {
-      const fetchedItems = (await axios('items/', {
-        method: 'GET',
-        params: { path }
-      })).data;
-      const itemsWithIcons = await fetchIcons(fetchedItems);
-
       const listItems = [];
-      itemsWithIcons.forEach((item) => {
+      storeItems.forEach((item) => {
         if (item.type.find(type => type === 'container')) {
           listItems.push(item);
         }
@@ -62,19 +59,30 @@ const ItemsList = (props) => {
       const newItems = listItems.map(item => (
         <React.Fragment key={item._id}>
           <SidebarItem icon={item.iconPath} path={item.path} changeDirHandler={() => changeDirHandler(item._id, item.name, `${item.path}/${item._id}`)}>{item.name}</SidebarItem>
-          <ItemsList path={`${item.path}/${item._id}`} changeDirHandler={changeDirHandler} />
+          <ThisComponentWithState path={`${item.path}/${item._id}`} changeDirHandler={changeDirHandler} parentActive={isActive} />
         </React.Fragment>
       ));
 
       setItems(newItems);
     } catch (err) {
-      console.log(err);
+      if (typeof storeItems === 'undefined') {
+        storeFetchItems(path, (listItems) => {
+          const newItems = listItems
+            .map(item => (
+              <React.Fragment key={item._id}>
+                <SidebarItem icon={item.iconPath} path={item.path} changeDirHandler={() => changeDirHandler(item._id, item.name, `${item.path}/${item._id}`)}>{item.name}</SidebarItem>
+                <ThisComponentWithState path={`${item.path}/${item._id}`} changeDirHandler={changeDirHandler} parentActive={isActive} />
+              </React.Fragment>
+            ));
+          setItems(newItems);
+        });
+      } else console.log(err);
     }
   };
 
   useEffect(() => {
-    fetchItems(path);
-  }, [isActive]);
+    if (parentActive || isActive) { fetchItems(path); }
+  }, [isActive, parentActive, loading]);
 
   return (
     <ItemsListDiv>
@@ -86,4 +94,13 @@ const ItemsList = (props) => {
   );
 };
 
-export default ItemsList;
+const mapStateToProps = (state, initProps) => ({
+  storeItems: state.apps.data[initProps.path] && state.apps.data[initProps.path].items,
+  loading: state.apps.data[initProps.path] && state.apps.data[initProps.path].loading,
+});
+
+const mapDispatchToProps = dispatch => ({
+  storeFetchItems: (path, callback) => dispatch(appFetchItems(path, callback))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemsList);

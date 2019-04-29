@@ -19,7 +19,7 @@ export const appStartFetchingItems = path => ({
   path
 });
 
-export const appFetchItems = (path = '/Desktop') => async (dispatch) => {
+export const appFetchItems = (path = '/Desktop', callback = () => {}) => async (dispatch) => {
   dispatch(appStartFetchingItems(path));
 
   const fetchedItems = (await axios('items/', {
@@ -28,11 +28,14 @@ export const appFetchItems = (path = '/Desktop') => async (dispatch) => {
   })).data;
   const newItems = await fetchIcons(fetchedItems);
 
-  dispatch({
+  await dispatch({
     type: actionTypes.APP_FETCH_ITEMS,
     path,
     newItems
   });
+
+  const onlyContainers = newItems.filter(item => item.type.find(typeEl => typeEl === 'container'));
+  callback(onlyContainers);
 };
 
 const startOpeningApp = () => ({
