@@ -9,8 +9,7 @@ import desktopIcon from '../../../assets/icons/desktop.svg';
 const Wrapper = styled.div`
   width: 160px;
   overflow: hidden;
-  border-right: 1px solid #ddd;
-  padding-right: 0.2rem;
+  margin-right: 0.4rem;
   position: relative;
 `;
 

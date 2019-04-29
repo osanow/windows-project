@@ -52,4 +52,5 @@ export const Content = styled.div`
   overflow-x: auto;
   height: 100%;
   margin: 0;
+  border-left: 1px solid #ddd;
 `;
