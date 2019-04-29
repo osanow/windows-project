@@ -98,7 +98,7 @@ class Desktop extends Component {
     const correctTarget = path.find(
       val => val.getAttribute('data-type') || val.id === 'app-root'
     );
-    if (!correctTarget.getAttribute('data-type')) return false;
+    if (!correctTarget.getAttribute('data-type') || correctTarget.getAttribute('data-type') === 'not-allowed') return false;
 
     const iconId = correctTarget.id;
     const iconType = correctTarget.getAttribute('data-type').split(',');

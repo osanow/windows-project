@@ -7,10 +7,12 @@ import ItemsList from './itemsList';
 import desktopIcon from '../../../assets/icons/desktop.svg';
 
 const Wrapper = styled.div`
-  width: 160px;
-  overflow: hidden;
+  width: 170px;
+  overflow-x: hidden;
+  overflow-y: auto;
   margin-right: 0.4rem;
   position: relative;
+  height: 100%;
 `;
 
 const Sidebar = styled.ul`
@@ -19,14 +21,15 @@ const Sidebar = styled.ul`
   flex-direction: column;
   list-style: none;
   margin: 0.5rem 0.5rem 0.5rem 0;
-  overflow-y: auto;
   width: 20rem;
 `;
 
 const sidebar = (props) => {
   const { changeDirHandler } = props;
   return (
-    <Wrapper>
+    <Wrapper
+      data-type="not-allowed"
+    >
       <Sidebar>
         <SidebarItem icon={desktopIcon} path="/Desktop" changeDirHandler={() => changeDirHandler('Desktop', 'Desktop')}>
           Desktop

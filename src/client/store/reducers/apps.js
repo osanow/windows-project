@@ -10,6 +10,7 @@ const initialState = {
 };
 
 const appStartFetchingItems = (state, action) => updateObject(state, {
+  loading: true,
   data: {
     ...state.data,
     [action.path]: {
@@ -22,6 +23,7 @@ const appStartFetchingItems = (state, action) => updateObject(state, {
 });
 
 const appFetchItems = (state, action) => updateObject(state, {
+  loading: false,
   data: {
     ...state.data,
     [action.path]: {
