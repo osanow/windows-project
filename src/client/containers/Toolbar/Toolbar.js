@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 
 import { showApp } from '../../store/actions/index';
 import ToolbarItem from './ToolbarItem/toolbarItem';
-import ClockItem from '../../components/ClockItem/clockItem';
+import ClockItem from '../../components/ToolbarComponents/ClockItem/clockItem';
 import noIcon from '../../assets/icons/noIcon.png';
-import WifiItem from '../../components/WifiItem/wifiItem';
+import WifiItem from '../../components/ToolbarComponents/WifiItem/wifiItem';
+import MainMenuItem from '../../components/ToolbarComponents/MainMenuItem/mainMenuItem';
 
 const Bar = styled.nav`
+  z-index: 1;
   position: absolute;
   bottom: 0;
   height: 2.5rem;
@@ -19,6 +21,7 @@ const Bar = styled.nav`
 `;
 
 const Box = styled.section`
+  position: relative;
   display: flex;
   align-items: center;
   margin-right: 0.5rem;
@@ -27,19 +30,15 @@ const Box = styled.section`
 const toolbar = (props) => {
   const [icons, setIcons] = useState({
     sound: noIcon,
-    wifi: noIcon,
-    win: noIcon,
     search: noIcon
   });
   const { minimalizedApps, showAppHandler, runningApps } = props;
 
   const fetchIcons = async () => {
     const sound = (await import('../../assets/icons/sound.png')).default;
-    const win = (await import('../../assets/icons/win10.png')).default;
     const search = (await import('../../assets/icons/search.svg')).default;
     setIcons({
       sound,
-      win,
       search
     });
   };
@@ -64,13 +63,13 @@ const toolbar = (props) => {
   ));
 
   const {
-    win, sound, search
+    sound, search
   } = icons;
 
   return (
     <Bar>
       <Box>
-        <ToolbarItem icon={win} isPermanent scale="medium" />
+        <MainMenuItem />
         <ToolbarItem icon={search} isPermanent scale="medium" />
         {itemsArray}
       </Box>

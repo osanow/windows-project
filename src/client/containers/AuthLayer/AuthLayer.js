@@ -127,7 +127,7 @@ class AuthLayer extends Component {
           return this.setState(prevState => updateObject(prevState, {
             backgroundUrl:
                 'https://source.unsplash.com/random/2000×1400/?nature'
-          })).then(() => disableLoadingPageHandler());
+          }), () => disableLoadingPageHandler());
         }
       });
   }

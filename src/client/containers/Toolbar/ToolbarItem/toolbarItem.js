@@ -3,7 +3,10 @@ import styled from 'styled-components';
 
 import { imageContainer } from '../../../assets/styles/globalStyles';
 
-const BarItem = styled.div`
+const BarItem = styled.button`
+  background: none;
+  border: none;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,11 +16,15 @@ const BarItem = styled.div`
   border-bottom: ${({ active }) => (active ? '2px solid #82ebfc' : '2px solid transparent')};
   transition: border 300ms ease-in-out;
   background: ${({ focused }) => (focused ? 'rgba(150, 150, 150, 0.3)' : 'transparent')};
-  cursor: pointer;
   margin: 0 0.1rem;
+  cursor: pointer;
 
   &:hover {
     background: ${({ focused }) => (focused ? 'rgba(150, 150, 150, 0.3)' : 'rgba(150, 150, 150, 0.1)')};
+  }
+
+  &:first-of-type {
+    margin: 0;
   }
 `;
 
@@ -27,15 +34,16 @@ const ImageContainer = styled(imageContainer)`
 
 const item = (props) => {
   const {
-    icon, isPermanent, scale, showAppHandler, active, focused
+    icon, isPermanent, scale, active, focused, children, onClick
   } = props;
   return (
     <BarItem
       scale={scale}
-      onClick={showAppHandler}
       active={active}
       focused={focused}
+      onClick={onClick}
     >
+      {children}
       <ImageContainer
         src={icon}
         alt="icon"

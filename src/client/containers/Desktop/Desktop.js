@@ -157,6 +157,7 @@ class Desktop extends Component {
         data-type="desktop,container"
         data-path="/Desktop"
         data-name="Desktop"
+        id="Desktop"
       >
         {appError && <ErrorWindow message={appError} />}
         {loading && <LoadingBackdrop />}
