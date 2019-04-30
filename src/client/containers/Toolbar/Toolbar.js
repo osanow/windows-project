@@ -6,6 +6,7 @@ import { showApp } from '../../store/actions/index';
 import ToolbarItem from './ToolbarItem/toolbarItem';
 import ClockItem from '../../components/ClockItem/clockItem';
 import noIcon from '../../assets/icons/noIcon.png';
+import WifiItem from '../../components/WifiItem/wifiItem';
 
 const Bar = styled.nav`
   position: absolute;
@@ -34,16 +35,15 @@ const toolbar = (props) => {
 
   const fetchIcons = async () => {
     const sound = (await import('../../assets/icons/sound.png')).default;
-    const wifi = (await import('../../assets/icons/wifi.png')).default;
     const win = (await import('../../assets/icons/win10.png')).default;
     const search = (await import('../../assets/icons/search.svg')).default;
     setIcons({
       sound,
-      wifi,
       win,
       search
     });
   };
+
   useEffect(() => {
     fetchIcons();
   }, []);
@@ -64,7 +64,7 @@ const toolbar = (props) => {
   ));
 
   const {
-    win, sound, wifi, search
+    win, sound, search
   } = icons;
 
   return (
@@ -76,7 +76,7 @@ const toolbar = (props) => {
       </Box>
       <Box>
         <ToolbarItem icon={sound} isPermanent scale="small" />
-        <ToolbarItem icon={wifi} isPermanent scale="small" />
+        <WifiItem />
         <ClockItem />
       </Box>
     </Bar>

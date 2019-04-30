@@ -42,6 +42,10 @@ const startOpeningApp = () => ({
   type: actionTypes.APP_START_OPENING
 });
 
+const failedOpeningApp = () => ({
+  type: actionTypes.APP_START_OPENING
+});
+
 export const openApp = app => async (dispatch) => {
   if (document.getElementById(`Window${app.props._id}`)) {
     focusApp(app.props._id);
