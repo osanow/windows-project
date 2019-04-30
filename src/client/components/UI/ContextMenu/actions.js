@@ -1,6 +1,6 @@
 import axios from '../../../axios-instance';
 
-export const emptyTrash = (updateItems) => {
+export const emptyTrash = (updateItems, catchError) => {
   document.body.style.cursor = 'progress';
   const trashItem = document.querySelector('[data-type*="trash"]');
   axios
@@ -12,6 +12,7 @@ export const emptyTrash = (updateItems) => {
     .catch((error) => {
       document.body.style.cursor = 'default';
       console.log(error);
+      catchError('Network Error, check your internet connection!');
     });
 };
 
@@ -23,7 +24,7 @@ export const personalize = () => {
   console.log('personalize');
 };
 
-export const deleteItem = ({ path, id }, updateItems) => {
+export const deleteItem = ({ path, id }, updateItems, catchError) => {
   const idArray = id.split('/');
   const itemId = idArray[idArray.length - 1];
   document.getElementById(id).style.display = 'none';
@@ -43,10 +44,11 @@ export const deleteItem = ({ path, id }, updateItems) => {
     .catch((error) => {
       document.body.style.cursor = 'default';
       console.log(error);
+      catchError('Network Error, check your internet connection!');
     });
 };
 
-export const createItem = (type, data, updateItems) => {
+export const createItem = (type, data, updateItems, catchError) => {
   const newPath = `${data.path}${
     data.id ? `/${data.id.split('/').slice(-1)}` : ''
   }`;
@@ -71,6 +73,7 @@ export const createItem = (type, data, updateItems) => {
     .catch((error) => {
       document.body.style.cursor = 'default';
       console.log(error);
+      catchError('Network Error, check your internet connection!');
     });
 };
 

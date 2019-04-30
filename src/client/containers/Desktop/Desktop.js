@@ -7,7 +7,7 @@ import ErrorWindow from '../../components/UI/ErrorWindow/errorWindow';
 import ContextMenu from '../../components/UI/ContextMenu/contextMenu';
 import DesktopIcon from './DesktopIcon/DesktopIcon';
 import { updateObject } from '../../utils/utility';
-import { appFetchItems } from '../../store/actions/index';
+import { appFetchItems, appError as appErrorAction } from '../../store/actions/index';
 
 const DesktopWrapper = styled.div`
   width: 100vw;
@@ -137,6 +137,7 @@ class Desktop extends Component {
     const {
       runningApps,
       appFetchItemsHandler,
+      appCatchError,
       desktopItems,
       loading,
       appError
@@ -163,7 +164,8 @@ class Desktop extends Component {
         {runningApps}
         {contextMenu.opened && (
           <ContextMenu
-            updateItems={path => appFetchItemsHandler(path)}
+            updateItems={appFetchItemsHandler}
+            catchError={appCatchError}
             {...contextMenu}
           />
         )}
@@ -186,7 +188,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  appFetchItemsHandler: path => dispatch(appFetchItems(path))
+  appFetchItemsHandler: path => dispatch(appFetchItems(path)),
+  appCatchError: message => dispatch(appErrorAction(message))
 });
 
 export default connect(

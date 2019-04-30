@@ -24,6 +24,7 @@ const Message = styled.p`
   font-size: 18px;
   font-weight: 400;
   margin: 0 auto;
+  text-align: center;
 `;
 
 const dragHint = ({ message }) => ReactDOM.createPortal(

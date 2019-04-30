@@ -22,6 +22,19 @@ const appStartFetchingItems = (state, action) => updateObject(state, {
   }
 });
 
+const appFailedFetchingItems = (state, { path, error }) => updateObject(state, {
+  loading: false,
+  error: error.message,
+  data: {
+    ...state.data,
+    [path]: {
+      ...updateObject(state.data[path], {
+        loading: false
+      })
+    }
+  }
+});
+
 const appFetchItems = (state, action) => updateObject(state, {
   loading: false,
   data: {
@@ -34,6 +47,8 @@ const appFetchItems = (state, action) => updateObject(state, {
 });
 
 const appStartOpening = state => updateObject(state, { loading: true });
+
+const appFailedOpening = (state, { message }) => updateObject(state, { loading: false, error: message });
 
 const openApp = (state, { OpenedApp }) => {
   const activeAppsAmount = state.running.length;
@@ -77,22 +92,23 @@ const showApp = (state, { id }) => {
   });
 };
 
-const errorApp = (state, { message }) => {
-  console.log(message);
-  return updateObject(state, {
-    error: message,
-    loading: false
-  });
-};
+const errorApp = (state, { message }) => updateObject(state, {
+  error: message,
+  loading: false
+});
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.APP_START_FETCHING_ITEMS:
       return appStartFetchingItems(state, action);
+    case actionTypes.APP_FAILED_FETCHING_ITEMS:
+      return appFailedFetchingItems(state, action);
     case actionTypes.APP_FETCH_ITEMS:
       return appFetchItems(state, action);
     case actionTypes.APP_START_OPENING:
       return appStartOpening(state);
+    case actionTypes.APP_FAILED_OPENING:
+      return appFailedOpening(state);
     case actionTypes.APP_OPEN:
       return openApp(state, action);
     case actionTypes.APP_CLOSE:
@@ -100,7 +116,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.APP_FOCUS:
       return focusApp(state, action);
     case actionTypes.APP_START_HIDING:
-      return state; // temp
+      return state; // temporary
     case actionTypes.APP_HIDE:
       return hideApp(state, action);
     case actionTypes.APP_SHOW:

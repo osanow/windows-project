@@ -1,14 +1,14 @@
 import * as itemsActions from './actions';
 
 export const trash = {
-  empty_trash: (_data, updateItems) => itemsActions.emptyTrash(updateItems),
+  empty_trash: (_data, updateItems, catchError) => itemsActions.emptyTrash(updateItems, catchError),
   new: null
 };
 
 export const desktop = {
   new: {
-    file: (data, updateItems) => itemsActions.createItem('file', data, updateItems),
-    directory: (data, updateItems) => itemsActions.createItem('directory', data, updateItems)
+    file: (data, updateItems, catchError) => itemsActions.createItem('file', data, updateItems, catchError),
+    directory: (data, updateItems, catchError) => itemsActions.createItem('directory', data, updateItems, catchError)
   },
   personalize: itemsActions.personalize,
   view: {
@@ -19,18 +19,18 @@ export const desktop = {
 };
 
 export const file = {
-  delete: (data, updateItems) => itemsActions.deleteItem(data, updateItems),
+  delete: (data, updateItems, catchError) => itemsActions.deleteItem(data, updateItems, catchError),
   rename: ({ id }) => itemsActions.changeName(id)
 };
 
 export const directory = {
-  delete: (data, updateItems) => itemsActions.deleteItem(data, updateItems),
+  delete: (data, updateItems, catchError) => itemsActions.deleteItem(data, updateItems, catchError),
   rename: ({ id }) => itemsActions.changeName(id)
 };
 
 export const container = {
   new: {
-    file: (data, updateItems) => itemsActions.createItem('file', data, updateItems),
-    directory: (data, updateItems) => itemsActions.createItem('directory', data, updateItems)
+    file: (data, updateItems, catchError) => itemsActions.createItem('file', data, updateItems, catchError),
+    directory: (data, updateItems, catchError) => itemsActions.createItem('directory', data, updateItems, catchError)
   }
 };
