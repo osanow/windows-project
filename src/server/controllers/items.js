@@ -73,8 +73,9 @@ exports.putItem = (req, res) => {
         return Item.find({ path: itemsInsidePath }).then((itemsInside) => {
           itemsInside.forEach((item) => {
             const newPath = item.path.replace(item.path, changedValues.path);
+            const prevInnerPath = item.path.replace(`${prevItem.path}`, '');
             // eslint-disable-next-line no-param-reassign
-            item.path = `${newPath}/${prevItem._id}`;
+            item.path = `${newPath}${prevInnerPath}`;
             item.save();
           });
           res.status(200).json({ message: 'Updated item' });
