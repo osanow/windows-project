@@ -46,7 +46,7 @@ const OptionsBox = styled.div`
   border-right: 1px solid rgba(125,125,125,.9);
 `;
 
-const ExpandButton = styled.button`
+const ExpandButton = styled.div`
   background: none;
   position: relative;
   border: none;
@@ -81,6 +81,7 @@ const Options = styled.ul`
   align-items: center;
   list-style: none;
   padding: 0;
+  margin: 0;
 `;
 
 const Option = styled.li`

@@ -38,16 +38,15 @@ const ImageContainer = styled(imageContainer)`
 
 const item = (props) => {
   const {
-    icon, isPermanent, scale, active, focused, children, onClick
+    icon, isPermanent, scale, active, focused, onClick, showAppHandler
   } = props;
   return (
     <BarItem
       scale={scale}
       active={active}
       focused={focused}
-      onClick={onClick}
+      onClick={onClick || showAppHandler}
     >
-      {children}
       <ImageContainer
         src={icon}
         alt="icon"
