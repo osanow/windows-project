@@ -7,9 +7,22 @@ import settingsIcon from '../../assets/icons/settings.svg';
 import pictureIcon from '../../assets/icons/picture.svg';
 
 const MainMenu = styled.div`
-  opacity: 0;
   transform: translateY(calc(80vh + 2.5rem));
-  animation: ${({ show }) => (show ? 'slideMenu .3s ease-out forwards' : 'none')};
+  ${({ show }) => {
+    if (show) {
+      return `
+        opacity: 1;
+        z-index: 10;
+        transform: translateY(0);
+      `;
+    }
+    return `
+      opacity: 0;
+      z-index: -1;
+      transform: translateY(calc(100% + 2.5rem));
+    `;
+  }}
+  transition: opacity .3s ease-out, transform .3s cubic-bezier(0.47, 0.09, 0.56, 0.68);
   position: absolute;
   bottom: 100%;
   width: 30vw;
@@ -21,21 +34,6 @@ const MainMenu = styled.div`
   display: flex;
   cursor: default;
   user-select: none;
-
-  @keyframes slideMenu {
-    0% {
-      opacity: 0;
-      transform: translateY(5rem);
-    }
-    1% {
-      opacity: 0;
-      transform: translateY(5rem);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 `;
 
 const OptionsBox = styled.div`
@@ -59,27 +57,33 @@ const ExpandButton = styled.button`
   width: 3rem;
   height: 3rem;
   cursor: pointer;
-
-  &:hover {
-    background-color: rgba(125,125,125,.9)
-  }
+  transition: background-color .1s ease-in-out;
 
   & > img {
     width: 1.5rem;
     height: 1rem;
     filter: invert(100%);
   }
+
+  &:hover {
+    background-color: rgba(125,125,125,.9)
+  }
+  &:active {
+    background-color: rgba(150,150,150,.9)
+  }
 `;
 
-const Options = styled.nav`
+const Options = styled.ul`
   width: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  list-style: none;
+  padding: 0;
 `;
 
-const Option = styled.button`
+const Option = styled.li`
   background: none;
   border: none;
   display: flex;
@@ -89,6 +93,7 @@ const Option = styled.button`
   width: 3rem;
   height: 3rem;
   cursor: pointer;
+  transition: background-color .2s ease-in-out;
 
   & > img {
     width: 1.1rem;
@@ -102,6 +107,9 @@ const Option = styled.button`
 
   &:hover {
     background-color: rgba(120,120,120,.9)
+  }
+  &:active {
+    background-color: rgba(90,90,90,.9)
   }
 `;
 
@@ -121,9 +129,13 @@ const App = styled.div`
   display: flex;
   align-items: center;
   padding: 0 .3rem;
+  transition: background-color .2s ease-in-out;
 
   &:hover {
     background-color: rgba(120,120,120,.9)
+  }
+  &:active {
+    background-color: rgba(150,150,150,.9)
   }
 `;
 

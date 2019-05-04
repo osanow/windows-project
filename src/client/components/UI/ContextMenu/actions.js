@@ -50,7 +50,7 @@ export const deleteItem = ({ path, id }, updateItems, catchError) => {
 
 export const createItem = (type, data, updateItems, catchError) => {
   const newPath = `${data.path}${
-    data.id ? `/${data.id.split('/').slice(-1)}` : ''
+    data.id && data.id !== 'Desktop' ? `/${data.id.split('/').slice(-1)}` : ''
   }`;
   const newItem = {
     name: `New ${type}`,
@@ -60,7 +60,7 @@ export const createItem = (type, data, updateItems, catchError) => {
   };
   document.body.style.cursor = 'progress';
 
-  axios('/items/', {
+  axios('/items', {
     method: 'POST',
     data: {
       items: [newItem]
